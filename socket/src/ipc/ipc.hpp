@@ -7,7 +7,7 @@
 #include <sys/types.h> //for accept
 #include <sys/socket.h>// for accept
 #include <netinet/in.h>
-
+#define MSG_SIZE 256 //for send/recv message size
 /**
  * @file ipc.hpp
  * @brief Contains ipc::socket class declaration
@@ -28,7 +28,7 @@ namespace ipc
 
 try {
         socket s(socket::TCP);
-        s.bind(9002);
+        s.bind(port);
         s.listen();
         socket c = s.accept();
 
@@ -38,28 +38,27 @@ try {
 class ipc::socket
 {
 public:
-        enum protocol { TCP, UDP};
+        enum protocol { TCP, UDP };
 public:
-        socket(int domain, int type, protocol p); 
-        socket(const socket& other); 
+        socket(int domain, protocol p);
+        socket(protocol p);//by default AF_INET, SOCK_STREAM
+        socket(const socket& other);
         ~socket();
         void bind(unsigned short port);
-        void init_addr(struct sockaddr_in);
         void listen(unsigned short queue_len);
         socket& accept();
-        void connect(char *ip);
-        void send(char response[25], int flag);
-        void recv(char response[25], int flag);
+        void connect();
+        //void connect(char* ip);
+        void send(char response[MSG_SIZE]);
+        void recv(char response[MSG_SIZE]);
         void close();
 
 private:
         int m_socket;
-        struct sockaddr_in m_addr;
-        protocol p;
+        protocol m_protocol;
         int m_domain;
-        int m_type;
         unsigned short m_port;
+        struct sockaddr_in m_addr;
 };
-
 
 #endif // SOCKETS_SOCKET_HPP
