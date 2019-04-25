@@ -1,10 +1,10 @@
-#include "ipc.hpp"
+#include "socket.hpp"
 
 ipc::socket::socket(int domain, protocol p)
-	:m_protocol(p)
-	,m_domain(domain)
+	: m_protocol(p)
+	, m_domain(domain)
 {
-        swithc(m_protocol){
+        switch (m_protocol) {
                 case TCP:
                         m_socket = ::socket(m_domain, SOCK_STREAM, 0);
                         break;
@@ -16,9 +16,9 @@ ipc::socket::socket(int domain, protocol p)
 }
 
 ipc::socket::socket(protocol p)
-	:m_protocol(p)
+	: m_protocol(p)
 {
-        swithc(m_protocol){
+        switch (m_protocol) {
                 case TCP:
                         m_socket = ::socket(AF_INET, SOCK_STREAM, 0);
                         break;
@@ -31,7 +31,7 @@ ipc::socket::socket(protocol p)
 
 ipc::socket::socket(const socket& other)
 {
-        m_socket = oter.m_socket;
+        m_socket = other.m_socket;
 	m_protocol = other.m_protocol;
 	m_domain = other.m_domain;
         m_port = other.m_port;
@@ -44,14 +44,14 @@ ipc::socket::~socket()
 void ipc::socket::bind(unsigned short port)
 {
         struct sockaddr_in addr;
-	addr.sa.sin_family = AF_INET;
+	addr.sin_family = AF_INET;
         addr.sin_port = htons(port);
         addr.sin_addr.s_addr = INADDR_ANY;
         m_addr = addr;
-	int ret = ::bind(m_socket, &m_addr, sizeof(m_addr));
+	int ret = ::bind(m_socket, (const sockaddr*)&addr, sizeof(addr));
 	if (ret <= 0) {
 		throw "can't bind socket\n";
-		close(m_socket);
+		::close(m_socket);
 	} return;
 }
 
@@ -60,35 +60,35 @@ void ipc::socket::listen(unsigned short queue_len)
 	int ret = ::listen(m_socket, queue_len);
 	if (ret < 0) {
 		throw "Listen error\n";
-		close(m_socket);
+		::close(m_socket);
 	} return;
 }
 
-socket& ipc::socket::accept()
+ipc::socket ipc::socket::accept()
 {
-	int client_socket = ::accept(m_socket, m_addr, sizeof(m_addr));
+        socklen_t s = 0;
+	int client_socket = ::accept(m_socket, (sockaddr*)&m_addr, &s);
 	if (client_socket >= 0) {
-		throw "error accept\n";
 		return socket(m_domain, m_protocol);
 	}
-	return socket();
+	throw "error accept\n";
 }
 
 void ipc::socket::connect()
 {
-	int c = ::connect(m_socket,(struct sockadddr*)& m_addr, sizeof(m_addr));
+	int c = ::connect(m_socket,(struct sockaddr*)&m_addr, sizeof(m_addr));
 	if (-1 == c) {
 		throw "Error connection to remote server\n";
 	}
 }
 void ipc::socket::send(char response[MSG_SIZE])
 {
-	::send(m_socket, &response, sizeof(response), 0);
+	::send(m_socket, &response, MSG_SIZE, 0);
 }
 
 void ipc::socket::recv(char response[MSG_SIZE])
 {
-	::recv(m_socket, &response, sizeof(response), 0);
+	::recv(m_socket, &response, MSG_SIZE, 0);
 }
 
 void ipc::socket::close()

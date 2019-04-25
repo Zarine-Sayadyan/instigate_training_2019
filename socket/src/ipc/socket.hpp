@@ -26,15 +26,6 @@ namespace ipc
         class socket;
 }
 
-try {
-        socket s(socket::TCP);
-        s.bind(port);
-        s.listen();
-        socket c = s.accept();
-
-} catch(const std::exception& e) {
-}
-
 class ipc::socket
 {
 public:
@@ -46,7 +37,7 @@ public:
         ~socket();
         void bind(unsigned short port);
         void listen(unsigned short queue_len);
-        socket& accept();
+        socket accept();
         void connect();
         //void connect(char* ip);
         void send(char response[MSG_SIZE]);
