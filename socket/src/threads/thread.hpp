@@ -45,7 +45,7 @@ public:
          * @fn create_thread
          * @brief creating thread
          */
-        void create_thread(enum flag);
+        void create_thread(enum flag = JOINABLE);
         /** 
          * @fn join_thread
          * @brief joining thread
