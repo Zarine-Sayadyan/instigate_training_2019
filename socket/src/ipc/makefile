@@ -6,7 +6,7 @@ INCLUDEH  := $(wildcard ./*hpp)
 INCLUDET  := $(wildcard ./*tpp)
 INCLUDE_H := $(patsubst ./%.hpp, ../../inc/%.hpp, $(INCLUDEH))
 INCLUDE_T := $(patsubst ./%.tpp, ../../inc/%.tpp, $(INCLUDET))
-LIBRARIES := $(patsubst ./%.hpp, ../../lib/lib%.so, $(INCLUDEH))
+LIBRARIES := $(patsubst ./%.hpp, ../../lib/socket/lib%.so, $(INCLUDEH))
 OBJECTS   := $(patsubst ./%.cpp, ../../obj/%.o, $(SOURCES))
 INC       := ../../inc
 DEPENDS   := $(patsubst ./%.cpp,../../obj/%.dep,$(SOURCES))
@@ -33,7 +33,8 @@ $(OBJECTS) :
 
 build : $(LIBRARIES)
 
-../../lib/% : $(INCLUDE_H) $(INCLUDE_T) $(OBJECTS) 
+../../lib/socket/% : $(INCLUDE_H) $(INCLUDE_T) $(OBJECTS) 
+	mkdir -p ../../lib/socket
 	$(CC) -shared  $(OBJECTS) -o $@
 
 ../../inc/%hpp : ./%hpp 

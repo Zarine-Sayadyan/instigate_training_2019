@@ -4,15 +4,14 @@ CC        := g++
 SOURCES   := $(wildcard ./*cpp)
 INCLUDEH  := $(wildcard ./*hpp) 
 INCLUDET  := $(wildcard ./*tpp)
-LIB_H     := $(wildcard ../threads/*hpp)
-LIB_NAME  := $(notdir $(LIB_H))
-LIBRARIES := $(patsubst %.hpp, ../../lib/lib%.so, $(LIB_NAME))
-L_NAME    := $(patsubst %.hpp, -l%, $(LIB_NAME))
+LIBRARIES := ../../lib/threads/libthreads.so
+LIB_NAME  := $(notdir $(LIBRARIES))
+L_NAME    := $(patsubst lib%.so, -l%, $(LIB_NAME))
 INCLUDE_H := $(patsubst ./%.hpp, ../../inc/%.hpp, $(INCLUDEH))
 INCLUDE_T := $(patsubst ./%.tpp, ../../inc/%.tpp, $(INCLUDET))
 OBJECTS   := $(patsubst ./%.cpp, ../../obj/%.o, $(SOURCES))
 INC       := ../../inc
-LINK      := ../../lib
+LINK      := $(wildcard ../../lib/*)
 DEPENDS   := $(patsubst ./%.cpp,../../obj/%.dep,$(SOURCES))
 CFLAGS    := -c -g -Wall -Wextra -pedantic -std=c++11
 
@@ -24,7 +23,7 @@ else ifeq ($(MAKECMDGOALS),all)
 endif
 
 default :
-	@echo $(LIB_H)
+	@echo $(LINK)
 	@echo $(LIB_NAME)
 	@echo $(LIBRARIES)
 	@echo $(L_NAME)

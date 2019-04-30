@@ -1,17 +1,20 @@
-all:  build
+all:  ../../bin/thread
 
 CC        := g++
 SOURCES   := $(wildcard ./*cpp)
 INCLUDEH  := $(wildcard ./*hpp) 
 INCLUDET  := $(wildcard ./*tpp)
+LIBRARIES := ../../lib/threads/libthreads.so
+LIB_NAME  := $(notdir $(LIBRARIES))
+L_NAME    := $(patsubst lib%.so, -l%, $(LIB_NAME))
 INCLUDE_H := $(patsubst ./%.hpp, ../../inc/%.hpp, $(INCLUDEH))
 INCLUDE_T := $(patsubst ./%.tpp, ../../inc/%.tpp, $(INCLUDET))
-LIBRARIES := $(patsubst ./%.hpp, ../../lib/lib%.so, $(INCLUDEH))
 OBJECTS   := $(patsubst ./%.cpp, ../../obj/%.o, $(SOURCES))
-INC       := ../../inc
+INC       := ../../inc 
+LINK      := ../../lib/threads
 DEPENDS   := $(patsubst ./%.cpp,../../obj/%.dep,$(SOURCES))
 CFLAGS    := -c -g -Wall -Wextra -pedantic -std=c++11
-LFLAGS    := -c -Wall -Werror -fPIC -Wextra -std=c++11
+
 
 ifeq ($(MAKECMDGOALS),)
 	    -include $(DEPENDS)
@@ -20,24 +23,20 @@ else ifeq ($(MAKECMDGOALS),all)
 endif
 
 default :
-	@echo $(DEPENDS)
+	@echo $(LIB_H)
+	@echo $(LIB_NAME)
 	@echo $(LIBRARIES)
+	@echo $(L_NAME)
 
-../../obj/%.dep : ./%.cpp 
-	$(CC) -I$(INC) -MM  $< -MT "$@ $(patsubst %.dep,%.o,$@)" -o $@
+../../obj/%.dep : ./%.cpp $(LIBRARIES)
+	$(CC) -I$(INC) -std=c++11 -MM $< -MT "$@ $(patsubst %.dep,%.o,$@)" -o $@
 
-$(OBJECTS) :
-	$(CC) $(LFLAGS) -I$(INC) $< -o $@ 
-	
-.PRECIOUS : $(INCLUDE_H) $(INCLUDE_T)
+$(OBJECTS) : 
+	$(CC) $(CFLAGS) -I$(INC) $< -o $@ 
 
-build : $(LIBRARIES)
+../../bin/thread : $(OBJECTS) 
+	$(CC) -pthread -L$(LINK) $(OBJECTS) -o $@ $(L_NAME)
 
-../../lib/% : $(INCLUDE_H) $(INCLUDE_T) $(OBJECTS) 
-	$(CC) -shared  $(OBJECTS) -o $@
+$(LIBRARIES) :
+	$(MAKE) -C ../threads
 
-../../inc/%hpp : ./%hpp 
-	ln -f $< $@
-
-../../%tpp : ./%tpp 
-	ln -f $< $@
