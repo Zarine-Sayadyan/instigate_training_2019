@@ -46,10 +46,14 @@ public:
         socket accept() const;
         /// Connect to remote server
         void connect(const char* ip, unsigned short p);
-        /// Data transmission
+        /// Data transmission for TCP
         void send(const unsigned char* m, unsigned int c);
-        /// @return actual number of bytes received
+        /// @return actual number of bytes received for TCP
         int recv(unsigned char* m, int s);
+        /// Data transmission for UDP
+        void sendto(const unsigned char* m, unsigned int c, unsigned short p);
+        ///@return actual number of bytes recieved for UDP
+        int recvfrom (unsigned char* m, int s, unsigned short p);
         /// Explicit close the socket
         void close();
         /// Test the socket is open

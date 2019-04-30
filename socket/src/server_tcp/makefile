@@ -1,4 +1,4 @@
-all:  ../../bin/server
+all:  ../../bin/server_tcp
 
 CC        := g++
 SOURCES   := $(wildcard ./*cpp)
@@ -35,7 +35,7 @@ default :
 $(OBJECTS) :
 	$(CC) $(CFLAGS) -I$(INC) $< -o $@ 
 
-../../bin/server : $(INCLUDE_H) $(INCLUDE_T) $(OBJECTS) 
+../../bin/server_tcp : $(INCLUDE_H) $(INCLUDE_T) $(OBJECTS) 
 	$(CC) -pthread $(LINK) $(OBJECTS) -o $@ $(L_NAME)
 
 $(LIBRARIES) :

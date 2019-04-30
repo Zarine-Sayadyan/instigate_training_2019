@@ -1,4 +1,4 @@
-all:  ../../bin/client
+all:  ../../bin/client_udp
 
 CC        := g++
 SOURCES   := $(wildcard ./*cpp)
@@ -34,7 +34,7 @@ default :
 $(OBJECTS) :
 	$(CC) $(CFLAGS) -I$(INC) $< -o $@ 
 
-../../bin/client : $(INCLUDE_H) $(INCLUDE_T) $(OBJECTS) 
+../../bin/client_udp : $(INCLUDE_H) $(INCLUDE_T) $(OBJECTS) 
 	$(CC) -pthread -L$(LINK) $(OBJECTS) -o $@ $(L_NAME)
 
 $(LIBRARIES) :

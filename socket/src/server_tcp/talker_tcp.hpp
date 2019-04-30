@@ -1,5 +1,5 @@
-#ifndef TALKER_HPP
-#define TALKER_HPP
+#ifndef TALKER_TCP_HPP
+#define TALKER_TCP_HPP
 
 #include <thread.hpp>
 #include <socket.hpp>
