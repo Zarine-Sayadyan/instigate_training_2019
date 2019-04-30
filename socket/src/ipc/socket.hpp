@@ -1,55 +1,76 @@
 #ifndef IPC_SOCKET_HPP
 #define IPC_SOCKET_HPP
-#include <iostream>
-#include <cstdio>
-#include <cstdlib>
-#include <unistd.h>
-#include <sys/types.h> //for accept
-#include <sys/socket.h>// for accept
-#include <netinet/in.h>
-#define MSG_SIZE 256 //for send/recv message size
+
 /**
- * @file ipc.hpp
+ * @file socket.hpp
  * @brief Contains ipc::socket class declaration
  */
 
 /**
  * @namespace ipc
- * @brief socket's namespace
+ * @brief Contains types used for inter-process communication.
  */
-namespace ipc
-{
+namespace ipc {
         /**
-          @class ipc::socket
-          @brief abstract class incapsulating POSIX socket functionality
-          */
+         * @class ipc::socket
+         * @brief POSIX socket wrapper, to hide messy socket programming and
+         * provide minimum functionality required for sockets.
+         *
+         * The class holds only socket descriptor, so it can be copied as an
+         * integer. All errors make the class throw an exception. So it is best
+         * to enclose it in try/catch clauses
+         * @verbatim
+         * try {
+         *      do something with sockets
+         * } catch (TODO& e) {
+         *      std::cerr << e.what();
+         * }
+         * @endverbatim
+         */
         class socket;
 }
 
 class ipc::socket
 {
 public:
-        enum protocol { TCP, UDP };
+        enum protocol { NONE, TCP, UDP };
 public:
-        socket(int domain, protocol p);
-        socket(protocol p);//by default AF_INET, SOCK_STREAM
-        socket(const socket& other);
-        ~socket();
+        /// Bind a socket to a local port
         void bind(unsigned short port);
-        void listen(unsigned short queue_len);
-        socket accept();
-        void connect();
-        //void connect(char* ip);
-        void send(char response[MSG_SIZE]);
-        void recv(char response[MSG_SIZE]);
+        /// Mark a socket as a listening socket (must be TCP)
+        void listen();
+        /**
+         * @brief Accept a connection request and return new socket to use for
+         * communication
+         */
+        socket accept() const;
+        /// Connect to remote server
+        void connect(const char* ip, unsigned short p);
+        /// Data transmission
+        void send(const unsigned char* m, unsigned int c);
+        /// @return actual number of bytes received
+        int recv(unsigned char* m, int s);
+        /// Explicit close the socket
         void close();
-
+        /// Test the socket is open
+        bool is_valid() const;
+        /// Return socket protocol
+        protocol get_protocol() const;
 private:
         int m_socket;
-        protocol m_protocol;
-        int m_domain;
-        unsigned short m_port;
-        struct sockaddr_in m_addr;
+private:
+        static const int MAX_CONNECTIONS = 10;
+        int id() const;
+public:
+        /**
+         * Socket must be created with a protocol TCP or UDP. NONE for unused
+         * socket.
+         */
+        explicit socket(protocol p);
+        /// Copy constructor, copy as an integer
+        socket(const socket& s);
+        /// Do not close socket in destructor
+        ~socket();
 };
 
-#endif // SOCKETS_SOCKET_HPP
+#endif // IPC_SOCKET_HPP
