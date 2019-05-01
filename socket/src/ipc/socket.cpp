@@ -1,5 +1,5 @@
 #include "socket.hpp"
-
+#include <iostream>
 #include <arpa/inet.h>
 #include <cassert>
 #include <cstring>
@@ -107,21 +107,22 @@ int ipc::socket::recv(unsigned char* m, int s)
     return r;
 }
 
-int ipc::socket::recvfrom(unsigned char* m, int& s, unsigned short &p)
+int ipc::socket::recvfrom(unsigned char* m, int& s, unsigned short& p)
 {
     if (! is_valid()) {
         throw "attempt to receive through invalid socket\n";
     }
     int len = 0;
     int r = 0;
-    struct sockaddr_in addr;
-    memset(&addr, 0, sizeof(addr));
-    r = ::recvfrom(m_socket, m, s, MSG_WAITALL, (struct sockaddr*) &addr,
+    struct sockaddr_in addr1;
+    //memset(&addr, 0, sizeof(addr));
+    r = ::recvfrom(m_socket, m, s, MSG_WAITALL, (struct sockaddr*) &addr1,
            (socklen_t*) &len);
     if (r < 0) {
         throw "recv error\n";
     }
-    p = htons(addr.sin_port);
+    p = (unsigned short) ntohs(addr1.sin_port);
+    std::cout << "port " << addr1.sin_port << " " << p << std::endl;
     return r;
 }
 
