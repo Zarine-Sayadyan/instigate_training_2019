@@ -53,7 +53,7 @@ public:
         /// Data transmission for UDP
         void sendto(const unsigned char* m, unsigned int c, unsigned short p);
         ///@return actual number of bytes recieved for UDP
-        int recvfrom (unsigned char* m, int s, unsigned short p);
+        int recvfrom (unsigned char* m, int& s, unsigned short& p);
         /// Explicit close the socket
         void close();
         /// Test the socket is open
@@ -62,7 +62,7 @@ public:
         protocol get_protocol() const;
 private:
         int m_socket;
-private:
+public:
         static const int MAX_CONNECTIONS = 10;
         int id() const;
 public:

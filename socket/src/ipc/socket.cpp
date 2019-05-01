@@ -86,7 +86,8 @@ void ipc::socket::sendto(const unsigned char* m, unsigned int c, unsigned short 
     addr.sin_family = AF_INET;
     addr.sin_port = htons(p);
     addr.sin_addr.s_addr = INADDR_ANY;
-    int sent_bytes = ::sendto(m_socket, m, c, MSG_CONFIRM, &addr, sizeof(addr));
+    int sent_bytes = ::sendto(m_socket,(const char*) m, c, MSG_CONFIRM,
+           (const struct sockaddr*) &addr, sizeof(addr));
     if (sent_bytes < 0) {
         throw "send error\n";
     }
@@ -106,15 +107,17 @@ int ipc::socket::recv(unsigned char* m, int s)
     return r;
 }
 
-int ipc::socket::recvfrom(unsigned char* m, int s, unsigned short &p)
+int ipc::socket::recvfrom(unsigned char* m, int& s, unsigned short &p)
 {
     if (! is_valid()) {
         throw "attempt to receive through invalid socket\n";
     }
     int len = 0;
+    int r = 0;
     struct sockaddr_in addr;
     memset(&addr, 0, sizeof(addr));
-    r = ::recvfrom(m_socket, m, s, MSG_WAITALL, &addr, &len);
+    r = ::recvfrom(m_socket, m, s, MSG_WAITALL, (struct sockaddr*) &addr,
+           (socklen_t*) &len);
     if (r < 0) {
         throw "recv error\n";
     }

@@ -3,6 +3,7 @@
 
 #include <thread.hpp>
 #include <socket.hpp>
+#include <iostream>
 
 #include <cassert>
 
@@ -15,9 +16,10 @@ class talker : public threads::thread
             char msg[256] = " ";
             char response[256] = "from udp server";
             unsigned short p = 0;
+            int len = 0;
             assert(m_socket.is_valid());
             //send the message
-            m_socket.recvfrom((unsigned char*)msg, sizeof(msg), p);
+            m_socket.recvfrom((unsigned char*)msg, len, p);
             std::cout << "Clent sent" << msg << std::endl;
             m_socket.sendto((unsigned char*)response, sizeof(response), p);
             m_socket.close();

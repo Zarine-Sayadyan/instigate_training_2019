@@ -21,8 +21,17 @@ int main ()
     try {
         ipc::socket s(ipc::socket::UDP);
         s.bind(9005);
-        s.listen();
-        run(s);
+        char msg[256] = " ";
+        char response[256] = "from udp server";
+        unsigned short p = 0;
+        int len = 0;
+        assert(s.is_valid());
+        //send the message
+        s.recvfrom((unsigned char*)msg, len, p);
+        std::cout << "Clent sent" << msg << std::endl;
+        s.sendto((unsigned char*)response, sizeof(response), p);
+        s.close();
+
     } catch(const char* e) {
         std::cout << e << std::endl;
     }
