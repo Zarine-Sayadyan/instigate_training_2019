@@ -50,6 +50,7 @@ void ipc::socket::connect(const char* ip, unsigned short p)
     memset(&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
     addr.sin_port = htons(p);
+
     int r = ::inet_pton(AF_INET, ip, &addr.sin_addr);
     if (0 == r) {
         throw "Invalid network address\n";
@@ -76,7 +77,8 @@ void ipc::socket::send(const unsigned char* m, unsigned int c)
     assert(sent_bytes == (int)c);
 }
 
-void ipc::socket::sendto(const unsigned char* m, unsigned int c, unsigned short p)
+void ipc::socket::sendto(const unsigned char* m, unsigned int c,
+                char * to_ip, unsigned short p)
 {
     if (! is_valid()) {
         throw "attempt to send through invalid socket\n";
@@ -85,7 +87,13 @@ void ipc::socket::sendto(const unsigned char* m, unsigned int c, unsigned short 
     memset(&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
     addr.sin_port = htons(p);
-    addr.sin_addr.s_addr = INADDR_ANY;
+    int r = ::inet_pton(AF_INET, to_ip, &addr.sin_addr);
+    if (0 == r) {
+        throw "Invalid network address\n";
+    }
+    if (r != 1) {
+        throw "Error, see perror\n";
+    }
     int sent_bytes = ::sendto(m_socket,(const char*) m, c, MSG_CONFIRM,
            (const struct sockaddr*) &addr, sizeof(addr));
     if (sent_bytes < 0) {
@@ -107,22 +115,25 @@ int ipc::socket::recv(unsigned char* m, int s)
     return r;
 }
 
-int ipc::socket::recvfrom(unsigned char* m, int& s, unsigned short& p)
+int ipc::socket::recvfrom(unsigned char* m, int s,
+                char* from_ip, unsigned short& from_port)
 {
     if (! is_valid()) {
         throw "attempt to receive through invalid socket\n";
     }
-    int len = 0;
     int r = 0;
-    struct sockaddr_in addr1;
-    //memset(&addr, 0, sizeof(addr));
-    r = ::recvfrom(m_socket, m, s, MSG_WAITALL, (struct sockaddr*) &addr1,
-           (socklen_t*) &len);
+    struct sockaddr_in addr;
+    memset(&addr, 0, sizeof(addr));
+    socklen_t len = sizeof(addr);
+    r = ::recvfrom(id(), m, s, MSG_WAITALL, (struct sockaddr*) &addr, &len);
     if (r < 0) {
         throw "recv error\n";
     }
-    p = (unsigned short) ntohs(addr1.sin_port);
-    std::cout << "port " << addr1.sin_port << " " << p << std::endl;
+    if (NULL == inet_ntop(AF_INET, &addr.sin_addr,
+                            from_ip, IP_ADDRESS_LENGTH)) {
+            throw "Error to get peer address\n";
+    }
+    from_port = ntohs(addr.sin_port);
     return r;
 }
 

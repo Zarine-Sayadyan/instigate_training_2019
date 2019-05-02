@@ -6,6 +6,8 @@
  * @brief Contains ipc::socket class declaration
  */
 
+#define IP_ADDRESS_LENGTH 16
+
 /**
  * @namespace ipc
  * @brief Contains types used for inter-process communication.
@@ -51,9 +53,10 @@ public:
         /// @return actual number of bytes received for TCP
         int recv(unsigned char* m, int s);
         /// Data transmission for UDP
-        void sendto(const unsigned char* m, unsigned int c, unsigned short p);
+        void sendto(const unsigned char* m, unsigned int c,
+                       char* ip, unsigned short p);
         ///@return actual number of bytes recieved for UDP
-        int recvfrom (unsigned char* m, int& s, unsigned short& p);
+        int recvfrom (unsigned char* m, int s, char* ip, unsigned short& p);
         /// Explicit close the socket
         void close();
         /// Test the socket is open
@@ -62,7 +65,7 @@ public:
         protocol get_protocol() const;
 private:
         int m_socket;
-public:
+private:
         static const int MAX_CONNECTIONS = 10;
         int id() const;
 public:

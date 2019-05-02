@@ -11,14 +11,15 @@ int main ()
         char msg[256] = " ";
         char response[256] = "from udp server";
         unsigned short p = 0;
-        int len = 256;
+        int len = sizeof(msg);
         assert(s.is_valid());
         //send the message
-        s.recvfrom((unsigned char*)msg, len, p);
+        char from_ip[IP_ADDRESS_LENGTH];
+        s.recvfrom((unsigned char*)msg, len, from_ip, p);
         std::cout << p << std::endl;
-        std::cout << "Clent sent" << msg << std::endl;
-        s.sendto((const unsigned char*)response, sizeof(response), p);
-//        s.close();
+        std::cout << "Client sent" << msg << std::endl;
+        s.sendto((const unsigned char*)response, sizeof(response),from_ip, p);
+        s.close();
     } catch(const char* e) {
         std::cout << e << std::endl;
     }
