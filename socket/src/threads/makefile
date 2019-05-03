@@ -6,7 +6,7 @@ INCLUDEH  := $(wildcard ./*hpp)
 INCLUDET  := $(wildcard ./*tpp)
 INCLUDE_H := $(patsubst ./%.hpp, ../../inc/%.hpp, $(INCLUDEH))
 INCLUDE_T := $(patsubst ./%.tpp, ../../inc/%.tpp, $(INCLUDET))
-LIBRARIES :=  ../../lib/threads/libthreads.so
+LIBRARIES :=  ../../lib/libthreads.so
 OBJECTS   := $(patsubst ./%.cpp, ../../obj/%.o, $(SOURCES))
 INC       := ../../inc
 DEPENDS   := $(patsubst ./%.cpp,../../obj/%.dep,$(SOURCES))
@@ -33,8 +33,7 @@ $(OBJECTS) :
 
 build : $(LIBRARIES)
 
-../../lib/threads/libthreads.so : $(INCLUDE_H) $(INCLUDE_T) $(OBJECTS) 
-	mkdir ../../lib/threads
+../../lib/libthreads.so : $(INCLUDE_H) $(INCLUDE_T) $(OBJECTS) 
 	$(CC) -shared  $(OBJECTS) -o $@
 
 ../../inc/%hpp : ./%hpp 

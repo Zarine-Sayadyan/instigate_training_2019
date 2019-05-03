@@ -16,7 +16,6 @@ int main ()
         //send the message
         char from_ip[IP_ADDRESS_LENGTH];
         s.recvfrom((unsigned char*)msg, len, from_ip, p);
-        std::cout << p << std::endl;
         std::cout << "Client sent" << msg << std::endl;
         s.sendto((const unsigned char*)response, sizeof(response),from_ip, p);
         s.close();

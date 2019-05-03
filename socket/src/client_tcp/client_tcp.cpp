@@ -13,7 +13,7 @@ int main ()
         //specify an address for the socket
         struct sockaddr_in sa;
         sa.sin_family = AF_INET;
-        sa.sin_port = htons(9002);
+        sa.sin_port = htons(9003);
         sa.sin_addr.s_addr = INADDR_ANY;
         // connetion
         int connection = connect(c, (struct sockaddr*)& sa, sizeof(sa));

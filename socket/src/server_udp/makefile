@@ -4,15 +4,14 @@ CC        := g++
 SOURCES   := $(wildcard ./*cpp)
 INCLUDEH  := $(wildcard ./*hpp) 
 INCLUDET  := $(wildcard ./*tpp)
-LIBRARIES := ../../lib/threads/libthreads.so ../../lib/socket/libsocket.so
+LIBRARIES := ../../lib/libthreads.so ../../lib/libsocket.so
 LIB_NAME  := $(notdir $(LIBRARIES))
 L_NAME    := $(patsubst lib%.so, -l%, $(LIB_NAME))
 INCLUDE_H := $(patsubst ./%.hpp, ../../inc/%.hpp, $(INCLUDEH))
 INCLUDE_T := $(patsubst ./%.tpp, ../../inc/%.tpp, $(INCLUDET))
 OBJECTS   := $(patsubst ./%.cpp, ../../obj/%.o, $(SOURCES))
 INC       := ../../inc
-LIN       := $(wildcard ../../lib/*)
-LINK      := $(patsubst %, -L%, $(LIN))
+LINK      := ../../lib
 DEPENDS   := $(patsubst ./%.cpp,../../obj/%.dep,$(SOURCES))
 CFLAGS    := -c -g -Wall -Wextra -pedantic -std=c++11
 
@@ -36,7 +35,7 @@ $(OBJECTS) :
 	$(CC) $(CFLAGS) -I$(INC) $< -o $@ 
 
 ../../bin/server_udp : $(INCLUDE_H) $(INCLUDE_T) $(OBJECTS) 
-	$(CC) -pthread $(LINK) $(OBJECTS) -o $@ $(L_NAME)
+	$(CC) -pthread -L$(LINK) $(OBJECTS) -o $@ $(L_NAME)
 
 $(LIBRARIES) :
 	$(MAKE) -C ../threads
