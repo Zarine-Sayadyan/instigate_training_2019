@@ -1,3 +1,0 @@
-Client sent barev udp
-Server sent the data >>> from udp server
-Server sent the data >>> barev
