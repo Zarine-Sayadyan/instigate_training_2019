@@ -20,12 +20,12 @@ int main()
         b.print("b");
         c.print("c");
         d.print("d");
-        adder ab(&a, &b, &e);
-        adder cd(&c, &d, &f);
-        multiplier ef(&e, &f, &g);
-        //multiplier ab(&a, &b, &e);
-        //multiplier cd(&c, &d, &f);
-        //adder ef(&e, &f, &g);
+        //adder ab(&a, &b, &e);
+        //adder cd(&c, &d, &f);
+        //multiplier ef(&e, &f, &g);
+        multiplier ab(&a, &b, &e);
+        multiplier cd(&c, &d, &f);
+        adder ef(&e, &f, &g);
         ab.create_thread(threads::thread::JOINABLE);
         cd.create_thread(threads::thread::JOINABLE);
         ef.create_thread(threads::thread::JOINABLE);
