@@ -12,6 +12,9 @@
 #include <QLabel>
 #include <QBoxLayout>
 #include <QLineEdit>
+#include <QHeaderView>
+#include <QToolBar>
+#include <QMenuBar>
 
 class second_screen : public QWidget
 {

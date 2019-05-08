@@ -3,6 +3,15 @@
 second_screen::second_screen(QWidget *parent)
     : QWidget(parent)
 {
+    //create toolbar
+
+    QMenuBar* menuBar = new QMenuBar();
+    QMenu *fileMenu = new QMenu("Menu");
+    menuBar->addMenu(fileMenu);
+    fileMenu->addAction("Go Invisible");
+    fileMenu->addAction("Logout");
+
+
     //create layout
     QVBoxLayout *mainLayout = new QVBoxLayout();
     QHBoxLayout *horLayout1 = new QHBoxLayout;
@@ -16,7 +25,7 @@ second_screen::second_screen(QWidget *parent)
 
     //create input number of column
     label21 = new QLabel(tr("Status : "));
-    label22 = new QLabel(tr("Online "));
+    label22 = new QLabel(tr("Connected"));
     horLayout2->addWidget(label21);
     horLayout2->addWidget(label22);
 
@@ -26,6 +35,9 @@ second_screen::second_screen(QWidget *parent)
     tblv = new QTableView();
     tblv->setSelectionBehavior(QAbstractItemView::SelectItems );
     tblv->setSelectionMode( QAbstractItemView::ExtendedSelection );
+    tblv->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    tblv->resizeColumnsToContents();
+    tblv->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     //get number of input row and column
     nrow = 5;
@@ -55,9 +67,10 @@ second_screen::second_screen(QWidget *parent)
 
     tblv->setModel(model);
     //setting layout
+    mainLayout->setMenuBar(menuBar);
     mainLayout->addLayout(horLayout1);
     mainLayout->addLayout(horLayout2);
-    mainLayout->addWidget(btn_logout);
+    //mainLayout->addWidget(btn_logout);
     mainLayout->addWidget(tblv);
     setLayout(mainLayout);
 
