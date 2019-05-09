@@ -29,6 +29,6 @@ int main ()
         } catch(const char* e) {
                 std::cout << e << std::endl;
         }
-        // s.close();
+        s.close();
         return 0;
 }
