@@ -1,51 +1,57 @@
-#include <cstring>
-#include "thread.hpp"
-#include "socket.hpp"
+#ifndef MESSENGER_SERVER_SERVER_HPP
+#define MESSENGER_SERVER_SERVER_HPP
+
+/**
+ * @file messenger_server/server.hpp
+ * @brief Contains Messenger Server declaration
+ */
+
+#include <socket.hpp>
+
+#include <string>
 #include <vector>
 
-namespace messenger
+/// @brief 
+namespace messenger_server
 {
+        /**
+         * @brief Server class responsible for acceptiong connections from
+         * clients.
+         *
+         * The class is responsible for
+         * - user registration
+         * - user login
+         *
+         */
         class server;
+        // forward declaration
         class talker;
 }
-class messenger::server
+
+class messenger_server::server
 {
-    private:
+public:
+        /// TODO
         void run();
-        void login_user();
+private:
+        void login_user(const std::string& u);
         void logout_user();
         void register_user();
         void notify();
         void add_user(std::string user) ;
-        bool find_user(std::string user) const;
+        void insert_talker(messenger_server::talker* t);
 
-        std::vector<std::string> m_users;
-        std::vector<talker*> talkers;
-        char* m_buffer;
+private:
+        typedef std::vector<talker*> talkers;
+        typedef std::vector<std::string> users;
+
+private:
+        ipc::socket m_socket;
+        users m_users;
+        talkers m_talkers;
+public:
+        server(unsigned short port);
+        ~server();
 };
 
-class messenger::talker : public threads::thread
-{
-    public:
-        talker(messenger::server s, ipc::socket rx, ipc::socket tx)
-            : rx_socket(rx)
-            , tx_socket(tx)
-            , m_server(s)
-    {}
-        void run();
-    private:
-        void parse(command_name);
-    private:
-        ipc::socket rx_socket;
-        ipc::socket tx_socket;
-        messenger::server m_server;
-        char* m_command;
-        char* m_response;
-};
-
-int main()
-{
-    messenger::server s;
-    s.run();
-    return 0;
-}
+#endif // MESSENGER_SERVER_SERVER_HPP

@@ -1,90 +1,77 @@
 #include "server.hpp"
+#include "talker.hpp"
 
-void messenger::server::run()
+#include <thread.hpp>
+#include <socket.hpp>
+
+#include <cassert>
+#include <algorithm>
+
+//add_user() ete user goyutyun chuni
+void messenger_server::server::login_user(const std::string& user)
 {
-	ipc::socket c = m_socket.accept();
-	talker* t = new talker(this, c, c.duplicate());
-	t->create_thread();
-	talkers.push_back(t);
+        auto it = std::find(m_users.begin(), m_users.end(), user);
+        if (it == m_users.end()) {
+                // m_resronse = "ERROR:No such registered user";
+        } else {
+                // *it->online;
+                //m_response = "UPDATE:user="+user+",status=online";
+                //notify(m_response);
+        }
 }
 
-void messenger::server::login_user(char* user) //add_user() ete user goyutyun chuni
+void messenger_server::server::logout_user()
 {
-	auto it = find(m_users.begin(),m_users.end(),user);
-    if (it == m_users.end()) {
-        m_resronse = "ERROR:No such registered user";
-    } else {
-        *it->online;
-        m_response = "UPDATE:user="+user+",status=online";
-        notify(m_response);
-    }
+	//user->offline;
 }
 
-void messenger::server::logout_user() 
-{
-	user->offline;
-}
-
-void messenger::server::register_user()
+void messenger_server::server::register_user()
 {
 	//find_user() -if true than failed.
 }
 
-void messenger::server::notify(m_response)
+void messenger_server::server::notify()
 {
-	for (auto i:talkers) {
-		tx.send(m_respone); //update command
-	}
+        //for (auto i:m_talkers) {
+        //        tx.send(m_respone); //update command
+        //}
 }
 
-void messenger::server::add_user(std::string user)
+void messenger_server::server::add_user(std::string user)
 {
 	m_users.push_back(user);
 }
 
-bool messenger::server::find_user(std::string user) const
+void messenger_server::server::insert_talker(messenger_server::talker* t)
 {
-	for (auto it = m_users->begin(); it != m_users->end(); ++it) {
-		if (it == user) {
-			return true;
-		}
-	}
-	return false;
+        // todo add mutex
+        m_talkers.push_back(t);
 }
 
-// talkers
-
-messenger::talker::talker(this, ipc::socket rx, ipc::socket tx) 
-{}
-  
-void messenger::talker::run()
+void messenger_server::server::run()
 {
-	while (1) {
-        assert(rx_socket.is_valid());
-		m_command = rx.recv();
-		parse(m_command); // syntax
-		rx.send(m_response); //response=DONE||FAILED||error
-	}
+        assert(m_socket.is_valid());
+        while (true) {
+                ipc::socket c = m_socket.accept();
+                talker* t = new talker(this, c, c/*c.duplicate()*/);
+                t->create_thread();
+                insert_talker(t);
+        }
 }
 
-void messenger::talker::parse(command_name)
+messenger_server::server::server(unsigned short port)
+        : m_socket(ipc::socket::TCP)
+        , m_users()
+        , m_talkers()
 {
-	switch (command_name) {
-		case REGISTER :
-			handle_register(); // m_server->register_user(); 
-			break;
-		case LOGIN:
-			handle_login(); // m_server->login_user();
-			break;
-		case LOGOUT:
-			handle_logout(); //m_server->logout_user();
-			break;
-	}
+        assert(m_socket.is_valid());
+        m_socket.bind(port);
+        m_socket.listen();
 }
 
-int main()
+messenger_server::server::~server()
 {
-        messenger::server s;
-        s.run();
-        return 0;
-}   
+        // delete talkers
+}
+
+
