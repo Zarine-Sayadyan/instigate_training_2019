@@ -1,0 +1,9 @@
+diff --git a/messenger/makefile b/messenger/makefile
+index 3876471..497a997 100644
+--- a/messenger/makefile
++++ b/messenger/makefile
+@@ -23,3 +23,4 @@ test : ./bin/server_tcp ./bin/server_udp ./bin/client_tcp ./bin/client_udp
+ 			 ./bin/client_tcp >> test.txt "
+ 	diff -u golden.txt test.txt
+ 	rm -rf test.txt
++
