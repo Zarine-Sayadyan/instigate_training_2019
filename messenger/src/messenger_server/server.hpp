@@ -7,7 +7,6 @@
  */
 
 #include <socket.hpp>
-
 #include <string>
 #include <vector>
 
@@ -15,7 +14,7 @@
 namespace messenger_server
 {
         /**
-         * @brief Server class responsible for acceptiong connections from
+         * @brief Server class responsible for accepting connections from
          * clients.
          *
          * The class is responsible for
@@ -38,7 +37,8 @@ private:
         void logout_user();
         void register_user();
         void notify();
-        void add_user(std::string user) ;
+        void add_user(std::string user);
+        bool does_user_exist(const std::string& user) const;
         void insert_talker(messenger_server::talker* t);
 
 private:
