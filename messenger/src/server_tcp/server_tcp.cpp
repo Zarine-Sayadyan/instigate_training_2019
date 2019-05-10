@@ -26,9 +26,9 @@ int main ()
                 s.bind(9003);
                 s.listen();
                 run(s);
+                s.close();
         } catch(const char* e) {
                 std::cout << e << std::endl;
         }
-        // s.close();
         return 0;
 }
