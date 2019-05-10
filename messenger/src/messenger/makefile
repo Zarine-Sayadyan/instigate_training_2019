@@ -1,9 +1,13 @@
-all:  ../../bin/messenger_server
+all:  ../../bin/messenger
+
 
 CC        := g++
 SOURCES   := $(wildcard ./*cpp)
 INCLUDEH  := $(wildcard ./*hpp) 
 INCLUDET  := $(wildcard ./*tpp)
+MOCS	  := second_screen.hpp
+MOC_FILES := $(patsubst ./%.hpp, ./moc_%.hpp, $(MOCS))
+
 LIBRARIES := ../../lib/libthreads.so ../../lib/libsocket.so
 LIB_NAME  := $(notdir $(LIBRARIES))
 L_NAME    := $(patsubst lib%.so, -l%, $(LIB_NAME))
@@ -11,7 +15,7 @@ INCLUDE_H := $(patsubst ./%.hpp, ../../inc/%.hpp, $(INCLUDEH))
 INCLUDE_T := $(patsubst ./%.tpp, ../../inc/%.tpp, $(INCLUDET))
 OBJECTS   := $(patsubst ./%.cpp, ../../obj/%.o, $(SOURCES))
 INC       := ../../inc
-LINK      := ../../lib
+LINK      := ../../lib 
 DEPENDS   := $(patsubst ./%.cpp,../../obj/%.dep,$(SOURCES))
 CFLAGS    := -c -g -Wall -Wextra -pedantic -std=c++11
 
@@ -23,10 +27,13 @@ else ifeq ($(MAKECMDGOALS),all)
 endif
 
 default :
-	@echo $(LIB_H)
+	@echo $(LINK)
 	@echo $(LIB_NAME)
 	@echo $(LIBRARIES)
 	@echo $(L_NAME)
+
+moc_%.cpp: %.hpp
+	moc $(DEFINES) $(INCPATH) $< -o $@
 
 ../../obj/%.dep : ./%.cpp $(LIBRARIES)
 	$(CC) -I$(INC) -std=c++11 -MM $< -MT "$@ $(patsubst %.dep,%.o,$@)" -o $@
@@ -34,15 +41,14 @@ default :
 $(OBJECTS) :
 	$(CC) $(CFLAGS) -I$(INC) $< -o $@ 
 
-../../bin/messenger_server : $(INCLUDEH) $(INCLUDET) $(OBJECTS) 
+../../bin/messenger : $(INCLUDE_H) $(INCLUDE_T) $(OBJECTS) 
 	$(CC) -pthread -L$(LINK) $(OBJECTS) -o $@ $(L_NAME)
 
 $(LIBRARIES) :
 	$(MAKE) -C ../threads
-	$(MAKE) -C ../ipc
 
-#../../inc/%hpp : ./%hpp 
-#	ln -f $< $@
+../../inc/%hpp : ./%hpp 
+	ln -f $< $@
 
-#../../%tpp : ./%tpp 
-#	ln -f $< $@
+../../%tpp : ./%tpp 
+	ln -f $< $@
