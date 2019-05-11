@@ -7,7 +7,7 @@
 class command
 {
 public:
-       enum type {REGISTER, LOGIN, LOGOUT, INVALID};
+       enum  type {REGISTER, LOGIN, LOGOUT, INVALID};
        type get_command();   // from QT
 };
 
@@ -23,7 +23,7 @@ void messenger_server::talker::set_registration_ok()
         m_reason = "";
 }
 
-bool empty(const std::string& str) const
+bool messenger_server::talker::empty(const std::string& str) const
 {
         return ("" == str);
 }
@@ -43,17 +43,17 @@ void messenger_server::talker::handle_register()
 void messenger_server::talker::handle_login()
 {
         assert (0 != m_server);
-        m_server-> login_user();
+        m_server->login_user();
 }
 
 void messenger_server::talker::handle_logout()
 {
-        m_server-> logout_user();
+        m_server->logout_user();
 }
 
 void messenger_server::talker::handle_inavild()
 {
-        m_server-> invalid_command();
+        m_server->invalid_command();
 }
 
 void messenger_server::talker::parse()
@@ -66,7 +66,7 @@ void messenger_server::talker::parse()
 		case command::LOGIN:
 			handle_login(); // m_server->login_user();
 			break;
-                case comman::LOGOUT:
+                case command::LOGOUT:
 			handle_logout(); //m_server->logout_user();
 			break;
                 case command::INVALID:
@@ -82,6 +82,7 @@ void messenger_server::talker::receive_command()
 {
         char message[512];
         int r = m_client_socket.recv(message, sizeof(message));
+        assert(-1 != r);
         assert(r < sizeof(message));
         assert('\0' == message[r]);
         m_command = std::string(message);
@@ -91,7 +92,7 @@ void messenger_server::talker::send_response()
 {
         assert(! m_response.empty());
         assert(m_client_socket.is_valid());
-        m_client_socket.send(m_response.c_str(), m_response.size());
+        m_client_socket.send((const unsigned char*)m_response.c_str(), m_response.size());
 }
 
 void messenger_server::talker::run()

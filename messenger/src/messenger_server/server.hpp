@@ -9,6 +9,7 @@
 #include <socket.hpp>
 #include <string>
 #include <vector>
+#include <map>
 
 /// @brief 
 namespace messenger_server
@@ -32,10 +33,10 @@ class messenger_server::server
 public:
         /// TODO
         void run();
-private:
-        void login_user(const std::string& u);
-        void logout_user();
-        void register_user();
+public:
+        void login_user(const std::string& user);
+        void logout_user(const std::string& user);
+        void register_user(const std::string& user);
         void notify();
         void add_user(std::string user);
         bool does_user_exist(const std::string& user) const;
@@ -43,7 +44,7 @@ private:
 
 private:
         typedef std::vector<talker*> talkers;
-        typedef std::vector<std::string> users;
+        typedef std::map<std::string, bool> users;
 
 private:
         ipc::socket m_socket;
