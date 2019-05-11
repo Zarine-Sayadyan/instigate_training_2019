@@ -51,7 +51,7 @@ void messenger_server::talker::handle_logout()
         m_server->logout_user();
 }
 
-void messenger_server::talker::handle_inavild()
+void messenger_server::talker::handle_invalid()
 {
         m_server->invalid_command();
 }
@@ -81,7 +81,7 @@ void messenger_server::talker::parse()
 void messenger_server::talker::receive_command()
 {
         char message[512];
-        int r = m_client_socket.recv(message, sizeof(message));
+        int r = m_client_socket.recv((unsigned char*)message, sizeof(message));
         assert(-1 != r);
         assert(r < sizeof(message));
         assert('\0' == message[r]);

@@ -36,7 +36,6 @@ private:
         void handle_login();
         void handle_logout();
         void handle_invalid();
-
 private:
         messenger_server::server* m_server;
         ipc::socket m_client_socket;
