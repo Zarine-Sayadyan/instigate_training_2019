@@ -9,11 +9,11 @@
 #include <socket.hpp>
 #include <string>
 #include <vector>
-#include <map>
 
 /// @brief 
 namespace messenger_server
 {
+        struct user;
         /**
          * @brief Server class responsible for accepting connections from
          * clients.
@@ -27,6 +27,13 @@ namespace messenger_server
         // forward declaration
         class talker;
 }
+
+struct messenger_server::user
+{
+        std::string m_name = "";
+        bool m_status = true;
+};
+
 
 class messenger_server::server
 {
@@ -44,7 +51,7 @@ public:
 
 private:
         typedef std::vector<talker*> talkers;
-        typedef std::map<std::string, bool> users;
+        typedef std::vector<user> users;
 
 private:
         ipc::socket m_socket;

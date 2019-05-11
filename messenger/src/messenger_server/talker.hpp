@@ -43,6 +43,8 @@ private:
         std::string m_command;
         std::string m_response;
         std::string m_reason;
+        std::string m_user;
+
 public:
         talker(messenger_server::server* s, ipc::socket r, ipc::socket t);
         virtual ~talker();

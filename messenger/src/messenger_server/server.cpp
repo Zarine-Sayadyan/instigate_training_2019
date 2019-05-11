@@ -7,50 +7,56 @@
 #include <cassert>
 #include <algorithm>
 
+bool messenger_server::server::does_user_exist(const std::string& name) const
+{
+    for (auto it = m_users.begin(); it != m_users.end(); ++it) {
+        if (name == (*it).m_name) {
+            return true;
+        }
+    }
+    return false;
+
+}
+
 //add_user() ete user goyutyun chuni
 void messenger_server::server::login_user(const std::string& user)
 {
     if (!does_user_exist(user)) {
         // m_response = "ERROR:No such registered user";
     } else {
-        m_users[user] = true;
+            for (auto it = m_users.begin(); it != m_users.end(); ++it) {
+                    if (user == (*it).m_name) {
+                            (*it).m_status = true;
+                            break;
+                    }
+    }
         // *it->online;
         //m_response = "UPDATE:user="+user+",status=online";
         //notify(m_response);
     }
 }
 
-bool messenger_server::server::does_user_exist(const std::string& name) const
-{
-        auto it = m_users.find(name);
-        if (it == m_users.end()) {
-                return true;
-        } else {
-                return false;
-        }
-/*    for (auto it = m_users.begin(); it != m_users.end(); ++it) {
-        if (name == m_users[*it]) {
-            return true;
-        }
-    }
-    return false;
-    */
-}
-
 void messenger_server::server::logout_user(const std::string& user)
 {
-        m_users[user] = false;
+    for (auto it = m_users.begin(); it != m_users.end(); ++it) {
+        if (user == (*it).m_name) {
+                (*it).m_status = false;
+                break;
+        }
+    }
     //user->offline;
 }
 
-void messenger_server::server::register_user(const std::string& user)
+void messenger_server::server::register_user(const std::string& username)
 {
-        if (! does_user_exist(user)) {
-                m_users[user] = true;
+        if (! does_user_exist(username)) {
+                user u;
+                u.m_name = username;
+                u.m_status = true;
+                m_users.push_back(u);
         }  else {
                 //error
         }
-    //find_user() -if true than failed.
 }
 
 void messenger_server::server::notify()
@@ -59,13 +65,13 @@ void messenger_server::server::notify()
     //        tx.send(m_respone); //update command
     //}
 }
-
+/*
 void messenger_server::server::add_user(std::string user)
 {
     //m_users.push_back(user);
     m_users[user] = true;
 }
-
+*/
 void messenger_server::server::insert_talker(messenger_server::talker* t)
 {
     // todo add mutex

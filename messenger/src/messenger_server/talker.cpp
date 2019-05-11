@@ -31,11 +31,11 @@ bool messenger_server::talker::empty(const std::string& str) const
 void messenger_server::talker::handle_register()
 {
         assert(0 != m_server);
-        std::string name = get_username(); // obj["name"]
-        if (m_server->does_user_exist(name)) {
+        m_user = get_username(); // obj["name"]
+        if (m_server->does_user_exist(m_user)) {
                 set_registration_failed(); // response = FAIL
         } else {
-                m_server->add_user(name);
+                m_server->add_user(m_user);
                 set_registration_ok();
         }
 }
@@ -43,12 +43,12 @@ void messenger_server::talker::handle_register()
 void messenger_server::talker::handle_login()
 {
         assert (0 != m_server);
-        m_server->login_user();
+        m_server->login_user(m_user);
 }
 
 void messenger_server::talker::handle_logout()
 {
-        m_server->logout_user();
+        m_server->logout_user(m_user);
 }
 
 void messenger_server::talker::handle_invalid()
