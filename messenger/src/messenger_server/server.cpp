@@ -1,6 +1,7 @@
 #include "server.hpp"
 #include "talker.hpp"
 
+#include <iostream>
 #include <mutex.hpp>
 #include <thread.hpp>
 #include <socket.hpp>
@@ -94,6 +95,7 @@ void messenger_server::server::insert_talker(messenger_server::talker* t)
 {
         m_mutex.lock();
         m_talkers.push_back(t);
+        std::cout << "add new talker." << std::endl;
         m_mutex.unlock();
 }
 
@@ -101,6 +103,7 @@ void messenger_server::server::insert_user(const messenger_server::user& u)
 {
         m_mutex.lock();
         m_users.push_back(u);
+        std::cout << "add new user." << std::endl;
         m_mutex.unlock();
 }
 
