@@ -16,10 +16,16 @@ void messenger_server::talker::set_registration_failed()
         m_response = "{ \"response\" : \"FAILED\", \"reason\" : \"User already exists\"}";
 }
 
-void messenger_server::talker::set_registration_ok()
+void messenger_server::talker::set_login_failed()
+{
+        m_response = "{ \"response\" : \"FAILED\", \"reason\" : \"User doesn't exist\"}";
+}
+
+void messenger_server::talker::set_ok()
 {
         m_response = "{ \"response\" : \"DONE\"}";
 }
+
 
 
 // in: { "command" : "REGISTER", "username" : "USER" }
@@ -28,26 +34,37 @@ void messenger_server::talker::set_registration_ok()
 // { "response" : "FAILED", "reason" : "error description"}
 void messenger_server::talker::handle_register()
 {
-        m_user = m_command.get_value("username"); 
+        m_user = m_command.get_value("username");
         assert(! m_user.empty());
         assert(0 != m_server);
         if (m_server->does_user_exist(m_user)) {
-                set_registration_failed(); 
+                set_registration_failed();
         } else {
                 m_server->register_user(m_user);
-                set_registration_ok();
+                set_ok();
         }
 }
 
 void messenger_server::talker::handle_login()
 {
+        m_user = m_command.get_value("username");
+        assert(! m_user.empty());
         assert(0 != m_server);
-        m_server->login_user(m_user);
+        if (m_server->does_user_exist(m_user)) {
+            m_server->login_user(m_user);
+            set_ok();
+        } else {
+            set_login_failed();
+        }
 }
 
 void messenger_server::talker::handle_logout()
 {
+        assert(! m_user.empty());
+        assert(0 != m_server);
+        assert(m_server->get_status(m_user));
         m_server->logout_user(m_user);
+        set_ok();
 }
 
 void messenger_server::talker::receive_command()
@@ -82,8 +99,7 @@ void messenger_server::talker::send_response()
 {
         assert(! m_response.empty());
         assert(m_client_socket.is_valid());
-        m_client_socket.send((const unsigned char*)m_response.c_str(),
-                        m_response.size());
+                        m_response.size();
 }
 
 void messenger_server::talker::run()

@@ -47,6 +47,7 @@ public:
         bool does_user_exist(const std::string& user) const;
         void insert_talker(messenger_server::talker* t);
         void insert_user(const messenger_server::user& u);
+        bool get_status(const std::string& n);
 
 private:
         typedef std::vector<talker*> talkers;
