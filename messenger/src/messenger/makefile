@@ -1,23 +1,28 @@
-all:  ../../bin/messenger
-
+all:  ../../bin/second_screen
 
 CC        := g++
-SOURCES   := $(wildcard ./*cpp)
-INCLUDEH  := $(wildcard ./*hpp) 
-INCLUDET  := $(wildcard ./*tpp)
-MOCS	  := second_screen.hpp
-MOC_FILES := $(patsubst ./%.hpp, ./moc_%.hpp, $(MOCS))
+SOURCES   := $(wildcard *cpp)
+INCLUDEH  := $(wildcard *hpp) 
+INCLUDET  := $(wildcard *tpp)
+MOCS      := second_screen.hpp
+MOC_FILES := $(patsubst %.hpp, moc_%.cpp, $(MOCS))
 
+
+OBJECTS   := $(patsubst %.cpp, ../../obj/%.o, $(SOURCES))
+#OBJECTS   += $(patsubst moc_%.cpp, ../../obj/moc_%.o, $(MOC_FILES))
 LIBRARIES := ../../lib/libthreads.so ../../lib/libsocket.so
 LIB_NAME  := $(notdir $(LIBRARIES))
 L_NAME    := $(patsubst lib%.so, -l%, $(LIB_NAME))
-INCLUDE_H := $(patsubst ./%.hpp, ../../inc/%.hpp, $(INCLUDEH))
-INCLUDE_T := $(patsubst ./%.tpp, ../../inc/%.tpp, $(INCLUDET))
-OBJECTS   := $(patsubst ./%.cpp, ../../obj/%.o, $(SOURCES))
-INC       := ../../inc
-LINK      := ../../lib 
-DEPENDS   := $(patsubst ./%.cpp,../../obj/%.dep,$(SOURCES))
-CFLAGS    := -c -g -Wall -Wextra -pedantic -std=c++11
+L_NAME    += `pkg-config --libs Qt5Widgets Qt5Core Qt5Gui`
+INCLUDE_H := $(patsubst %.hpp, ../../inc/%.hpp, $(INCLUDEH))
+INCLUDE_T := $(patsubst %.tpp, ../../inc/%.tpp, $(INCLUDET))
+INC       := -I../../inc
+INC       += `pkg-config --cflags Qt5Widgets Qt5Core Qt5Gui`
+LINKDIR   := $(shell bash -c 'pkg-config --variable libdir Qt5Widgets')
+LINKDIR   += ../../lib
+LINK      := $(foreach link, $(LINKDIR), $(shell echo -L$(link)))
+DEPENDS   := $(patsubst %.cpp, ../../obj/%.dep,$(SOURCES))
+CFLAGS    := -c -g -Wall -Wextra -pedantic -std=c++11 -fPIC
 
 
 ifeq ($(MAKECMDGOALS),)
@@ -26,29 +31,41 @@ else ifeq ($(MAKECMDGOALS),all)
 	    -include $(DEPENDS)
 endif
 
+.PRESIOUS : $(MOC_FILES)
+
 default :
-	@echo $(LINK)
+	@echo $(SOURCES)
+	@echo $(LIB_H)
 	@echo $(LIB_NAME)
 	@echo $(LIBRARIES)
 	@echo $(L_NAME)
+	@echo $(INC)
+	@echo $(OBJECTS)
+	@echo $(MOC_FILES)
+	@echo $(LINKDIR)
+	@echo $(LINK)
 
-moc_%.cpp: %.hpp
-	moc $(DEFINES) $(INCPATH) $< -o $@
+../../obj/%.dep : %.cpp $(LIBRARIES) $(MOC_FILES) 
+	@echo "DEP"
+	$(CC) $(INC) -std=c++11 -fPIC -MM $< -MT "$@ $(patsubst %.dep,%.o,$@)" -o $@
 
-../../obj/%.dep : ./%.cpp $(LIBRARIES)
-	$(CC) -I$(INC) -std=c++11 -MM $< -MT "$@ $(patsubst %.dep,%.o,$@)" -o $@
+moc_%.cpp : %.hpp
+	@echo "MOC"
+	moc $(INC) $< -o $@
 
 $(OBJECTS) :
-	$(CC) $(CFLAGS) -I$(INC) $< -o $@ 
+	@echo "OBJ"
+	$(CC) $(CFLAGS) $(INC) $< -o $@ 
 
-../../bin/messenger : $(INCLUDE_H) $(INCLUDE_T) $(OBJECTS) 
-	$(CC) -pthread -L$(LINK) $(OBJECTS) -o $@ $(L_NAME)
+../../bin/second_screen : $(INCLUDEH) $(INCLUDET) $(OBJECTS) 
+	$(CC) -pthread $(LINK) $(OBJECTS) -o $@ $(L_NAME)
 
 $(LIBRARIES) :
-	$(MAKE) -C ../threads
+	$(MAKE) -C ../../threads
+	$(MAKE) -C ../../ipc
 
-../../inc/%hpp : ./%hpp 
-	ln -f $< $@
+#../../inc/%hpp : ./%hpp 
+#	ln -f $< $@
 
-../../%tpp : ./%tpp 
-	ln -f $< $@
+#../../%tpp : ./%tpp 
+#	ln -f $< $@
