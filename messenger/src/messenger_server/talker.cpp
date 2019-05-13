@@ -7,29 +7,28 @@
 
 void messenger_server::talker::set_registration_failed()
 {
-        m_response = "FAILED";
-        m_reason = "User already exists";
+        m_response = "{ \"response\" : \"FAILED\", \"reason\" : \"User already exists\"}";
 }
 
 void messenger_server::talker::set_registration_ok()
 {
-        m_response = "DONE";
-        m_reason = "";
+        m_response = "{ \"response\" : \"DONE\"}";
 }
 
-bool messenger_server::talker::empty(const std::string& str) const
-{
-        return ("" == str);
-}
 
+// in: { "command" : "REGISTER", "username" : "USER" }
+// out:
+// { "response" : "DONE"} in case of success
+// { "response" : "FAILED", "reason" : "error description"}
 void messenger_server::talker::handle_register()
 {
+        m_user = m_command.get_value("username"); // obj["name"]
+        assert(! m_user.empty());
         assert(0 != m_server);
-        m_user = "";// get_username(); // obj["name"]
         if (m_server->does_user_exist(m_user)) {
                 set_registration_failed(); // response = FAIL
         } else {
-                // m_server->add_user(m_user);
+                m_server->add_user(m_user);
                 set_registration_ok();
         }
 }
@@ -43,11 +42,6 @@ void messenger_server::talker::handle_login()
 void messenger_server::talker::handle_logout()
 {
         m_server->logout_user(m_user);
-}
-
-void messenger_server::talker::handle_invalid()
-{
-        // m_server->invalid_command();
 }
 
 void messenger_server::talker::receive_command()
@@ -72,9 +66,6 @@ void messenger_server::talker::parse()
                 case command::LOGOUT:
 			handle_logout(); //m_server->logout_user();
 			break;
-                case command::INVALID:
-                        handle_invalid();
-                        break;
                 default:
                         assert(false);
                         break;
@@ -111,7 +102,6 @@ talker(messenger_server::server* s, ipc::socket r, ipc::socket t)
         , m_server_socket(t)
         , m_command("")
         , m_response("")
-        , m_reason("")
 {
         assert(0 != m_server);
         assert(m_client_socket.is_valid());

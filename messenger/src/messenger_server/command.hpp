@@ -14,7 +14,7 @@ namespace messenger_server {
 class messenger_server::command
 {
 public:
-       enum  type {REGISTER, LOGIN, LOGOUT, INVALID};
+       enum  type {REGISTER, LOGIN, LOGOUT};
 public:
        type get_command() const;
 

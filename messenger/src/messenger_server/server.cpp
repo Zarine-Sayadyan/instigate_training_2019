@@ -65,13 +65,14 @@ void messenger_server::server::notify()
     //        tx.send(m_respone); //update command
     //}
 }
-/*
-void messenger_server::server::add_user(std::string user)
+
+void messenger_server::server::add_user(const std::string& user)
 {
+        (void)user;
     //m_users.push_back(user);
-    m_users[user] = true;
+    // m_users[user] = true;
 }
-*/
+
 void messenger_server::server::insert_talker(messenger_server::talker* t)
 {
         // todo add mutex

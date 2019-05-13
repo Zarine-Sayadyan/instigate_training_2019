@@ -45,7 +45,7 @@ public:
         void logout_user(const std::string& user);
         void register_user(const std::string& user);
         void notify();
-        void add_user(std::string user);
+        void add_user(const std::string& user);
         bool does_user_exist(const std::string& user) const;
         void insert_talker(messenger_server::talker* t);
 

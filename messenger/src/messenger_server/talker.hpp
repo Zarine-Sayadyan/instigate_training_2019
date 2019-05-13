@@ -30,21 +30,18 @@ public:
 private:
         void set_registration_failed();
         void set_registration_ok();
-        bool empty(const std::string& str) const;
         void parse();
         void receive_command();
         void send_response();
         void handle_register();
         void handle_login();
         void handle_logout();
-        void handle_invalid();
 private:
         messenger_server::server* m_server;
         ipc::socket m_client_socket;
         ipc::socket m_server_socket;
         messenger_server::command m_command;
         std::string m_response;
-        std::string m_reason;
         std::string m_user;
 
 public:
