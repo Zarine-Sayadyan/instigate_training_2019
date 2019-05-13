@@ -1,2 +1,0 @@
-../../obj/main_thread_test.dep ../../obj/main_thread_test.o: \
- main_thread_test.cpp matrix.hpp ../../inc/thread.hpp ../../inc/mutex.hpp

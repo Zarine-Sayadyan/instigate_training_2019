@@ -1,2 +1,0 @@
-../../obj/main_msg_server.dep ../../obj/main_msg_server.o: \
- main_msg_server.cpp server.hpp ../../inc/socket.hpp
