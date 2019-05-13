@@ -31,7 +31,8 @@ public:
         void send_update_command(const std::string& n, bool status);
 private:
         void set_registration_failed();
-        void set_registration_ok();
+        void set_login_failed();
+        void set_ok();
         void parse();
         void receive_command();
         void send_response();
