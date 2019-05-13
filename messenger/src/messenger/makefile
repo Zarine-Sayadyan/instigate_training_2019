@@ -1,10 +1,10 @@
-all:  ../../bin/second_screen
+all:  ../../bin/messenger
 
 CC        := g++
 SOURCES   := $(wildcard *cpp)
 INCLUDEH  := $(wildcard *hpp) 
 INCLUDET  := $(wildcard *tpp)
-MOCS      := second_screen.hpp
+MOCS      := messenger.hpp login_page.hpp main_page.hpp
 MOC_FILES := $(patsubst %.hpp, moc_%.cpp, $(MOCS))
 
 
@@ -57,7 +57,7 @@ $(OBJECTS) :
 	@echo "OBJ"
 	$(CC) $(CFLAGS) $(INC) $< -o $@ 
 
-../../bin/second_screen : $(INCLUDEH) $(INCLUDET) $(OBJECTS) 
+../../bin/messenger : $(INCLUDEH) $(INCLUDET) $(OBJECTS) 
 	$(CC) -pthread $(LINK) $(OBJECTS) -o $@ $(L_NAME)
 
 $(LIBRARIES) :
