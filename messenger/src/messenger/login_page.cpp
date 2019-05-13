@@ -1,6 +1,9 @@
 #include "login_page.hpp"
 
+#include <command.hpp>
+
 #include <cassert>
+#include <iostream>
 
 QPushButton* login_page::get_ok_button() const
 {
@@ -8,8 +11,31 @@ QPushButton* login_page::get_ok_button() const
         return m_button;
 }
 
-login_page::login_page()
+void login_page::register_or_login()
+{
+        assert(0 != m_lineedit);
+        assert(0 != m_checkBox);
+        assert(0 != m_text);
+        std::string u = m_lineedit->text().toStdString();
+        assert(! u.empty()); // fix this report error
+        bool v = m_checkBox->isChecked();
+        std::string t = "{\"command\" : ";
+        t += v ? "\"REGISTER\"" : "\"LOGIN\"";
+        t += ", \"username\" : \"";
+        t += u;
+        t += "\"}";
+        std::cout << " command="<< t << std::endl;
+
+        // typedef messenger_server::command C;
+        // messenger_server::command c("{\"command\" : \"REGISTER"}
+        // c.add_data("username", u);
+        // std::string f = c.stringify();
+        m_server.send((const unsigned char*)t.c_str(), t.size());
+}
+
+login_page::login_page(ipc::socket m)
           : QWidget()
+          , m_server(m)
           , m_lineedit(0)
           , m_button(0)
           , m_checkBox(0)
@@ -35,8 +61,10 @@ login_page::login_page()
         m_text->setStyleSheet("border: 0.5 solid black; padding: 3px; background: #fff;");
         vl->addWidget(m_text);
 
-        setFixedSize(700, 500);
-        // connect push -> slot sending REGISTER or LOGIN commands
+        QObject::connect(m_button, SIGNAL(clicked()),
+                        this, SLOT(register_or_login()));
+        setFixedSize(300, 200);
+
 }
 
 login_page::~login_page()

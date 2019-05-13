@@ -63,6 +63,7 @@ $(OBJECTS) :
 $(LIBRARIES) :
 	$(MAKE) -C ../../threads
 	$(MAKE) -C ../../ipc
+	$(MAKE) -C ../../messenger_server
 
 #../../inc/%hpp : ./%hpp 
 #	ln -f $< $@

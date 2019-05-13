@@ -34,15 +34,15 @@ default :
 $(OBJECTS) :
 	$(CC) $(CFLAGS) -I$(INC) $< -o $@ 
 
-../../bin/messenger_server : $(INCLUDEH) $(INCLUDET) $(OBJECTS) 
+../../bin/messenger_server : $(INCLUDE_H) $(INCLUDET) $(OBJECTS) 
 	$(CC) -pthread -L$(LINK) $(OBJECTS) -o $@ $(L_NAME)
 
 $(LIBRARIES) :
 	$(MAKE) -C ../threads
 	$(MAKE) -C ../ipc
 
-#../../inc/%hpp : ./%hpp 
-#	ln -f $< $@
+../../inc/%hpp : ./%hpp 
+	ln -f $< $@
 
 #../../%tpp : ./%tpp 
 #	ln -f $< $@

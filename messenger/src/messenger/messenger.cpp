@@ -29,8 +29,8 @@ messenger::messenger()
         , m_main(0)
 {
         assert(m_server.is_valid());
-        // connect()
-        m_login = new login_page;
+        m_server.connect("127.0.0.1", 9000);
+        m_login = new login_page(m_server);
         assert(0 != m_login);
         m_main = new main_page;
         assert(0 != m_main);
