@@ -1,0 +1,1 @@
+../../obj/command.dep ../../obj/command.o: command.cpp command.hpp

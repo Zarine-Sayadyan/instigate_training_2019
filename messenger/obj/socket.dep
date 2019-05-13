@@ -1,0 +1,1 @@
+../../obj/socket.dep ../../obj/socket.o: socket.cpp socket.hpp

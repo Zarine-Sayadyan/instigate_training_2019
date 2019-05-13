@@ -1,0 +1,2 @@
+../../obj/server_tcp.dep ../../obj/server_tcp.o: server_tcp.cpp \
+ talker_tcp.hpp ../../inc/thread.hpp ../../inc/socket.hpp

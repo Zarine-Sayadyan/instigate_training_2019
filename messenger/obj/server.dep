@@ -1,0 +1,2 @@
+../../obj/server.dep ../../obj/server.o: server.cpp server.hpp \
+ ../../inc/socket.hpp talker.hpp command.hpp ../../inc/thread.hpp

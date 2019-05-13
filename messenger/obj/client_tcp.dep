@@ -1,0 +1,1 @@
+../../obj/client_tcp.dep ../../obj/client_tcp.o: client_tcp.cpp

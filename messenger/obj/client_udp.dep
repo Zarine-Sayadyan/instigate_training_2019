@@ -1,0 +1,2 @@
+../../obj/client_udp.dep ../../obj/client_udp.o: client_udp.cpp \
+ ../../inc/socket.hpp
