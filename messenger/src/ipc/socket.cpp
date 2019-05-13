@@ -8,6 +8,25 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+
+ipc::socket ipc::socket::duplicate()
+{
+    if (! is_valid()) {
+        throw "invalid socket\n";
+    }
+    int fd = ::dup(m_socket);
+    if (fd < 0) {
+        throw "Duplicate error";
+    }
+    if (-1 == fd) {
+        throw "Error: see perror";
+    }
+    if (! fd.is_valid()) {
+        throw "Duplicate error\n";
+    }
+    return fid;
+}
+
 void ipc::socket::bind(unsigned short port)
 {
     assert(is_valid());

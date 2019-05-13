@@ -1,7 +1,12 @@
-#include "second_screen.hpp"
+#include "main_page.hpp"
 
-second_screen::second_screen(QWidget *parent)
-    : QWidget(parent)
+QPushButton* main_page::get_logout() const
+{
+        return btn_logout;
+}
+
+main_page::main_page()
+    : QWidget()
 {
     //create toolbar
 

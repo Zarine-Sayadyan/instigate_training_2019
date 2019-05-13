@@ -7,8 +7,10 @@
  */
 
 #include <socket.hpp>
+#include <mutex.hpp>
 #include <string>
 #include <vector>
+
 
 /// @brief 
 namespace messenger_server
@@ -30,10 +32,9 @@ namespace messenger_server
 
 struct messenger_server::user
 {
-        std::string m_name = "";
-        bool m_status = true;
+        std::string name;
+        bool status; // online/offline
 };
-
 
 class messenger_server::server
 {
@@ -44,10 +45,11 @@ public:
         void login_user(const std::string& user);
         void logout_user(const std::string& user);
         void register_user(const std::string& user);
-        void notify();
-        void add_user(const std::string& user);
-        bool does_user_exist(const std::string& user) const;
+        void update_status(const std::string& user);
+        bool does_user_exist(const std::string& user);
         void insert_talker(messenger_server::talker* t);
+        void insert_user(const messenger_server::user& u);
+        bool get_status(const std::string& n);
 
 private:
         typedef std::vector<talker*> talkers;
@@ -57,6 +59,7 @@ private:
         ipc::socket m_socket;
         users m_users;
         talkers m_talkers;
+        threads::mutex m_mutex;
 public:
         server(unsigned short port);
         ~server();

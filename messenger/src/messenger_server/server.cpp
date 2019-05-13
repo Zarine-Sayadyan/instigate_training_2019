@@ -1,82 +1,110 @@
 #include "server.hpp"
 #include "talker.hpp"
 
+#include <iostream>
+#include <mutex.hpp>
 #include <thread.hpp>
 #include <socket.hpp>
 #include <cstring>
 #include <cassert>
 #include <algorithm>
 
-bool messenger_server::server::does_user_exist(const std::string& name) const
+bool messenger_server::server::does_user_exist(const std::string& name)
 {
-    for (auto it = m_users.begin(); it != m_users.end(); ++it) {
-        if (name == (*it).m_name) {
-            return true;
-        }
-    }
-    return false;
 
+        m_mutex.lock();
+        for (auto i = m_users.begin(); i != m_users.end(); ++i) {
+                if (name == i->name) {
+                        m_mutex.unlock();
+                        return true;
+                }
+        }
+        m_mutex.unlock();
+        return false;
 }
 
 //add_user() ete user goyutyun chuni
-void messenger_server::server::login_user(const std::string& user)
+void messenger_server::server::login_user(const std::string& s)
 {
-    if (!does_user_exist(user)) {
-        // m_response = "ERROR:No such registered user";
-    } else {
-            for (auto it = m_users.begin(); it != m_users.end(); ++it) {
-                    if (user == (*it).m_name) {
-                            (*it).m_status = true;
-                            break;
-                    }
-    }
-        // *it->online;
-        //m_response = "UPDATE:user="+user+",status=online";
-        //notify(m_response);
-    }
-}
-
-void messenger_server::server::logout_user(const std::string& user)
-{
-        for (auto it = m_users.begin(); it != m_users.end(); ++it) {
-                if (user == (*it).m_name) {
-                        (*it).m_status = false;
+        assert(does_user_exist(s));
+        m_mutex.lock();
+        for (auto i = m_users.begin(); i != m_users.end(); ++i) {
+                if (s == i->name) {
+                        i->status = true;
                         break;
                 }
         }
-        //user->offline;
+        m_mutex.unlock();
+        update_status(s);
 }
 
-void messenger_server::server::register_user(const std::string& username)
+bool messenger_server::server::get_status(const std::string& s)
 {
-        if (! does_user_exist(username)) {
-                user u;
-                u.m_name = username;
-                u.m_status = true;
-                m_users.push_back(u);
-        }  else {
-                //error
+        assert(does_user_exist(s));
+        for (auto i = m_users.begin(); i != m_users.end(); ++i) {
+                if (s == i->name) {
+                        return i->status;
+                }
         }
 }
 
-void messenger_server::server::notify()
+void messenger_server::server::logout_user(const std::string& s)
 {
-    //for (auto i:m_talkers) {
-    //        tx.send(m_respone); //update command
-    //}
+        m_mutex.lock();
+        for (auto i = m_users.begin(); i != m_users.end(); ++i) {
+                if (s == i->name) {
+                        i->status = false;
+                        break;
+                }
+        }
+        m_mutex.unlock();
+        update_status(s);
 }
 
-void messenger_server::server::add_user(const std::string& user)
+void messenger_server::server::register_user(const std::string& s)
 {
-        (void)user;
-    //m_users.push_back(user);
-    // m_users[user] = true;
+        assert(! does_user_exist(s));
+        user u;
+        m_mutex.lock();
+        u.name = s;
+        u.status = true;
+        insert_user(u);
+        m_mutex.unlock();
+        update_status(u.name);
+}
+
+void messenger_server::server::update_status(const std::string& s)
+{
+        assert(! s.empty());
+        assert(does_user_exist(s));
+        user u;
+        m_mutex.lock();
+        for (auto i = m_users.begin(); i != m_users.end(); ++i) {
+                if (s == i->name) {
+                        u = *i;
+                        break;
+                }
+        }
+        for (auto i = m_talkers.begin(); i != m_talkers.end(); ++i) {
+                (*i)->send_update_command(u.name, u.status);
+        }
+        m_mutex.unlock();
 }
 
 void messenger_server::server::insert_talker(messenger_server::talker* t)
 {
-        // todo add mutex
+        m_mutex.lock();
         m_talkers.push_back(t);
+        std::cout << "add new talker." << std::endl;
+        m_mutex.unlock();
+}
+
+void messenger_server::server::insert_user(const messenger_server::user& u)
+{
+        m_mutex.lock();
+        m_users.push_back(u);
+        std::cout << "add new user." << std::endl;
+        m_mutex.unlock();
 }
 
 void messenger_server::server::run()
@@ -84,7 +112,7 @@ void messenger_server::server::run()
         assert(m_socket.is_valid());
         while (true) {
                 ipc::socket c = m_socket.accept();
-                talker* t = new talker(this, c, c/*c.duplicate()*/);
+                talker* t = new talker(this, c, c.duplicate());
                 t->create_thread();
                 insert_talker(t);
         }
