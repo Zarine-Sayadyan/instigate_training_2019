@@ -97,7 +97,7 @@ void messenger_server::server::run()
         assert(m_socket.is_valid());
         while (true) {
                 ipc::socket c = m_socket.accept();
-                talker* t = new talker(this, c, c/*c.duplicate()*/);
+                talker* t = new talker(this, c, c.duplicate());
                 t->create_thread();
                 insert_talker(t);
         }
