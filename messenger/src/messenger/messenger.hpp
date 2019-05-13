@@ -4,6 +4,8 @@
 #include "login_page.hpp"
 #include "main_page.hpp"
 
+#include <socket.hpp>
+
 #include <QObject>
 
 class messenger : public QObject
@@ -13,10 +15,11 @@ public slots:
         void show_login();
         void show_main();
 private:
-        main_page* m_main;
+        ipc::socket m_server;
         login_page* m_login;
+        main_page* m_main;
 public:
-        explicit messenger();
+        messenger();
         virtual ~messenger();
 };
 

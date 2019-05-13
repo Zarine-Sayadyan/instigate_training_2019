@@ -7,7 +7,7 @@ void messenger::show_login()
 {
         assert(0 != m_login);
         assert(0 != m_main);
-        // assert(m_main->isVisible());
+        // assert(m_main->isVisible()); fails on run
         assert(! m_login->isVisible());
         m_main->hide();
         m_login->show();
@@ -24,7 +24,12 @@ void messenger::show_main()
 }
 
 messenger::messenger()
+        : m_server(ipc::socket::TCP)
+        , m_login(0)
+        , m_main(0)
 {
+        assert(m_server.is_valid());
+        // connect()
         m_login = new login_page;
         assert(0 != m_login);
         m_main = new main_page;

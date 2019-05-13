@@ -33,11 +33,13 @@ void messenger_server::server::login_user(const std::string& s)
 bool messenger_server::server::get_status(const std::string& s)
 {
         assert(does_user_exist(s));
-        for (auto i = m_users.begin(); i != m_users.end(); ++i) {
+        auto i = m_users.begin();
+        for (; i != m_users.end(); ++i) {
                 if (s == i->name) {
-                        return i->status;
+                        break;
                 }
         }
+        return i->status;
 }
 
 void messenger_server::server::logout_user(const std::string& s)
