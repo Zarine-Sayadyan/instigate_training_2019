@@ -7,8 +7,10 @@
  */
 
 #include <socket.hpp>
+#include <mutex.hpp>
 #include <string>
 #include <vector>
+
 
 /// @brief 
 namespace messenger_server
@@ -44,7 +46,7 @@ public:
         void logout_user(const std::string& user);
         void register_user(const std::string& user);
         void update_status(const std::string& user);
-        bool does_user_exist(const std::string& user) const;
+        bool does_user_exist(const std::string& user);
         void insert_talker(messenger_server::talker* t);
         void insert_user(const messenger_server::user& u);
         bool get_status(const std::string& n);
@@ -57,6 +59,7 @@ private:
         ipc::socket m_socket;
         users m_users;
         talkers m_talkers;
+        threads::mutex m_mutex;
 public:
         server(unsigned short port);
         ~server();

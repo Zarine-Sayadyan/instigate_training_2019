@@ -1,19 +1,25 @@
 #include "server.hpp"
 #include "talker.hpp"
 
+#include <iostream>
+#include <mutex.hpp>
 #include <thread.hpp>
 #include <socket.hpp>
 #include <cstring>
 #include <cassert>
 #include <algorithm>
 
-bool messenger_server::server::does_user_exist(const std::string& name) const
+bool messenger_server::server::does_user_exist(const std::string& name)
 {
+
+        m_mutex.lock();
         for (auto i = m_users.begin(); i != m_users.end(); ++i) {
                 if (name == i->name) {
+                        m_mutex.unlock();
                         return true;
                 }
         }
+        m_mutex.unlock();
         return false;
 }
 
@@ -21,12 +27,14 @@ bool messenger_server::server::does_user_exist(const std::string& name) const
 void messenger_server::server::login_user(const std::string& s)
 {
         assert(does_user_exist(s));
+        m_mutex.lock();
         for (auto i = m_users.begin(); i != m_users.end(); ++i) {
                 if (s == i->name) {
                         i->status = true;
                         break;
                 }
         }
+        m_mutex.unlock();
         update_status(s);
 }
 
@@ -42,12 +50,14 @@ bool messenger_server::server::get_status(const std::string& s)
 
 void messenger_server::server::logout_user(const std::string& s)
 {
+        m_mutex.lock();
         for (auto i = m_users.begin(); i != m_users.end(); ++i) {
                 if (s == i->name) {
                         i->status = false;
                         break;
                 }
         }
+        m_mutex.unlock();
         update_status(s);
 }
 
@@ -55,9 +65,11 @@ void messenger_server::server::register_user(const std::string& s)
 {
         assert(! does_user_exist(s));
         user u;
+        m_mutex.lock();
         u.name = s;
         u.status = true;
         insert_user(u);
+        m_mutex.unlock();
         update_status(u.name);
 }
 
@@ -66,30 +78,33 @@ void messenger_server::server::update_status(const std::string& s)
         assert(! s.empty());
         assert(does_user_exist(s));
         user u;
-        // lock users
+        m_mutex.lock();
         for (auto i = m_users.begin(); i != m_users.end(); ++i) {
                 if (s == i->name) {
                         u = *i;
                         break;
                 }
         }
-        // unlock users
-        // lock talker
         for (auto i = m_talkers.begin(); i != m_talkers.end(); ++i) {
                 (*i)->send_update_command(u.name, u.status);
         }
-        // unlock talker
+        m_mutex.unlock();
 }
 
 void messenger_server::server::insert_talker(messenger_server::talker* t)
 {
-        // todo add mutex
+        m_mutex.lock();
         m_talkers.push_back(t);
+        std::cout << "add new talker." << std::endl;
+        m_mutex.unlock();
 }
 
 void messenger_server::server::insert_user(const messenger_server::user& u)
 {
+        m_mutex.lock();
         m_users.push_back(u);
+        std::cout << "add new user." << std::endl;
+        m_mutex.unlock();
 }
 
 void messenger_server::server::run()
