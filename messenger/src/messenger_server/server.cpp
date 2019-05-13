@@ -38,13 +38,13 @@ void messenger_server::server::login_user(const std::string& user)
 
 void messenger_server::server::logout_user(const std::string& user)
 {
-    for (auto it = m_users.begin(); it != m_users.end(); ++it) {
-        if (user == (*it).m_name) {
-                (*it).m_status = false;
-                break;
+        for (auto it = m_users.begin(); it != m_users.end(); ++it) {
+                if (user == (*it).m_name) {
+                        (*it).m_status = false;
+                        break;
+                }
         }
-    }
-    //user->offline;
+        //user->offline;
 }
 
 void messenger_server::server::register_user(const std::string& username)
@@ -74,29 +74,29 @@ void messenger_server::server::add_user(std::string user)
 */
 void messenger_server::server::insert_talker(messenger_server::talker* t)
 {
-    // todo add mutex
-    m_talkers.push_back(t);
+        // todo add mutex
+        m_talkers.push_back(t);
 }
 
 void messenger_server::server::run()
 {
-    assert(m_socket.is_valid());
-    while (true) {
-        ipc::socket c = m_socket.accept();
-        talker* t = new talker(this, c, c/*c.duplicate()*/);
-        t->create_thread();
-        insert_talker(t);
-    }
+        assert(m_socket.is_valid());
+        while (true) {
+                ipc::socket c = m_socket.accept();
+                talker* t = new talker(this, c, c/*c.duplicate()*/);
+                t->create_thread();
+                insert_talker(t);
+        }
 }
 
 messenger_server::server::server(unsigned short port)
-    : m_socket(ipc::socket::TCP)
-    , m_users()
-      , m_talkers()
+        : m_socket(ipc::socket::TCP)
+        , m_users()
+        , m_talkers()
 {
-    assert(m_socket.is_valid());
-    m_socket.bind(port);
-    m_socket.listen();
+        assert(m_socket.is_valid());
+        m_socket.bind(port);
+        m_socket.listen();
 }
 
 messenger_server::server::~server()

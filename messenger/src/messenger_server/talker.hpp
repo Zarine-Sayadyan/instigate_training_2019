@@ -6,6 +6,8 @@
  * @brief
  */
 
+#include "command.hpp"
+
 #include <thread.hpp>
 #include <socket.hpp>
 
@@ -40,7 +42,7 @@ private:
         messenger_server::server* m_server;
         ipc::socket m_client_socket;
         ipc::socket m_server_socket;
-        std::string m_command;
+        messenger_server::command m_command;
         std::string m_response;
         std::string m_reason;
         std::string m_user;
