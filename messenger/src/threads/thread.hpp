@@ -47,10 +47,14 @@ public:
          */
         void create_thread(enum flag = JOINABLE);
         /** 
+         * @fn detach_thread
+         * @brief detaching thread
+         */
+        void detach_thread();
+        /** 
          * @fn join_thread
          * @brief joining thread
          */
-        void detach_thread();
         void join_thread();
 private:
         static void* entry_point(void* obj);
