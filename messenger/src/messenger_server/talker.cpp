@@ -5,6 +5,12 @@
 #include <iostream>
 
 
+void messenger_server::talker::
+send_update_command(const std::string& n, bool status)
+{
+        // m_server_socket.send();
+}
+
 void messenger_server::talker::set_registration_failed()
 {
         m_response = "{ \"response\" : \"FAILED\", \"reason\" : \"User already exists\"}";
@@ -22,20 +28,20 @@ void messenger_server::talker::set_registration_ok()
 // { "response" : "FAILED", "reason" : "error description"}
 void messenger_server::talker::handle_register()
 {
-        m_user = m_command.get_value("username"); // obj["name"]
+        m_user = m_command.get_value("username"); 
         assert(! m_user.empty());
         assert(0 != m_server);
         if (m_server->does_user_exist(m_user)) {
-                set_registration_failed(); // response = FAIL
+                set_registration_failed(); 
         } else {
-                m_server->add_user(m_user);
+                m_server->register_user(m_user);
                 set_registration_ok();
         }
 }
 
 void messenger_server::talker::handle_login()
 {
-        assert (0 != m_server);
+        assert(0 != m_server);
         m_server->login_user(m_user);
 }
 
@@ -71,7 +77,6 @@ void messenger_server::talker::parse()
                         break;
         }
 }
-
 
 void messenger_server::talker::send_response()
 {

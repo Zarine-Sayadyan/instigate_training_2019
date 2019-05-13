@@ -30,10 +30,9 @@ namespace messenger_server
 
 struct messenger_server::user
 {
-        std::string m_name = "";
-        bool m_status = true;
+        std::string name;
+        bool status; // online/offline
 };
-
 
 class messenger_server::server
 {
@@ -44,10 +43,10 @@ public:
         void login_user(const std::string& user);
         void logout_user(const std::string& user);
         void register_user(const std::string& user);
-        void notify();
-        void add_user(const std::string& user);
+        void update_status(const std::string& user);
         bool does_user_exist(const std::string& user) const;
         void insert_talker(messenger_server::talker* t);
+        void insert_user(const messenger_server::user& u);
 
 private:
         typedef std::vector<talker*> talkers;

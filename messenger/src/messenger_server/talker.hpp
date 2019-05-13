@@ -27,6 +27,8 @@ class messenger_server::talker : public threads::thread
 {
 public:
         void run();
+
+        void send_update_command(const std::string& n, bool status);
 private:
         void set_registration_failed();
         void set_registration_ok();
