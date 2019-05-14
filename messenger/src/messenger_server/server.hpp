@@ -12,8 +12,10 @@
 #include <string>
 #include <vector>
 
-
-/// @brief 
+/**
+ * @namespace messenger_server
+ * @brief Contains types used for messenger
+ */
 namespace messenger_server
 {
         struct user;
@@ -24,7 +26,8 @@ namespace messenger_server
          * The class is responsible for
          * - user registration
          * - user login
-         *
+         * - user logout
+         * - message sending
          */
         class server;
         // forward declaration
@@ -62,7 +65,10 @@ private:
         talkers m_talkers;
         threads::mutex m_mutex;
 public:
+        
+        /// server constructor must be creat socket with a protocol TCP
         server(unsigned short port);
+        /// server destructor must be destroy talkers
         ~server();
 };
 
