@@ -4,61 +4,81 @@
 #include <cassert>
 #include <iostream>
 
-class command
+
+void messenger_server::talker::
+send_update_command(const std::string& n, bool status)
 {
-public:
-       enum  type {REGISTER, LOGIN, LOGOUT, INVALID};
-       type get_command();   // from QT
-};
+        // m_server_socket.send();
+}
 
 void messenger_server::talker::set_registration_failed()
 {
-        m_response = "FAILED";
-        m_reason = "User already exists";
+        m_response = "{ \"response\" : \"FAILED\", \"reason\" : \"User already exists\"}";
 }
 
-void messenger_server::talker::set_registration_ok()
+void messenger_server::talker::set_login_failed()
 {
-        m_response = "DONE";
-        m_reason = "";
+        m_response = "{ \"response\" : \"FAILED\", \"reason\" : \"User doesn't exist\"}";
 }
 
-bool messenger_server::talker::empty(const std::string& str) const
+void messenger_server::talker::set_ok()
 {
-        return ("" == str);
+        m_response = "{ \"response\" : \"DONE\"}";
 }
 
+
+
+// in: { "command" : "REGISTER", "username" : "USER" }
+// out:
+// { "response" : "DONE"} in case of success
+// { "response" : "FAILED", "reason" : "error description"}
 void messenger_server::talker::handle_register()
 {
+        m_user = m_command.get_value("username");
+        assert(! m_user.empty());
         assert(0 != m_server);
-        m_user = get_username(); // obj["name"]
         if (m_server->does_user_exist(m_user)) {
-                set_registration_failed(); // response = FAIL
+                set_registration_failed();
         } else {
-                m_server->add_user(m_user);
-                set_registration_ok();
+                m_server->register_user(m_user);
+                set_ok();
         }
 }
 
 void messenger_server::talker::handle_login()
 {
-        assert (0 != m_server);
-        m_server->login_user(m_user);
+        m_user = m_command.get_value("username");
+        assert(! m_user.empty());
+        assert(0 != m_server);
+        if (m_server->does_user_exist(m_user)) {
+            m_server->login_user(m_user);
+            set_ok();
+        } else {
+            set_login_failed();
+        }
 }
 
 void messenger_server::talker::handle_logout()
 {
+        assert(! m_user.empty());
+        assert(0 != m_server);
+        assert(m_server->get_status(m_user));
         m_server->logout_user(m_user);
+        set_ok();
 }
 
-void messenger_server::talker::handle_invalid()
+void messenger_server::talker::receive_command()
 {
-        m_server->invalid_command();
+        char message[512];
+        int r = m_client_socket.recv((unsigned char*)message, sizeof(message));
+        assert(r < (int)sizeof(message));
+        assert('\0' == message[r]);
+        m_command.append(message);
 }
 
 void messenger_server::talker::parse()
 {
-        command::type c = get_command(); //from QT
+        command::type c = m_command.get_command();
 	switch (c) {
                 case command::REGISTER :
 			handle_register(); // m_server->add_user();
@@ -69,30 +89,17 @@ void messenger_server::talker::parse()
                 case command::LOGOUT:
 			handle_logout(); //m_server->logout_user();
 			break;
-                case command::INVALID:
-                        handle_invalid();
-                        break;
                 default:
                         assert(false);
                         break;
         }
 }
 
-void messenger_server::talker::receive_command()
-{
-        char message[512];
-        int r = m_client_socket.recv((unsigned char*)message, sizeof(message));
-        assert(-1 != r);
-        assert(r < sizeof(message));
-        assert('\0' == message[r]);
-        m_command = std::string(message);
-}
-
 void messenger_server::talker::send_response()
 {
         assert(! m_response.empty());
         assert(m_client_socket.is_valid());
-        m_client_socket.send((const unsigned char*)m_response.c_str(), m_response.size());
+                        m_response.size();
 }
 
 void messenger_server::talker::run()
@@ -104,7 +111,7 @@ void messenger_server::talker::run()
                         parse();
                         send_response();
                 }
-        } catch(const char* m) {
+        } catch (const char* m) {
                 std::cerr << "Talker error: " << m << std::endl;
         }
 }
@@ -116,7 +123,6 @@ talker(messenger_server::server* s, ipc::socket r, ipc::socket t)
         , m_server_socket(t)
         , m_command("")
         , m_response("")
-        , m_reason("")
 {
         assert(0 != m_server);
         assert(m_client_socket.is_valid());

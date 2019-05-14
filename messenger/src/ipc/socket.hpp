@@ -37,6 +37,8 @@ class ipc::socket
 public:
         enum protocol { NONE, TCP, UDP };
 public:
+        /// create a copy of the file descriptor. 
+        socket duplicate();
         /// Bind a socket to a local port
         void bind(unsigned short port);
         /// Mark a socket as a listening socket (must be TCP)

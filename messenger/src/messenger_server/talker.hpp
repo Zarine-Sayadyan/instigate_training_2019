@@ -6,6 +6,8 @@
  * @brief
  */
 
+#include "command.hpp"
+
 #include <thread.hpp>
 #include <socket.hpp>
 
@@ -25,24 +27,24 @@ class messenger_server::talker : public threads::thread
 {
 public:
         void run();
+
+        void send_update_command(const std::string& n, bool status);
 private:
         void set_registration_failed();
-        void set_registration_ok();
-        bool empty(const std::string& str) const;
+        void set_login_failed();
+        void set_ok();
         void parse();
         void receive_command();
         void send_response();
         void handle_register();
         void handle_login();
         void handle_logout();
-        void handle_invalid();
 private:
         messenger_server::server* m_server;
         ipc::socket m_client_socket;
         ipc::socket m_server_socket;
-        std::string m_command;
+        messenger_server::command m_command;
         std::string m_response;
-        std::string m_reason;
         std::string m_user;
 
 public:

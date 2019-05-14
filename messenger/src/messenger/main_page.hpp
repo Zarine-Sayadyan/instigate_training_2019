@@ -1,5 +1,5 @@
-#ifndef SECOND_SCREEN_HPP
-#define SECOND_SCREEN_HPP
+#ifndef MESSENGER_MAIN_PAGE_HPP
+#define MESSENGER_MAIN_PAGE_HPP
 
 #include <QtGui>
 #include <QWidget>
@@ -16,11 +16,11 @@
 #include <QToolBar>
 #include <QMenuBar>
 
-class second_screen : public QWidget
+class main_page : public QWidget
 {
     Q_OBJECT
 public:
-    second_screen(QWidget *parent = 0);
+    QPushButton* get_logout() const;
 
 private:
     QTableView *tblv;
@@ -30,6 +30,8 @@ private:
 
 private slots:
 //    void btnApply_clicked();
+public:
+    main_page();
 };
 
-#endif // SECOND_SCREEN_HPP
+#endif // MESSENGER_MAIN_PAGE_HPP
