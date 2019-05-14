@@ -11,7 +11,6 @@
 
 bool messenger_server::server::does_user_exist(const std::string& name)
 {
-
         m_mutex.lock();
         for (auto i = m_users.begin(); i != m_users.end(); ++i) {
                 if (name == i->name) {
@@ -23,13 +22,13 @@ bool messenger_server::server::does_user_exist(const std::string& name)
         return false;
 }
 
-//add_user() ete user goyutyun chuni
 void messenger_server::server::login_user(const std::string& s)
 {
         assert(does_user_exist(s));
         m_mutex.lock();
         for (auto i = m_users.begin(); i != m_users.end(); ++i) {
                 if (s == i->name) {
+                        assert(false == i->status);
                         i->status = true;
                         break;
                 }
@@ -52,9 +51,11 @@ bool messenger_server::server::get_status(const std::string& s)
 
 void messenger_server::server::logout_user(const std::string& s)
 {
+        assert(does_user_exist(s));
         m_mutex.lock();
         for (auto i = m_users.begin(); i != m_users.end(); ++i) {
                 if (s == i->name) {
+                        assert(true == i->status);
                         i->status = false;
                         break;
                 }
@@ -93,20 +94,20 @@ void messenger_server::server::update_status(const std::string& s)
         m_mutex.unlock();
 }
 
-void messenger_server::server::insert_talker(messenger_server::talker* t)
-{
-        m_mutex.lock();
-        m_talkers.push_back(t);
-        std::cout << "add new talker." << std::endl;
-        m_mutex.unlock();
-}
-
 void messenger_server::server::insert_user(const messenger_server::user& u)
 {
         m_mutex.lock();
         m_users.push_back(u);
-        std::cout << "add new user." << std::endl;
         m_mutex.unlock();
+        std::cout << "add new user " << u.name << std::endl;
+}
+
+void messenger_server::server::insert_talker(messenger_server::talker* t)
+{
+        m_mutex.lock();
+        m_talkers.push_back(t);
+        m_mutex.unlock();
+        std::cout << "add new talker " /*<< t->get_user()*/ << std::endl;
 }
 
 void messenger_server::server::run()

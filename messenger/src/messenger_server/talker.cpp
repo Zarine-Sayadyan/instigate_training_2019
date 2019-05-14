@@ -18,6 +18,7 @@ void messenger_server::talker::set_registration_failed()
 
 void messenger_server::talker::set_login_failed()
 {
+        /// add already login fault
         m_response = "{ \"response\" : \"FAILED\", \"reason\" : \"User doesn't exist\"}";
 }
 
@@ -50,7 +51,8 @@ void messenger_server::talker::handle_login()
         m_user = m_command.get_value("username");
         assert(! m_user.empty());
         assert(0 != m_server);
-        if (m_server->does_user_exist(m_user)) {
+        if (m_server->does_user_exist(m_user) &&
+                        ! m_server->get_status(m_user)) {
             m_server->login_user(m_user);
             set_ok();
         } else {
@@ -81,13 +83,13 @@ void messenger_server::talker::parse()
         command::type c = m_command.get_command();
 	switch (c) {
                 case command::REGISTER :
-			handle_register(); // m_server->add_user();
+			handle_register();
 			break;
 		case command::LOGIN:
-			handle_login(); // m_server->login_user();
+			handle_login();
 			break;
                 case command::LOGOUT:
-			handle_logout(); //m_server->logout_user();
+			handle_logout();
 			break;
                 default:
                         assert(false);
@@ -99,7 +101,7 @@ void messenger_server::talker::send_response()
 {
         assert(! m_response.empty());
         assert(m_client_socket.is_valid());
-                        m_response.size();
+        // m_response.size();
 }
 
 void messenger_server::talker::run()
@@ -121,7 +123,7 @@ talker(messenger_server::server* s, ipc::socket r, ipc::socket t)
         : m_server(s)
         , m_client_socket(r)
         , m_server_socket(t)
-        , m_command("")
+        , m_command()
         , m_response("")
 {
         assert(0 != m_server);
