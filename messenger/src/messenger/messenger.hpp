@@ -4,7 +4,7 @@
 #include "login_page.hpp"
 #include "main_page.hpp"
 
-#include <socket.hpp>
+#include <ipc/socket.hpp>
 
 #include <QObject>
 

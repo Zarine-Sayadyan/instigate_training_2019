@@ -1,5 +1,5 @@
 #include "talker_tcp.hpp"
-#include <socket.hpp>
+#include <ipc/socket.hpp>
 #include <iostream>
 #include <vector>
 
@@ -13,8 +13,8 @@ void run(ipc::socket s)
                         talker* t = new talker(client);
                         t->create_thread();
                         talkers.push_back(t);
-                } catch (const char* s) {
-                        std::cout << "Error: " << s << std::endl;
+                } catch (const char* m) {
+                        std::cout << "Error: " << m << std::endl;
                 }
         }
 }

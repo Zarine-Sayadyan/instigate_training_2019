@@ -10,7 +10,6 @@
 #include <QString>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <algorithm>
 
 namespace messenger_server {
         class command;

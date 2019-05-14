@@ -1,7 +1,7 @@
 #ifndef MESSENGER_LOGIN_PAGE_H
 #define MESSENGER_LOGIN_PAGE_H
 
-#include <socket.hpp>
+#include <ipc/socket.hpp>
 
 #include <QCheckBox>
 #include <QHBoxLayout>

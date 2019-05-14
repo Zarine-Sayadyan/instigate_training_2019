@@ -84,7 +84,7 @@ void ipc::socket::send(const unsigned char* m, unsigned int c)
     if (! is_valid()) {
         throw "attempt to send through invalid socket\n";
     }
-    int sent_bytes = ::send(m_socket, m, c, 0);
+    ssize_t sent_bytes = ::send(m_socket, m, c, 0);
     if (sent_bytes < 0) {
         throw "send error\n";
     }
@@ -109,7 +109,7 @@ void ipc::socket::sendto(const unsigned char* m, unsigned int c,
     if (r != 1) {
         throw "Error, see perror\n";
     }
-    int sent_bytes = ::sendto(m_socket,(const char*) m, c, MSG_CONFIRM,
+    ssize_t sent_bytes = ::sendto(m_socket,(const char*) m, c, MSG_CONFIRM,
            (const struct sockaddr*) &addr, sizeof(addr));
     if (sent_bytes < 0) {
         throw "send error\n";
@@ -123,11 +123,11 @@ int ipc::socket::recv(unsigned char* m, int s)
     if (! is_valid()) {
         throw "attempt to receive through invalid socket\n";
     }
-    int r = ::recv(m_socket, m, s, 0);
+    ssize_t r = ::recv(m_socket, m, s, 0);
     if (r < 0) {
         throw "recv error\n";
     }
-    return r;
+    return (int)r;
 }
 
 int ipc::socket::recvfrom(unsigned char* m, int s,
@@ -136,7 +136,7 @@ int ipc::socket::recvfrom(unsigned char* m, int s,
     if (! is_valid()) {
         throw "attempt to receive through invalid socket\n";
     }
-    int r = 0;
+    ssize_t r = 0;
     struct sockaddr_in addr;
     memset(&addr, 0, sizeof(addr));
     socklen_t len = sizeof(addr);
@@ -149,7 +149,7 @@ int ipc::socket::recvfrom(unsigned char* m, int s,
             throw "Error to get peer address\n";
     }
     from_port = ntohs(addr.sin_port);
-    return r;
+    return (int)r;
 }
 
 void ipc::socket::close()

@@ -1,7 +1,8 @@
 #include "talker.hpp"
 #include "server.hpp"
 
-#include <mutex.hpp>
+#include <threads/mutex.hpp>
+
 #include <cassert>
 #include <iostream>
 
@@ -9,10 +10,12 @@
 void messenger_server::talker::
 send_update_command(const std::string& n, bool status)
 {
+        /*
         messenger_server::command c(command::UPDATE);
         c.add_value("username", n);
         c.add_value("status", status ? "online" : "offline");
         send_response(c.get_cmd_str());
+        */
 }
 
 void messenger_server::talker::set_registration_failed()
@@ -105,7 +108,7 @@ void messenger_server::talker::send_response(const std::string& n)
         assert(m_tx.is_valid());
         m_mutex.lock();
         try {
-                m_tx.send((const unsigned char*)n.c_str(), n.size());
+                m_tx.send((const unsigned char*)n.c_str(), (unsigned  int)n.size());
         }  catch(const char* s) {
                 std::cout << "failed  to send " << std::endl; 
         }

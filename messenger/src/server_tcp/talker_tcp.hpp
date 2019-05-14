@@ -1,8 +1,8 @@
 #ifndef TALKER_TCP_HPP
 #define TALKER_TCP_HPP
 
-#include <thread.hpp>
-#include <socket.hpp>
+#include <threads/thread.hpp>
+#include <ipc/socket.hpp>
 
 #include <cassert>
 

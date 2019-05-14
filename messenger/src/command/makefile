@@ -1,62 +1,97 @@
-all:  build
+#
+# Copyright (c) 2005-2009 Instigate CJSC, Armenia
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free
+# Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+#
 
-CC        := g++
-SOURCES   := $(wildcard *cpp)
-INCLUDEH  := $(wildcard *hpp) 
-INCLUDET  := $(wildcard *tpp)
-MOCS      := command.hpp 
-MOC_FILES := $(patsubst %.hpp, moc_%.cpp, $(MOCS))
+# The source files under the project.
+cpp_files := \
+	command.cpp
 
+# The header files under the project, which are supposed to be used by other
+# projects.
+public_headers := \
+	command.hpp
 
-OBJECTS   := $(patsubst %.cpp, ../../obj/%.o, $(SOURCES))
-#OBJECTS   += $(patsubst moc_%.cpp, ../../obj/moc_%.o, $(MOC_FILES))
-LIBRARIES := 
-LIB_NAME  := $(notdir $(LIBRARIES))
-L_NAME    := $(patsubst lib%.so, -l%, $(LIB_NAME))
-L_NAME    += `pkg-config --libs Qt5Widgets Qt5Core Qt5Gui`
-INCLUDE_H := $(patsubst %.hpp, ../../inc/%.hpp, $(INCLUDEH))
-INCLUDE_T := $(patsubst %.tpp, ../../inc/%.tpp, $(INCLUDET))
-INC       := -I../../inc
-INC       += `pkg-config --cflags Qt5Widgets Qt5Core Qt5Gui`
-LINKDIR   := $(shell bash -c 'pkg-config --variable libdir Qt5Widgets')
-#LINKDIR   += ../../lib
-LINK      := $(foreach link, $(LINKDIR), $(shell echo -L$(link)))
-DEPENDS   := $(patsubst %.cpp, ../../obj/%.dep,$(SOURCES))
-CFLAGS    := -c -g -Wall -Wextra -pedantic -std=c++11 -fPIC
+# Building QT project.
+# TODO: Add detailed comments.
+qt_headers := command.hpp
 
+moc_flags :=
 
-ifeq ($(MAKECMDGOALS),)
-	    -include $(DEPENDS)
-else ifeq ($(MAKECMDGOALS),all)
-	    -include $(DEPENDS)
-endif
+qt_ui_files :=
 
-.PRESIOUS : $(MOC_FILES)
+uic_flags :=
 
-default :
-	@echo $(DEPENDS)
-	@echo $(LIBRARIES)
+# The compiler flags can be updated/overwritten for the project.
+# 
+# Example:
+# compiler_flags += -s -Wno-long-long -fno-strict-aliasing
+# compiler_flags := $(filter-out -Wshadow -Wconversion, $(compiler_flags))
+# 
+# Note: It is not recommended to overwrite the value (don't use := operator).
+# 
+compiler_flags += `pkg-config --cflags Qt5Widgets Qt5Core Qt5Gui`\
+		  -Wno-error\
+		  -Wno-sign-conversion\
 
-../../obj/%.dep : ./%.cpp $(MOC_FILES)
-	$(CC) $(INC) $(CFLAGS) -MM  $< -MT "$@ $(patsubst %.dep,%.o,$@)" -o $@
+# The linker flags can be updated/overwritten for the project
+#
+# Example:
+# linker_flags += -i 
+#
+# Note: It is not recommended to overwrite the value (don't use := operator).
+#
+linker_flags += -lstdc++
 
-moc_%.cpp : %.hpp
-	@echo "MOC"
-	moc $(INC) $< -o $@
+# The libraries which should be linked to the current project. The link type is
+# specified as a global parameter, except the libraries, which are built as a
+# either shared or static library. For those libraries the appropriate linking
+# type is selected, e.g. if current project is being linked to lib_project,
+# which is static library, then current project will be always linked to
+# lib_project statically, despite global link type is shared or static.
+# 
+# Example:
+# libs := project1 tcl gtkmm-2.4 
+# 
+# Note: Specifying the library version is not supported.
+#
+libs := 
 
-$(OBJECTS) :
-	$(CC) $(CFLAGS) $(INC) $< -o $@ 
-	
-.PRECIOUS : $(INCLUDE_H) $(INCLUDE_T)
+# Library version
+#
+# Note: If the library version is not specified, then the program_version is
+# taken for this library.
+#
+lib_version :=
 
-build : ../../lib/libcommand.so
+# For each project either executable file or a library can be generated.
+#
+# To generate the executable file the exe.mk should be included, which is
+# located in mkf directory.
+#
+# Two types of libraries can be generated for each project:
+#       dynamic (shared objects) and static (archives).
+#
+# To generate the shared object the dynamic.mk should be included here.
+# To generate the archive the static.mk file should be included here.
+# To generate either (shared object or archive) depending on the global link
+# type the lib.mk should be included.
+#
+# Note that the generated library will be located in local $lib_dir directory
+# (by default $(project_root)/lib/).
+#
 
-../../lib/libcommand.so : $(INCLUDE_H) $(INCLUDE_T) $(OBJECTS) 
-	$(CC) -shared $(LINK) $(OBJECTS) -o $@ $(L_NAME)
-	#mv ./moc_* ../../obj/
-
-../../inc/%hpp : ./%hpp 
-	ln -f $< $@
-
-../../%tpp : ./%tpp 
-	ln -f $< $@
+include $(mkf_path)/lib.mk

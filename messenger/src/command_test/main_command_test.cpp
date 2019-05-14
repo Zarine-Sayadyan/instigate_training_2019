@@ -1,4 +1,4 @@
-#include <command.hpp>
+#include <command/command.hpp>
 #include <iostream>
 #include <cassert>
 
