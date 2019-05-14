@@ -1,10 +1,6 @@
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
 #include <socket.hpp>
 
 int main ()
