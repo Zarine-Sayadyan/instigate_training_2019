@@ -14,12 +14,18 @@ messenger_server::command::type
 messenger_server::command::
 get_command() const
 {
-	QJsonObject obj = str_to_json();
-	QString cmd = obj["command"].toString();
-	int n = sizeof(m_cmd_arr)/sizeof(m_cmd_arr[0]);
-	auto it = std::find(m_cmd_arr, m_cmd_arr + n, cmd);
-	int d = std::distance(m_cmd_arr, it);
-	return (type)d;
+        QJsonObject obj = str_to_json();
+        QString cmd = obj["command"].toString();
+        int n = sizeof(m_cmd)/sizeof(m_cmd[0]);
+        auto it = std::find(m_cmd, m_cmd + n, cmd);
+        int d = std::distance(m_cmd, it);
+        return (type)d;
+}
+
+std::string messenger_server::command::
+get_cmd_str() const
+{
+        return m_command;
 }
 
 // IN: "username", "status"
@@ -80,6 +86,22 @@ append(std::string str)
 	m_command = m_command + "," + str;
 }
 
+messenger_server::command::
+command()
+{
+        m_command = "{}";
+}
+
+messenger_server::command::
+command(command::type t)
+        : m_command("{}")
+{
+        int n = sizeof(m_cmd)/sizeof(m_cmd[0]);
+        assert(4 == n);
+        assert((int)t < n);
+        add_value("command", m_cmd[t]);
+}
+
 // n is one of these JSON
 // { “command” : “REGISTER”, “username” : “USER” }
 // { “command” : “LOGIN”, “username” : “USER” }
@@ -88,12 +110,11 @@ append(std::string str)
 messenger_server::command::
 command(const std::string& n)
         : m_command(n)
-{}
-
-messenger_server::command::
-command()
-	: m_command("{}")
-{}
+{
+	assert(! m_command.empty());
+	assert('{' == m_command[0]);
+	assert('}' == m_command[m_command.size() - 1]);
+}
 
 messenger_server::command::
 ~command()
