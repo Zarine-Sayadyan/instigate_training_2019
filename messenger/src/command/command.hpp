@@ -1,5 +1,5 @@
-#ifndef MESSENGER_SERVER_MYCOMMAND_HPP
-#define MESSENGER_SERVER_MYCOMMAND_HPP
+#ifndef COMMAND_COMMAND_HPP
+#define COMMAND_COMMAND_HPP
 
 /**
  * @file messenger_server/command.hpp
@@ -18,8 +18,7 @@ namespace messenger_server {
 
 class messenger_server::command : public QObject
 {
-
-    Q_OBJECT
+        Q_OBJECT
 
 public:
        enum  type {REGISTER, LOGIN, LOGOUT};
@@ -40,4 +39,4 @@ public:
        ~command();
 };
 
-#endif // MESSENGER_SERVER_MYCOMMAND_HPP
+#endif // COMMAND_COMMAND_HPP

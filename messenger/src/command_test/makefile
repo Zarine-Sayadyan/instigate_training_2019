@@ -1,25 +1,25 @@
-all:  ../../bin/messenger_server
+all:  ../../bin/mycommand
 
 CC        := g++
 SOURCES   := $(wildcard *cpp)
 INCLUDEH  := $(wildcard *hpp) 
 INCLUDET  := $(wildcard *tpp)
-MOCS      := 
+MOCS      :=
 MOC_FILES := $(patsubst %.hpp, moc_%.cpp, $(MOCS))
 
 
 OBJECTS   := $(patsubst %.cpp, ../../obj/%.o, $(SOURCES))
 #OBJECTS   += $(patsubst moc_%.cpp, ../../obj/moc_%.o, $(MOC_FILES))
-LIBRARIES := ../../lib/libthreads.so ../../lib/libsocket.so ../../libcommand.so
+LIBRARIES := ../../lib/libcommand.so
 LIB_NAME  := $(notdir $(LIBRARIES))
 L_NAME    := $(patsubst lib%.so, -l%, $(LIB_NAME))
-#L_NAME    += `pkg-config --libs Qt5Widgets Qt5Core Qt5Gui`
-INCLUDE_H := 
+L_NAME    += `pkg-config --libs Qt5Widgets Qt5Core Qt5Gui`
+INCLUDE_H := $(patsubst %.hpp, ../../inc/%.hpp, $(INCLUDEH))
 INCLUDE_T := $(patsubst %.tpp, ../../inc/%.tpp, $(INCLUDET))
 INC       := -I../../inc
-#INC       += `pkg-config --cflags Qt5Widgets Qt5Core Qt5Gui`
-LINKDIR   := ../../lib
-#LINKDIR   += $(shell bash -c 'pkg-config --variable libdir Qt5Widgets')
+INC       += `pkg-config --cflags Qt5Widgets Qt5Core Qt5Gui`
+LINKDIR   := $(shell bash -c 'pkg-config --variable libdir Qt5Widgets')
+LINKDIR   += ../../lib
 LINK      := $(foreach link, $(LINKDIR), $(shell echo -L$(link)))
 DEPENDS   := $(patsubst %.cpp, ../../obj/%.dep,$(SOURCES))
 CFLAGS    := -c -g -Wall -Wextra -pedantic -std=c++11 -fPIC
@@ -45,28 +45,23 @@ default :
 	@echo $(LINKDIR)
 	@echo $(LINK)
 
-../../obj/%.dep : %.cpp $(LIBRARIES) #$(MOC_FILES) 
+../../obj/%.dep : %.cpp $(LIBRARIES) $(MOC_FILES) 
 	@echo "DEP"
 	$(CC) $(INC) -std=c++11 -fPIC -MM $< -MT "$@ $(patsubst %.dep,%.o,$@)" -o $@
 
-#moc_%.cpp : %.hpp
-#	@echo "MOC"
-#	moc $(INC) $< -o $@
+moc_%.cpp : %.hpp
+	@echo "MOC"
+	moc $(INC) $< -o $@
 
 $(OBJECTS) :
 	@echo "OBJ"
 	$(CC) $(CFLAGS) $(INC) $< -o $@ 
 
-../../bin/messenger_server : $(INCLUDET) $(INCLUDEH) $(OBJECTS) 
+../../bin/mycommand : $(INCLUDEH) $(INCLUDET) $(OBJECTS) 
 	$(CC) -pthread $(LINK) $(OBJECTS) -o $@ $(L_NAME)
 
-
 $(LIBRARIES) :
-	@echo "FIRST IN"
-	$(MAKE) -C ../threads
-	$(MAKE) -C ../ipc
 	$(MAKE) -C ../command
-	@echo "FIRST OUT"
 
 #../../inc/%hpp : ./%hpp 
 #	ln -f $< $@

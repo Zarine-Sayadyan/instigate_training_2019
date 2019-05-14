@@ -59,12 +59,12 @@ $(OBJECTS) :
 
 ../../bin/messenger : $(INCLUDEH) $(INCLUDET) $(OBJECTS) 
 	$(CC) -pthread $(LINK) $(OBJECTS) -o $@ $(L_NAME)
-	mv ./moc_* ../../obj/
+	#mv ./moc_* ../../obj/
 
 $(LIBRARIES) :
 	$(MAKE) -C ../../threads
 	$(MAKE) -C ../../ipc
-	$(MAKE) -C ../../messenger_server
+	$(MAKE) -C ../../command
 
 #../../inc/%hpp : ./%hpp 
 #	ln -f $< $@

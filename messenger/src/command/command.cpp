@@ -1,4 +1,4 @@
-#include "mycommand.hpp"
+#include "command.hpp"
 
 QJsonObject messenger_server::command::
 str_to_json() const

@@ -1,16 +1,16 @@
-all:  ../../bin/mycommand
+all:  build
 
 CC        := g++
 SOURCES   := $(wildcard *cpp)
 INCLUDEH  := $(wildcard *hpp) 
 INCLUDET  := $(wildcard *tpp)
-MOCS      := mycommand.hpp
+MOCS      := command.hpp 
 MOC_FILES := $(patsubst %.hpp, moc_%.cpp, $(MOCS))
 
 
 OBJECTS   := $(patsubst %.cpp, ../../obj/%.o, $(SOURCES))
 #OBJECTS   += $(patsubst moc_%.cpp, ../../obj/moc_%.o, $(MOC_FILES))
-LIBRARIES := ../../lib/libthreads.so ../../lib/libsocket.so
+LIBRARIES := 
 LIB_NAME  := $(notdir $(LIBRARIES))
 L_NAME    := $(patsubst lib%.so, -l%, $(LIB_NAME))
 L_NAME    += `pkg-config --libs Qt5Widgets Qt5Core Qt5Gui`
@@ -19,7 +19,7 @@ INCLUDE_T := $(patsubst %.tpp, ../../inc/%.tpp, $(INCLUDET))
 INC       := -I../../inc
 INC       += `pkg-config --cflags Qt5Widgets Qt5Core Qt5Gui`
 LINKDIR   := $(shell bash -c 'pkg-config --variable libdir Qt5Widgets')
-LINKDIR   += ../../lib
+#LINKDIR   += ../../lib
 LINK      := $(foreach link, $(LINKDIR), $(shell echo -L$(link)))
 DEPENDS   := $(patsubst %.cpp, ../../obj/%.dep,$(SOURCES))
 CFLAGS    := -c -g -Wall -Wextra -pedantic -std=c++11 -fPIC
@@ -34,39 +34,29 @@ endif
 .PRESIOUS : $(MOC_FILES)
 
 default :
-	@echo $(SOURCES)
-	@echo $(LIB_H)
-	@echo $(LIB_NAME)
+	@echo $(DEPENDS)
 	@echo $(LIBRARIES)
-	@echo $(L_NAME)
-	@echo $(INC)
-	@echo $(OBJECTS)
-	@echo $(MOC_FILES)
-	@echo $(LINKDIR)
-	@echo $(LINK)
 
-../../obj/%.dep : %.cpp $(LIBRARIES) $(MOC_FILES) 
-	@echo "DEP"
-	$(CC) $(INC) -std=c++11 -fPIC -MM $< -MT "$@ $(patsubst %.dep,%.o,$@)" -o $@
+../../obj/%.dep : ./%.cpp $(MOC_FILES)
+	$(CC) $(INC) $(CFLAGS) -MM  $< -MT "$@ $(patsubst %.dep,%.o,$@)" -o $@
 
 moc_%.cpp : %.hpp
 	@echo "MOC"
 	moc $(INC) $< -o $@
 
 $(OBJECTS) :
-	@echo "OBJ"
 	$(CC) $(CFLAGS) $(INC) $< -o $@ 
+	
+.PRECIOUS : $(INCLUDE_H) $(INCLUDE_T)
 
-../../bin/mycommand : $(INCLUDEH) $(INCLUDET) $(OBJECTS) 
-	$(CC) -pthread $(LINK) $(OBJECTS) -o $@ $(L_NAME)
-	mv ./moc_* ../../obj/
+build : ../../lib/libcommand.so
 
-$(LIBRARIES) :
-	$(MAKE) -C ../threads
-	$(MAKE) -C ../ipc
+../../lib/libcommand.so : $(INCLUDE_H) $(INCLUDE_T) $(OBJECTS) 
+	$(CC) -shared $(LINK) $(OBJECTS) -o $@ $(L_NAME)
+	#mv ./moc_* ../../obj/
 
-#../../inc/%hpp : ./%hpp 
-#	ln -f $< $@
+../../inc/%hpp : ./%hpp 
+	ln -f $< $@
 
-#../../%tpp : ./%tpp 
-#	ln -f $< $@
+../../%tpp : ./%tpp 
+	ln -f $< $@
