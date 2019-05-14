@@ -87,7 +87,7 @@ command(const std::string& n)
 messenger_server::command::
 command()
 {
-    m_command = " ";
+    m_command = "{}";
 }
 
 messenger_server::command::
