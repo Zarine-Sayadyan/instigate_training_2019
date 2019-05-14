@@ -59,6 +59,7 @@ $(OBJECTS) :
 
 ../../bin/command : $(INCLUDEH) $(INCLUDET) $(OBJECTS) 
 	$(CC) -pthread $(LINK) $(OBJECTS) -o $@ $(L_NAME)
+	mv ./moc_* ../../obj/
 
 $(LIBRARIES) :
 	$(MAKE) -C ../../threads

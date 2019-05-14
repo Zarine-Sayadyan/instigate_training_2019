@@ -25,11 +25,15 @@ public:
        enum  type {REGISTER, LOGIN, LOGOUT};
 public:
        type get_command() const;
-
        std::string get_value(const std::string& key) const;
+       void change_value(const std::string& key, const std::string& value);
+       void add_value(const std::string& key, const std::string& value);
+       void remove_key(const std::string& key);
 private:
        std::string m_command;
        QString m_cmd_arr[3] = {"REGISTER", "LOGIN", "LOGOUT"};
+private:
+       QJsonObject str_to_json() const;
 public:
        command(const std::string& n);
        ~command();

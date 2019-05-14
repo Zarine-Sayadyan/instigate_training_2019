@@ -36,6 +36,8 @@ $(OBJECTS) :
 
 ../../bin/messenger_server : $(INCLUDE_H) $(INCLUDET) $(OBJECTS) 
 	$(CC) -pthread -L$(LINK) $(OBJECTS) -o $@ $(L_NAME)
+#	mv ./moc_* ../../obj/
+
 
 $(LIBRARIES) :
 	$(MAKE) -C ../threads
