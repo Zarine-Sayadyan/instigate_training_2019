@@ -66,6 +66,14 @@ remove_key(const std::string& key)
     QString qstr(qdoc.toJson(QJsonDocument::Compact));
     m_command = qstr.toStdString();
 }
+
+void messenger_server::command::
+append (std::string str)
+{
+    m_command.pop_back();
+    str.erase(0,1);
+    m_command = m_command + "," + str;
+}
 // n is one of these JSON
 // { “command” : “REGISTER”, “username” : “USER” }
 // { “command” : “LOGIN”, “username” : “USER” }

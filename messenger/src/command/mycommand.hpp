@@ -29,7 +29,8 @@ public:
        void change_value(const std::string& key, const std::string& value);
        void add_value(const std::string& key, const std::string& value);
        void remove_key(const std::string& key);
-private:
+       void append(std::string str);
+public:
        std::string m_command;
        QString m_cmd_arr[3] = {"REGISTER", "LOGIN", "LOGOUT"};
 private:

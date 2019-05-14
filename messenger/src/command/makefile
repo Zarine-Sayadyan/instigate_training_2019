@@ -1,4 +1,4 @@
-all:  ../../bin/command
+all:  ../../bin/mycommand
 
 CC        := g++
 SOURCES   := $(wildcard *cpp)
@@ -57,13 +57,13 @@ $(OBJECTS) :
 	@echo "OBJ"
 	$(CC) $(CFLAGS) $(INC) $< -o $@ 
 
-../../bin/command : $(INCLUDEH) $(INCLUDET) $(OBJECTS) 
+../../bin/mycommand : $(INCLUDEH) $(INCLUDET) $(OBJECTS) 
 	$(CC) -pthread $(LINK) $(OBJECTS) -o $@ $(L_NAME)
 	mv ./moc_* ../../obj/
 
 $(LIBRARIES) :
-	$(MAKE) -C ../../threads
-	$(MAKE) -C ../../ipc
+	$(MAKE) -C ../threads
+	$(MAKE) -C ../ipc
 
 #../../inc/%hpp : ./%hpp 
 #	ln -f $< $@

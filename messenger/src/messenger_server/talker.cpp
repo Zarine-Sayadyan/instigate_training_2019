@@ -73,7 +73,7 @@ void messenger_server::talker::receive_command()
         int r = m_client_socket.recv((unsigned char*)message, sizeof(message));
         assert(r < (int)sizeof(message));
         assert('\0' == message[r]);
-        m_command = std::string(message);
+        m_command.append(message);
 }
 
 void messenger_server::talker::parse()

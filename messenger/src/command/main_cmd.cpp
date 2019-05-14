@@ -16,5 +16,7 @@ int main()
     std::cout << cmd.get_value("age") << std::endl;
     cmd.remove_key("age");
     std::cout << cmd.get_value("age") << std::endl;
+    cmd.append(a);
+    std::cout << cmd.m_command << std::endl;
     return 0;
 }
