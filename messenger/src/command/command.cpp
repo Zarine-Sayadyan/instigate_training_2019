@@ -24,7 +24,7 @@ command::command::type
 command::command::
 get_command() const
 {
-        std::cout << "get_command=" << m_command << std::endl;
+        // std::cout << "get_command=" << m_command << std::endl;
         assert(has_key("command"));
         QJsonObject obj = str_to_json();
         QString cmd = obj["command"].toString();
@@ -32,7 +32,7 @@ get_command() const
         assert(4 == n);
         auto it = std::find(m_cmd, m_cmd + n, cmd.toStdString());
         int d = (int)std::distance(m_cmd, it);
-        std::cout << "command number is " << d << std::endl;
+        // std::cout << "command number is " << d << std::endl;
         return (type)d;
 }
 

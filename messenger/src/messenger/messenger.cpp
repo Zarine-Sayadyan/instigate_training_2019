@@ -1,9 +1,11 @@
 
 #include "messenger.hpp"
 #include <command/command.hpp>
-#include <cassert>
+
 #include <QTimer>
 
+#include <iostream>
+#include <cassert>
 
 void messenger::show_login()
 {

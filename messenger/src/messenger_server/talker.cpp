@@ -10,6 +10,7 @@
 void messenger_server::talker::
 send_update_command(const std::string& n, bool status)
 {
+        std::cout << "send update for " << n << std::endl;
         command::command c(command::command::UPDATE);
         c.add_value("username", n);
         c.add_value("status", status ? "online" : "offline");
@@ -47,6 +48,7 @@ void messenger_server::talker::set_ok()
 void messenger_server::talker::handle_register()
 {
         m_user = m_command.get_value("username");
+        // std::cout << "handle register user=" << m_user << std::endl;
         assert(! m_user.empty());
         assert(0 != m_server);
         if (m_server->does_user_exist(m_user)) {
@@ -85,13 +87,13 @@ void messenger_server::talker::receive_command()
         char message[512];
         memset(message, 0, sizeof(message));
         int r = m_rx.recv((unsigned char*)message, sizeof(message));
-        std::cout<< "recv command='" << message << "' r = " << r << std::endl;
         assert(r < (int)sizeof(message));
         assert('\0' == message[r]);
         if ('\0' == message[0]) {
                 m_command.set_command();
         } else {
                 m_command.set_command(message);
+                std::cout<< "recv command='" << message << "' r = " << r << std::endl;
         }
 }
 
@@ -118,6 +120,7 @@ void messenger_server::talker::send_response(const std::string& n)
 {
         assert(! n.empty());
         assert(m_tx.is_valid());
+        std::cout << "sending response=" << n <<std::endl;
         m_mutex.lock();
         try {
                 m_tx.send((const unsigned char*)n.c_str(), (unsigned  int)n.size());

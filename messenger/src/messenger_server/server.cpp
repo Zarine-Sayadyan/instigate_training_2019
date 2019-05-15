@@ -35,7 +35,7 @@ void messenger_server::server::login_user(const std::string& s)
                 }
         }
         m_mutex.unlock();
-        update_status(s);
+        // update_status(s);
 }
 
 bool messenger_server::server::get_status(const std::string& s)
@@ -62,19 +62,17 @@ void messenger_server::server::logout_user(const std::string& s)
                 }
         }
         m_mutex.unlock();
-        update_status(s);
+        // update_status(s);
 }
 
 void messenger_server::server::register_user(const std::string& s)
 {
         assert(! does_user_exist(s));
         user u;
-        m_mutex.lock();
         u.name = s;
         u.status = true;
         insert_user(u);
-        m_mutex.unlock();
-        update_status(u.name);
+        // update_status(u.name);
 }
 
 void messenger_server::server::update_status(const std::string& s)

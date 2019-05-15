@@ -13,6 +13,7 @@ void talker::run()
                         int r = m_rx.recv(msg, s);
                         assert(r < s);
                         assert('\0' == msg[r]);
+                        std::cout << "recv command="<< msg << std::endl;
                         std::string str((const char*)msg);
                         assert(0 != m_messenger);
                         m_messenger->push_command(str);
