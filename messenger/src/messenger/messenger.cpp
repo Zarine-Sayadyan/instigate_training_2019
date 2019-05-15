@@ -7,6 +7,7 @@
 #include <iostream>
 #include <cassert>
 
+
 void messenger::show_login()
 {
         assert(0 != m_login);
@@ -129,7 +130,7 @@ void messenger::parse(const std::string& s)
                 case command::command::LOGOUT:
 			handle_logout(c);
 			break;
-                // case command::SEND_FILE:
+                // case command::command::SEND_FILE:
                 // my name is to
                 // open_save_as_dialog("filename", )
                 // open file write from base64

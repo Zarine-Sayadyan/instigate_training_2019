@@ -20,6 +20,7 @@ namespace messenger_server
 {
         struct user;
         /**
+         * @class server
          * @brief Server class responsible for accepting connections from
          * clients.
          *
@@ -30,14 +31,17 @@ namespace messenger_server
          * - message sending
          */
         class server;
-        // forward declaration
+        /**
+         * @class talker
+         * @brief class responsible for talking to clients
+         */
         class talker;
 }
 
 struct messenger_server::user
 {
         std::string name;
-        bool status; // online/offline
+        bool status; 
 };
 
 class messenger_server::server
@@ -46,14 +50,21 @@ public:
         /// TODO
         void run();
 public:
+	
         void login_user(const std::string& user);
         void logout_user(const std::string& user);
+        /// register new user
         void register_user(const std::string& user);
+        /// update user status
         void update_status(const std::string& user);
+        /// check does user exist at users list
         bool does_user_exist(const std::string& user);
+        /// insert t talker 
         void insert_talker(messenger_server::talker* t);
+        /// insert new user
         void insert_user(const messenger_server::user& u);
-        bool get_status(const std::string& n);
+	/// get user status
+	bool get_status(const std::string& user);
 
 private:
         typedef std::vector<talker*> talkers;
