@@ -8,8 +8,8 @@
  * @brief Contains prototype for data, multiplier and adder class
  */
 
-#include "thread.hpp"
-#include "mutex.hpp"
+#include <threads/thread.hpp>
+#include <threads/mutex.hpp>
 
 #include <cassert>
 #include <iostream>

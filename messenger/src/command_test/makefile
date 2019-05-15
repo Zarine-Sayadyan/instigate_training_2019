@@ -17,17 +17,15 @@
 #
 
 # The source files under the project.
-cpp_files := \
-	command.cpp
+cpp_files := main_command_test.cpp
 
 # The header files under the project, which are supposed to be used by other
 # projects.
-public_headers := \
-	command.hpp
+public_headers := 
 
 # Building QT project.
 # TODO: Add detailed comments.
-qt_headers := command.hpp
+qt_headers :=
 
 moc_flags :=
 
@@ -47,6 +45,7 @@ compiler_flags += `pkg-config --cflags Qt5Widgets Qt5Core Qt5Gui`\
 		  -Wno-error\
 		  -Wno-sign-conversion\
 
+
 # The linker flags can be updated/overwritten for the project
 #
 # Example:
@@ -54,7 +53,9 @@ compiler_flags += `pkg-config --cflags Qt5Widgets Qt5Core Qt5Gui`\
 #
 # Note: It is not recommended to overwrite the value (don't use := operator).
 #
-linker_flags += -lstdc++
+linker_flags += -lstdc++ -ldl \
+		`pkg-config --libs Qt5Widgets Qt5Core Qt5Gui`
+
 
 # The libraries which should be linked to the current project. The link type is
 # specified as a global parameter, except the libraries, which are built as a
@@ -68,7 +69,8 @@ linker_flags += -lstdc++
 # 
 # Note: Specifying the library version is not supported.
 #
-libs := 
+libs := \
+	command
 
 # Library version
 #
@@ -94,4 +96,4 @@ lib_version :=
 # (by default $(project_root)/lib/).
 #
 
-include $(mkf_path)/lib.mk
+include $(mkf_path)/exe.mk

@@ -4,8 +4,9 @@
 #include "login_page.hpp"
 #include "main_page.hpp"
 
-#include <socket.hpp>
-#include <command.hpp>
+#include <ipc/socket.hpp>
+#include <command/command.hpp>
+
 #include <QObject>
 #include <QTimer>
 #include <queue>

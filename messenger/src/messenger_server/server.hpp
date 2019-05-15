@@ -6,8 +6,9 @@
  * @brief Contains Messenger Server declaration
  */
 
-#include <socket.hpp>
-#include <mutex.hpp>
+#include <ipc/socket.hpp>
+#include <threads/mutex.hpp>
+
 #include <string>
 #include <vector>
 

@@ -1,10 +1,11 @@
 #include "server.hpp"
 #include "talker.hpp"
 
+#include <threads/mutex.hpp>
+#include <threads/thread.hpp>
+#include <ipc/socket.hpp>
+
 #include <iostream>
-#include <mutex.hpp>
-#include <thread.hpp>
-#include <socket.hpp>
 #include <cstring>
 #include <cassert>
 #include <algorithm>

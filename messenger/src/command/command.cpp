@@ -1,4 +1,5 @@
-#include "mycommand.hpp"
+#include "command.hpp"
+#include <algorithm>
 
 QJsonObject messenger_server::command::
 str_to_json() const
@@ -17,7 +18,7 @@ get_command() const
     QString cmd = json_obj["command"].toString();
     int n = sizeof(m_cmd_arr)/sizeof(m_cmd_arr[0]);
     auto it = std::find(m_cmd_arr, m_cmd_arr + n, cmd);
-    int d = std::distance(m_cmd_arr, it);
+    int d = (int)std::distance(m_cmd_arr, it);
     return (type)d;
 }
 

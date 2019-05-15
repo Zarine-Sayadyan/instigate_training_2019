@@ -6,11 +6,10 @@
  * @brief
  */
 
-#include "command.hpp"
-
-#include <mutex.hpp>
-#include <thread.hpp>
-#include <socket.hpp>
+#include <command/command.hpp>
+#include <threads/mutex.hpp>
+#include <threads/thread.hpp>
+#include <ipc/socket.hpp>
 
 #include <string>
 
