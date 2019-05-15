@@ -36,8 +36,8 @@ private slots:
 private:
         void parse(const std::string& str);
         void handle_register(const command::command& c);
-        void handle_login();
-        void handle_logout();
+        void handle_login(const command::command& c);
+        void handle_logout(const command::command& c);
 public:
         messenger();
         virtual ~messenger();
