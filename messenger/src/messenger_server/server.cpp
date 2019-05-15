@@ -12,7 +12,6 @@
 
 bool messenger_server::server::does_user_exist(const std::string& name)
 {
-
         m_mutex.lock();
         for (auto i = m_users.begin(); i != m_users.end(); ++i) {
                 if (name == i->name) {

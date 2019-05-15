@@ -46,4 +46,3 @@ messenger::~messenger()
         delete m_main;
 }
 
-
