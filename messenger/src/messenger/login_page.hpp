@@ -1,7 +1,6 @@
 #ifndef MESSENGER_LOGIN_PAGE_H
 #define MESSENGER_LOGIN_PAGE_H
 
-#include <ipc/socket.hpp>
 
 #include <QCheckBox>
 #include <QHBoxLayout>
@@ -11,6 +10,8 @@
 #include <QTextEdit>
 #include <QWidget>
 #include <QKeyEvent>
+
+class  messenger;
 
 class login_page : public QWidget
 {
@@ -25,14 +26,14 @@ private:
 private slots:
         void register_or_login();
 private:
-        ipc::socket m_server;
+        messenger* m_messenger;
         QLineEdit* m_lineedit;
         QPushButton* m_button;
         QCheckBox* m_checkBox;
         QTextEdit* m_text;
 
 public:
-        login_page(ipc::socket s);
+        login_page(messenger* m);
         virtual ~login_page();
 };
 

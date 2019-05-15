@@ -30,6 +30,7 @@ private:
 public:
         void push_command(const std::string& str);
         std::string pop_command();
+        void send_command(const std::string& t);
 
 private slots:
         void handle_messages();

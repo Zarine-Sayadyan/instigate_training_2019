@@ -39,6 +39,13 @@ std::string messenger::pop_command()
         return str;
 }
 
+void messenger::send_command(const std::string& t) 
+{
+        assert(! t.empty());
+        std::cout << "send command=" << t << std::endl;
+        m_server.send((const unsigned char*)t.c_str(), t.size());
+}
+
 // n can be this JSON
 // { “command” : “REGISTER”, “username” : “USER”, "response": "DONE"}
 // { “command” : “REGISTER”, “username” : “USER”, "response": "FAILED", "reason": "error"}
@@ -148,9 +155,9 @@ messenger::messenger()
 {
         assert(m_server.is_valid());
         m_server.connect("127.0.0.1", 9000);
-        m_login = new login_page(m_server);
+        m_login = new login_page(this);
         assert(0 != m_login);
-        m_main = new main_page;
+        m_main = new main_page(this);
         assert(0 != m_main);
         m_talker = new talker(this, m_server.duplicate());
         assert(0 != m_talker);

@@ -5,8 +5,9 @@ QPushButton* main_page::get_logout() const
         return btn_logout;
 }
 
-main_page::main_page()
-    : QWidget()
+main_page::main_page(messenger* m)
+        : QWidget()
+        , m_messenger(m)
 {
     //create toolbar
 
