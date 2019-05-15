@@ -6,20 +6,20 @@
 
 void messenger::show_login()
 {
-        assert(0 != m_login);
-        assert(0 != m_main);
+       // assert(0 != m_login);
+       // assert(0 != m_main);
         // assert(m_main->isVisible()); fails on run
-        assert(! m_login->isVisible());
+       // assert(! m_login->isVisible());
         m_main->hide();
         m_login->show();
 }
 
 void messenger::show_main()
 {
-        assert(0 != m_login);
-        assert(0 != m_main);
-        assert(! m_main->isVisible());
-        assert(m_login->isVisible());
+       // assert(0 != m_login);
+       // assert(0 != m_main);
+       // assert(! m_main->isVisible());
+       // assert(m_login->isVisible());
         m_login->hide();
         m_main->show();
 }
@@ -30,13 +30,13 @@ void messenger::parse(const std::string& s)
         messenger_server::command::type t = c.get_command();
 	switch (t) {
                 case messenger_server::command::REGISTER :
-			//handle_register();
+			handle_register();
 			break;
                 case messenger_server::command::LOGIN:
-			//handle_login();
+			handle_login();
 			break;
                 case messenger_server::command::LOGOUT:
-			//handle_logout();
+			handle_logout();
 			break;
                 // case command::UPDATE:
 
@@ -67,6 +67,31 @@ void messenger::handle_messages()
         }
 }
 
+//handle function
+
+void messenger::handle_register()
+{
+
+        m_server.send(m_queue, m_queue.size());
+        show_main();
+}
+
+void messenger::handle_login()
+{
+
+        show_main();
+
+}
+
+
+void messenger::handle_logout()
+{
+        show_login();
+}
+
+
+
+//constroctor and destructor
 messenger::messenger()
         : m_server(ipc::socket::TCP)
         , m_login(0)
@@ -84,10 +109,10 @@ messenger::messenger()
         connect(m_timer, SIGNAL(timeout()), this, SLOT(handle_messages()));
         m_timer->start(2000);
 
-        // QObject::connect(m_login->get_ok_button(), SIGNAL(clicked()),
-        //                 this, SLOT(show_main()));
+         //QObject::connect(m_login->get_ok_button(), SIGNAL(clicked()),
+           //              this, SLOT(show_main()));
         // QObject::connect(m_main->get_logout(), SIGNAL(clicked()),
-        //                 this, SLOT(show_login()));
+            //             this, SLOT(show_login()));
 }
 
 messenger::~messenger()

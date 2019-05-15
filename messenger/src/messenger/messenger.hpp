@@ -31,6 +31,13 @@ private slots:
         void handle_messages();
 private:
         void parse(const std::string& str);
+
+//handle_function
+
+private: 
+        void handle_register();
+        void handle_login();
+        void handle_logout();
 public:
         messenger();
         virtual ~messenger();

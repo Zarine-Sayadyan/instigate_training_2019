@@ -8,6 +8,10 @@ talker::talker(messenger* m, ipc::socket s)
         , m_rx(s)
 {}
 
+talker::~talker(){
+
+        delete m_messenger;
+}
 void talker::run()
 {
         while (1) {

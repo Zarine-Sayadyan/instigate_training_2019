@@ -38,7 +38,7 @@ $(OBJECTS) :
 	$(CC) -pthread -L$(LINK) $(OBJECTS) -o $@ $(L_NAME)
 
 $(LIBRARIES) :
-	$(MAKE) -C ../threads
+	$(MAKE) -C ../ipc
 
 ../../inc/%hpp : ./%hpp 
 	ln -f $< $@
