@@ -5,6 +5,16 @@ QPushButton* main_page::get_logout() const
         return btn_logout;
 }
 
+// send file handler
+// command c(SEND_FILE);
+// c.add_value("from", me)
+// c.add_value("to", he)
+// filepath = open_dialog();
+// c.add_value("filename", filepath.name());
+// open file
+// read file -> QByteArray a
+// c.add_value("data", a.tobase64)
+// m_messenger->send_command(c);
 main_page::main_page(messenger* m)
         : QWidget()
         , m_messenger(m)

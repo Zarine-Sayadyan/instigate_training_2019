@@ -110,6 +110,9 @@ void messenger_server::talker::parse()
                 case command::command::LOGOUT:
 			handle_logout();
 			break;
+                // case SEND_FILE:
+                //      m_server->send_file_to(find_talker("to"), c);
+                //       
                 default:
                         assert(false);
                         break;
