@@ -8,6 +8,13 @@ QPushButton* login_page::get_ok_button() const
         assert(0 != m_button);
         return m_button;
 }
+void login_page::keyPressEvent(QKeyEvent* event)
+{
+        if(event->key() == Qt::Key_Return || Qt::Key_Enter)
+        {
+                register_or_login();
+        }
+}
 
 void login_page::show_error(const std::string& e) 
 {

@@ -10,6 +10,7 @@
 #include <QPushButton>
 #include <QTextEdit>
 #include <QWidget>
+#include <QKeyEvent>
 
 class login_page : public QWidget
 {
@@ -18,6 +19,8 @@ class login_page : public QWidget
 public:
         QPushButton* get_ok_button() const;
 	void show_error(const std::string& e);
+private:
+        void keyPressEvent(QKeyEvent* event);
 
 private slots:
         void register_or_login();
