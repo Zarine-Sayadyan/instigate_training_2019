@@ -10,13 +10,13 @@ int main()
         //assert(t = messenger_server::command::type::LOGIN);
         std::cout << t << std::endl;
         std::cout << cmd.get_value("username") << std::endl;
-        cmd.change_value("username", "David");
+        cmd.set_value("username", "David");
         std::cout << cmd.get_value("username") << std::endl;
         cmd.add_value("age", "sdas");
         std::cout << cmd.get_value("age") << std::endl;
         cmd.remove_key("age");
         std::cout << cmd.get_value("age") << std::endl;
         cmd.append(a);
-        std::cout << cmd.m_command << std::endl;
+        std::cout << cmd.get_cmd_str() << std::endl;
         return 0;
 }

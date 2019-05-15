@@ -10,12 +10,10 @@
 void messenger_server::talker::
 send_update_command(const std::string& n, bool status)
 {
-        /*
         messenger_server::command c(command::UPDATE);
         c.add_value("username", n);
         c.add_value("status", status ? "online" : "offline");
         send_response(c.get_cmd_str());
-        */
 }
 
 void messenger_server::talker::set_registration_failed()
