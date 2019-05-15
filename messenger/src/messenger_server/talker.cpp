@@ -10,7 +10,7 @@
 void messenger_server::talker::
 send_update_command(const std::string& n, bool status)
 {
-        messenger_server::command c(command::UPDATE);
+        command::command c(command::command::UPDATE);
         c.add_value("username", n);
         c.add_value("status", status ? "online" : "offline");
         send_response(c.get_cmd_str());
@@ -85,15 +85,15 @@ void messenger_server::talker::receive_command()
 
 void messenger_server::talker::parse()
 {
-        command::type c = m_command.get_command();
+        command::command::type c = m_command.get_command();
 	switch (c) {
-                case command::REGISTER :
+                case command::command::REGISTER :
 			handle_register();
 			break;
-		case command::LOGIN:
+                case command::command::LOGIN:
 			handle_login();
 			break;
-                case command::LOGOUT:
+                case command::command::LOGOUT:
 			handle_logout();
 			break;
                 default:

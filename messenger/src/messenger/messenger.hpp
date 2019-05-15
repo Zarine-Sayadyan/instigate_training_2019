@@ -3,12 +3,14 @@
 
 #include "login_page.hpp"
 #include "main_page.hpp"
+#include "talker_client.hpp"
 
 #include <ipc/socket.hpp>
 #include <command/command.hpp>
 
 #include <QObject>
 #include <QTimer>
+
 #include <queue>
 #include <string>
 
@@ -20,6 +22,7 @@ public slots:
         void show_main();
 private:
         ipc::socket m_server;
+        talker* m_talker;
         login_page* m_login;
         main_page* m_main;
         QTimer* m_timer;
@@ -32,11 +35,7 @@ private slots:
         void handle_messages();
 private:
         void parse(const std::string& str);
-
-//handle_function
-
-private: 
-        void handle_register();
+        void handle_register(const command::command& c);
         void handle_login();
         void handle_logout();
 public:

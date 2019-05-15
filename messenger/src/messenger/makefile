@@ -17,7 +17,11 @@
 #
 
 # The source files under the project.
-cpp_files := login_page.cpp main.cpp main_page.cpp messenger.cpp
+cpp_files := login_page.cpp \
+	main.cpp \
+	main_page.cpp \
+	messenger.cpp \
+	talker_client.cpp
 
 # The header files under the project, which are supposed to be used by other
 # projects.

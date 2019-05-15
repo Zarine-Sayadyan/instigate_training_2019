@@ -9,6 +9,13 @@ QPushButton* login_page::get_ok_button() const
         return m_button;
 }
 
+void login_page::show_error(const std::string& e) 
+{
+        assert(! e.empty());
+	assert(0 != m_text);
+        m_text->setPlainText(QString(e.c_str()));
+}
+
 void login_page::register_or_login()
 {
         assert(0 != m_lineedit);

@@ -17,6 +17,7 @@ class login_page : public QWidget
 
 public:
         QPushButton* get_ok_button() const;
+	void show_error(const std::string& e);
 
 private slots:
         void register_or_login();

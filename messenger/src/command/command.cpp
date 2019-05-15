@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <cassert>
 
-QJsonObject messenger_server::command::
+QJsonObject command::command::
 str_to_json() const
 {
 	QString s = QString::fromStdString(m_command);
@@ -11,8 +11,8 @@ str_to_json() const
 	return obj;
 }
 
-messenger_server::command::type
-messenger_server::command::
+command::command::type
+command::command::
 get_command() const
 {
         QJsonObject obj = str_to_json();
@@ -23,7 +23,13 @@ get_command() const
         return (type)d;
 }
 
-std::string messenger_server::command::
+bool command::command::has_data(const std::string& c) const
+{
+        assert(! c.empty());
+        return true;
+}
+
+std::string command::command::
 get_cmd_str() const
 {
         return m_command;
@@ -31,7 +37,7 @@ get_cmd_str() const
 
 // IN: "username", "status"
 // OUT: "USER", "online"
-std::string messenger_server::command::
+std::string command::command::
 get_value(const std::string& key) const
 {
 	QJsonObject obj = str_to_json();
@@ -40,7 +46,7 @@ get_value(const std::string& key) const
 	return cmd.toStdString();
 }
 
-void messenger_server::command::
+void command::command::
 set_value(const std::string& key, const std::string& value)
 {
 	QJsonObject obj = str_to_json();
@@ -52,7 +58,7 @@ set_value(const std::string& key, const std::string& value)
 	m_command = s.toStdString();
 }
 
-void messenger_server::command::
+void command::command::
 add_value(const std::string& key, const std::string& value)
 {
 	QJsonObject obj = str_to_json();
@@ -64,7 +70,7 @@ add_value(const std::string& key, const std::string& value)
 	m_command = s.toStdString();
 }
 
-void messenger_server::command::
+void command::command::
 remove_key(const std::string& key)
 {
 	QJsonObject obj = str_to_json();
@@ -75,7 +81,7 @@ remove_key(const std::string& key)
 	m_command = s.toStdString();
 }
 
-void messenger_server::command::
+void command::command::
 append(std::string str)
 {
 	assert(! m_command.empty());
@@ -87,13 +93,13 @@ append(std::string str)
 	m_command = m_command + "," + str;
 }
 
-messenger_server::command::
+command::command::
 command()
 {
         m_command = "{}";
 }
 
-messenger_server::command::
+command::command::
 command(command::type t)
         : m_command("{}")
 {
@@ -108,7 +114,7 @@ command(command::type t)
 // { “command” : “LOGIN”, “username” : “USER” }
 // { “command” : “UPDATE”, “username” : “USER”, “status” : “online” }
 // { “command” : “LOGOUT”, “username” : “USER” }
-messenger_server::command::
+command::command::
 command(const std::string& n)
         : m_command(n)
 {
@@ -117,7 +123,7 @@ command(const std::string& n)
 	assert('}' == m_command[m_command.size() - 1]);
 }
 
-messenger_server::command::
+command::command::
 ~command()
 {}
 

@@ -3,15 +3,7 @@
 
 #include <iostream>
 #include <cassert>
-talker::talker(messenger* m, ipc::socket s)
-        : m_messenger(m)
-        , m_rx(s)
-{}
 
-talker::~talker(){
-
-        delete m_messenger;
-}
 void talker::run()
 {
         while (1) {
@@ -28,4 +20,15 @@ void talker::run()
                         std::cout << m <<std::endl;
                 }
         }
+}
+
+talker::talker(messenger* m, ipc::socket s)
+        : m_messenger(m)
+        , m_rx(s)
+{
+        assert(0 != m_messenger);
+}
+
+talker::~talker()
+{
 }
