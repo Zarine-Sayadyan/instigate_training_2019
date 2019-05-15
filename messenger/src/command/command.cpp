@@ -1,6 +1,15 @@
 #include "command.hpp"
 #include <algorithm>
 #include <cassert>
+#include <iostream>
+
+void command::command::set_command(const std::string& s)
+{
+        m_command = s;
+	assert(! m_command.empty());
+	assert('{' == m_command[0]);
+	assert('}' == m_command[m_command.size() - 1]);
+}
 
 QJsonObject command::command::
 str_to_json() const
@@ -15,11 +24,15 @@ command::command::type
 command::command::
 get_command() const
 {
+        std::cout << "get_command=" << m_command << std::endl;
+        assert(has_key("command"));
         QJsonObject obj = str_to_json();
         QString cmd = obj["command"].toString();
         int n = sizeof(m_cmd)/sizeof(m_cmd[0]);
-        auto it = std::find(m_cmd, m_cmd + n, cmd);
+        assert(4 == n);
+        auto it = std::find(m_cmd, m_cmd + n, cmd.toStdString());
         int d = (int)std::distance(m_cmd, it);
+        std::cout << "command number is " << d << std::endl;
         return (type)d;
 }
 
@@ -87,12 +100,16 @@ void command::command::
 append(std::string str)
 {
 	assert(! m_command.empty());
-	assert('}' == m_command[m_command.size() - 1]);
-	m_command.pop_back();
 	assert(! str.empty());
 	assert('{' == str[0]);
+	assert('}' == m_command[m_command.size() - 1]);
+	QJsonObject obj = str_to_json(); // yet valid object
+	m_command.pop_back(); // invalid json
 	str.erase(0, 1);
-	m_command = m_command + "," + str;
+        if (! obj.isEmpty()) {
+	        m_command += ",";
+        }
+	m_command += str;
 }
 
 command::command::
