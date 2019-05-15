@@ -18,21 +18,27 @@ send_update_command(const std::string& n, bool status)
 
 void messenger_server::talker::set_registration_failed()
 {
-        m_response = "{ \"response\" : \"FAILED\", \"reason\" : \"User already exists\"}";
+        command::command r(m_command.get_cmd_str());
+        r.add_value("response", "FAILED");
+        r.add_value("reason", "User already exists");
+        m_response = r.get_cmd_str();
 }
 
 void messenger_server::talker::set_login_failed()
 {
         /// add already login fault
-        m_response = "{ \"response\" : \"FAILED\", \"reason\" : \"User doesn't exist\"}";
+        command::command r(m_command.get_cmd_str());
+        r.add_value("response", "FAILED");
+        r.add_value("reason", "User doesn't exist");
+        m_response = r.get_cmd_str();
 }
 
 void messenger_server::talker::set_ok()
 {
-        m_response = "{ \"response\" : \"DONE\"}";
+        command::command r(m_command.get_cmd_str());
+        r.add_value("response", "DONE");
+        m_response = r.get_cmd_str();
 }
-
-
 
 // in: { "command" : "REGISTER", "username" : "USER" }
 // out:
@@ -77,10 +83,16 @@ void messenger_server::talker::handle_logout()
 void messenger_server::talker::receive_command()
 {
         char message[512];
+        memset(message, 0, sizeof(message));
         int r = m_rx.recv((unsigned char*)message, sizeof(message));
+        std::cout<< "recv command='" << message << "' r = " << r << std::endl;
         assert(r < (int)sizeof(message));
         assert('\0' == message[r]);
-        m_command.append(message);
+        if ('\0' == message[0]) {
+                m_command.set_command();
+        } else {
+                m_command.set_command(message);
+        }
 }
 
 void messenger_server::talker::parse()
@@ -121,8 +133,11 @@ void messenger_server::talker::run()
                 // todo end condition (logout or fail)
                 while (1) {
                         receive_command();
-                        parse();
-                        send_response(m_response);
+                        if (m_command.get_cmd_str() != 
+                              command::command().get_cmd_str()) {
+                                parse();
+                                send_response(m_response);
+                        }
                 }
         } catch (const char* m) {
                 std::cerr << "Talker error: " << m << std::endl;

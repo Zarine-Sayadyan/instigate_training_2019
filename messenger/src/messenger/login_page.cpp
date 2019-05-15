@@ -36,7 +36,7 @@ void login_page::register_or_login()
         t += ", \"username\" : \"";
         t += u;
         t += "\"}";
-        std::cout << " command="<< t << std::endl;
+        std::cout << "send command="<< t << std::endl;
 
         // typedef messenger_server::command C;
         // messenger_server::command c("{\"command\" : \"REGISTER"}
