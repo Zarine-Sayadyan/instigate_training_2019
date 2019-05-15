@@ -16,6 +16,8 @@
 #include <QToolBar>
 #include <QMenuBar>
 
+class messenger;
+
 class main_page : public QWidget
 {
     Q_OBJECT
@@ -23,6 +25,7 @@ public:
     QPushButton* get_logout() const;
 
 private:
+    messenger* m_messenger;
     QTableView *tblv;
     QLabel *label11, *label12, *label21, *label22;
     QPushButton *btn_logout;
@@ -31,7 +34,7 @@ private:
 private slots:
 //    void btnApply_clicked();
 public:
-    main_page();
+    main_page(messenger* m);
 };
 
 #endif // MESSENGER_MAIN_PAGE_HPP

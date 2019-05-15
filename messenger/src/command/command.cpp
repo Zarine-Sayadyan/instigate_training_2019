@@ -1,91 +1,148 @@
 #include "command.hpp"
 #include <algorithm>
+#include <cassert>
+#include <iostream>
 
-QJsonObject messenger_server::command::
-str_to_json() const
+void command::command::set_command(const std::string& s)
 {
-    QString qstr = QString::fromStdString(m_command);
-    QJsonDocument json_doc = QJsonDocument::fromJson(qstr.toUtf8());
-    QJsonObject json_obj = json_doc.object();
-    return json_obj;
+        m_command = s;
+	assert(! m_command.empty());
+	assert('{' == m_command[0]);
+	assert('}' == m_command[m_command.size() - 1]);
 }
 
-messenger_server::command::type
-messenger_server::command::
+QJsonObject command::command::
+str_to_json() const
+{
+	QString s = QString::fromStdString(m_command);
+	QJsonDocument d = QJsonDocument::fromJson(s.toUtf8());
+	QJsonObject obj = d.object();
+	return obj;
+}
+
+command::command::type
+command::command::
 get_command() const
 {
-    QJsonObject json_obj = str_to_json();
-    QString cmd = json_obj["command"].toString();
-    int n = sizeof(m_cmd_arr)/sizeof(m_cmd_arr[0]);
-    auto it = std::find(m_cmd_arr, m_cmd_arr + n, cmd);
-    int d = (int)std::distance(m_cmd_arr, it);
-    return (type)d;
+        // std::cout << "get_command=" << m_command << std::endl;
+        assert(has_key("command"));
+        QJsonObject obj = str_to_json();
+        QString cmd = obj["command"].toString();
+        int n = sizeof(m_cmd)/sizeof(m_cmd[0]);
+        assert(4 == n);
+        auto it = std::find(m_cmd, m_cmd + n, cmd.toStdString());
+        int d = (int)std::distance(m_cmd, it);
+        // std::cout << "command number is " << d << std::endl;
+        return (type)d;
+}
+
+bool command::command::has_key(const std::string& c) const
+{
+        QJsonObject obj = str_to_json();
+	QString qstr = QString::fromStdString(c);
+	bool k = obj.contains(qstr);
+	return k;        
+}
+
+std::string command::command::
+get_cmd_str() const
+{
+        return m_command;
 }
 
 // IN: "username", "status"
 // OUT: "USER", "online"
-std::string messenger_server::command::
+std::string command::command::
 get_value(const std::string& key) const
 {
-    QJsonObject json_obj = str_to_json();
-    QString qkey = QString::fromStdString(key);
-    QString cmd = json_obj[qkey].toString();
-    return cmd.toStdString();
+	QJsonObject obj = str_to_json();
+	QString qkey = QString::fromStdString(key);
+	QString cmd = obj[qkey].toString();
+	return cmd.toStdString();
 }
 
-void messenger_server::command::
-change_value(const std::string& key, const std::string& value)
+void command::command::
+set_value(const std::string& key, const std::string& value)
 {
-    QJsonObject json_obj = str_to_json();
-    QString qkey = QString::fromStdString(key);
-    QString qval = QString::fromStdString(value);
-    json_obj[qkey] = qval;
-    QJsonDocument qdoc(json_obj);
-    QString qstr(qdoc.toJson(QJsonDocument::Compact));
-    m_command = qstr.toStdString();
+	QJsonObject obj = str_to_json();
+	QString qkey = QString::fromStdString(key);
+	QString qval = QString::fromStdString(value);
+	obj[qkey] = qval;
+	QJsonDocument qdoc(obj);
+	QString s(qdoc.toJson(QJsonDocument::Compact));
+	m_command = s.toStdString();
 }
 
-void messenger_server::command::
+void command::command::
 add_value(const std::string& key, const std::string& value)
 {
-    QJsonObject json_obj = str_to_json();
-    QString qkey = QString::fromStdString(key);
-    QString qval = QString::fromStdString(value);
-    json_obj.insert(qkey,qval);
-    QJsonDocument qdoc(json_obj);
-    QString qstr(qdoc.toJson(QJsonDocument::Compact));
-    m_command = qstr.toStdString();
+	QJsonObject obj = str_to_json();
+	QString qkey = QString::fromStdString(key);
+	QString qval = QString::fromStdString(value);
+	obj.insert(qkey, qval);
+	QJsonDocument qdoc(obj);
+	QString s(qdoc.toJson(QJsonDocument::Compact));
+	m_command = s.toStdString();
 }
 
-void messenger_server::command::
+void command::command::
 remove_key(const std::string& key)
 {
-    QJsonObject json_obj = str_to_json();
-    QString qkey = QString::fromStdString(key);
-    json_obj.remove(qkey);
-    QJsonDocument qdoc(json_obj);
-    QString qstr(qdoc.toJson(QJsonDocument::Compact));
-    m_command = qstr.toStdString();
+	QJsonObject obj = str_to_json();
+	QString qkey = QString::fromStdString(key);
+	obj.remove(qkey);
+	QJsonDocument qdoc(obj);
+	QString s(qdoc.toJson(QJsonDocument::Compact));
+	m_command = s.toStdString();
 }
 
-void messenger_server::command::
-append (std::string str)
+void command::command::
+append(std::string str)
 {
-    m_command.pop_back();
-    str.erase(0,1);
-    m_command = m_command + "," + str;
+	assert(! m_command.empty());
+	assert(! str.empty());
+	assert('{' == str[0]);
+	assert('}' == m_command[m_command.size() - 1]);
+	QJsonObject obj = str_to_json(); // yet valid object
+	m_command.pop_back(); // invalid json
+	str.erase(0, 1);
+        if (! obj.isEmpty()) {
+	        m_command += ",";
+        }
+	m_command += str;
 }
+
+command::command::
+command()
+{
+        m_command = "{}";
+}
+
+command::command::
+command(command::type t)
+        : m_command("{}")
+{
+        int n = sizeof(m_cmd)/sizeof(m_cmd[0]);
+        assert(4 == n);
+        assert((int)t < n);
+        add_value("command", m_cmd[t]);
+}
+
 // n is one of these JSON
 // { “command” : “REGISTER”, “username” : “USER” }
 // { “command” : “LOGIN”, “username” : “USER” }
 // { “command” : “UPDATE”, “username” : “USER”, “status” : “online” }
 // { “command” : “LOGOUT”, “username” : “USER” }
-messenger_server::command::
+command::command::
 command(const std::string& n)
         : m_command(n)
-{}
+{
+	assert(! m_command.empty());
+	assert('{' == m_command[0]);
+	assert('}' == m_command[m_command.size() - 1]);
+}
 
-messenger_server::command::
+command::command::
 ~command()
 {}
 

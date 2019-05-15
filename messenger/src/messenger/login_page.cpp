@@ -1,4 +1,5 @@
 #include "login_page.hpp"
+#include "messenger.hpp"
 
 #include <cassert>
 #include <iostream>
@@ -9,6 +10,20 @@ QPushButton* login_page::get_ok_button() const
         return m_button;
 }
 
+void login_page::keyPressEvent(QKeyEvent* event)
+{
+        if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
+                register_or_login();
+        }
+}
+
+void login_page::show_error(const std::string& e) 
+{
+        assert(! e.empty());
+	assert(0 != m_text);
+        m_text->setPlainText(QString(e.c_str()));
+}
+
 void login_page::register_or_login()
 {
         assert(0 != m_lineedit);
@@ -17,23 +32,15 @@ void login_page::register_or_login()
         std::string u = m_lineedit->text().toStdString();
         assert(! u.empty()); // fix this report error
         bool v = m_checkBox->isChecked();
-        std::string t = "{\"command\" : ";
-        t += v ? "\"REGISTER\"" : "\"LOGIN\"";
-        t += ", \"username\" : \"";
-        t += u;
-        t += "\"}";
-        std::cout << " command="<< t << std::endl;
-
-        // typedef messenger_server::command C;
-        // messenger_server::command c("{\"command\" : \"REGISTER"}
-        // c.add_data("username", u);
-        // std::string f = c.stringify();
-        m_server.send((const unsigned char*)t.c_str(), t.size());
+        command::command c(v ? command::command::REGISTER : command::command::LOGIN);
+        c.add_value("username", u);
+        std::string t = c.get_cmd_str();
+        m_messenger->send_command(t);
 }
 
-login_page::login_page(ipc::socket m)
+login_page::login_page(messenger* m)
           : QWidget()
-          , m_server(m)
+          , m_messenger(m)
           , m_lineedit(0)
           , m_button(0)
           , m_checkBox(0)
@@ -62,7 +69,6 @@ login_page::login_page(ipc::socket m)
         QObject::connect(m_button, SIGNAL(clicked()),
                         this, SLOT(register_or_login()));
         setFixedSize(300, 200);
-
 }
 
 login_page::~login_page()

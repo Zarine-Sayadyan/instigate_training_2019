@@ -43,7 +43,7 @@ private:
         messenger_server::server* m_server;
         ipc::socket m_rx;
         ipc::socket m_tx;
-        messenger_server::command m_command;
+        command::command m_command;
         std::string m_response;
         std::string m_user;
         threads::mutex m_mutex;

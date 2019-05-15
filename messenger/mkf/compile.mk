@@ -102,7 +102,6 @@ compile: $(rcc_files) $(ui_headers) $(public_headers) $(obj_files)
 
 $(objs_path)/%.o: %.cpp
 	$(echo) "CC	$<"
-	@echo $(compiler) -c $(compiler_flags) $(cflags)  $< -o $@
 	$(compiler) -c $(compiler_flags) $(cflags)  $< -o $@
 
 $(objs_path)/%.o: $(objs_path)/%.cpp
