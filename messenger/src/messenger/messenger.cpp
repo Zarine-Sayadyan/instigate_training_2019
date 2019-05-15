@@ -46,10 +46,10 @@ void messenger::handle_register(const command::command& c)
         assert(! m_main->isVisible()); 
         assert(m_login->isVisible());
         assert(command::command::REGISTER == c.get_command());
-        assert(c.has_data("response"));
+        assert(c.has_key("response"));
         std::string r = c.get_value("response");
         assert("DONE" == r || "FAILED" == r);
-        assert("FAILED" != r || c.has_data("reason"));
+        assert("FAILED" != r || c.has_key("reason"));
         if ("DONE" == r) {
                 show_main();
         } else {
