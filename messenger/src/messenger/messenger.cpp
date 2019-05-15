@@ -39,7 +39,7 @@ std::string messenger::pop_command()
 // n can be this JSON
 // { “command” : “REGISTER”, “username” : “USER”, "response": "DONE"}
 // { “command” : “REGISTER”, “username” : “USER”, "response": "FAILED", "reason": "error"}
-void messenger::handle_register(const command::command& c)
+ void messenger::handle_register(const command::command& c)
 {
         assert(0 != m_login);
         assert(0 != m_main);
@@ -59,14 +59,44 @@ void messenger::handle_register(const command::command& c)
         }
 }
 
-void messenger::handle_login()
+ void messenger::handle_login(const command::command& c)
 {
-        // show_main();
+        assert(0 != m_login);
+        assert(0 != m_main);
+        assert(! m_main->isVisible()); 
+        assert(m_login->isVisible());
+        assert(command::command::LOGIN == c.get_command());
+        assert(c.has_key("response"));
+        std::string r = c.get_value("response");
+        assert("DONE" == r || "FAILED" == r);
+        assert("FAILED" != r || c.has_key("reason"));
+        if ("DONE" == r) {
+                show_main();
+        } else {
+                std::string e = c.get_value("reason"); 
+                assert(! e.empty());
+                m_login->show_error(e);
+        }
 }
 
-void messenger::handle_logout()
+ void messenger::handle_logout(const command::command& c)
 {
-        // show_login();
+        assert(0 != m_login);
+        assert(0 != m_main);
+        assert(m_main->isVisible()); 
+        assert(!m_login->isVisible());
+        assert(command::command::LOGOUT == c.get_command());
+        assert(c.has_key("response"));
+        std::string r = c.get_value("response");
+        assert("DONE" == r || "FAILED" == r);
+        assert("FAILED" != r || c.has_key("reason"));
+        if ("DONE" == r) {
+                show_login();
+        } else {
+                std::string e = c.get_value("reason"); 
+                assert(! e.empty());
+                m_login->show_error(e);
+        }
 }
 
 // n can be this JSON
@@ -84,10 +114,10 @@ void messenger::parse(const std::string& s)
 			handle_register(c);
 			break;
                 case command::command::LOGIN:
-			handle_login();
+			handle_login(c);
 			break;
                 case command::command::LOGOUT:
-			handle_logout();
+			handle_logout(c);
 			break;
                 // case command::UPDATE:
 
