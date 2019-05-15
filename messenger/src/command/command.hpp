@@ -23,7 +23,7 @@ class command::command : public QObject
 public:
        enum  type {REGISTER, LOGIN, LOGOUT, UPDATE};
 public:
-       bool has_data(const std::string& c) const;
+       bool has_key(const std::string& c) const;
        type get_command() const;
        std::string get_value(const std::string& key) const;
        void set_value(const std::string& key, const std::string& value);

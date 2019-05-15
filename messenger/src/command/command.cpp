@@ -23,10 +23,12 @@ get_command() const
         return (type)d;
 }
 
-bool command::command::has_data(const std::string& c) const
+bool command::command::has_key(const std::string& c) const
 {
-        assert(! c.empty());
-        return true;
+        QJsonObject obj = str_to_json();
+	QString qstr = QString::fromStdString(c);
+	bool k = obj.contains(qstr);
+	return k;        
 }
 
 std::string command::command::
