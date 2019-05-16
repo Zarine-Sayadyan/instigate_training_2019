@@ -73,7 +73,7 @@ chat_page::chat_page(messenger* m, QWidget* parent)
         , m_messenger(m)
 {
         setWindowTitle("Chat");
-        setFixedSize(700, 500);
+        setMinimumSize(700, 500);
         m_text_edit = new QTextEdit;
         m_text_edit->setReadOnly(true);
         m_line_edit = new QLineEdit;

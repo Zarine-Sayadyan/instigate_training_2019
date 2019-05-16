@@ -50,8 +50,13 @@ void main_page::create_menubar(QBoxLayout* l)
         QMenuBar* menuBar = new QMenuBar();
         QMenu* fileMenu = new QMenu("Menu");
         menuBar->addMenu(fileMenu);
-        fileMenu->addAction("Go Invisible");
+
+        m_user_label = new QLabel(m_messenger->get_username().c_str());
+        fileMenu->addAction(m_messenger->get_username().c_str());
+	
         fileMenu->addAction("Logout");
+
+
         l->setMenuBar(menuBar);
 }
 
@@ -100,6 +105,7 @@ void main_page::create_table()
                 model->setItem(r, 0, item1);
                 model->setItem(r, 1, item2);
         }
+	tblv->setStyleSheet("margin: 10 0"); 
         tblv->setModel(model);
 }
 
@@ -133,11 +139,24 @@ void main_page::set_main_page()
         cl->addWidget(m_chat);
 
         create_menubar(hl);
-        create_labels(ml);
+       // create_labels(ml);
         create_table();
         ml->addWidget(tblv);
-        btn_logout = new QPushButton(tr("Logout"));
-        ml->addWidget(btn_logout);
+      
+       
+
+
+
+
+
+
+
+
+
+
+
+//	btn_logout = new QPushButton();
+//	ml->addWidget(btn_logout);
         QObject::connect(tblv, SIGNAL(clicked(const QModelIndex&)),
                 this, SLOT(get_selected_username(const QModelIndex&)));
 }
