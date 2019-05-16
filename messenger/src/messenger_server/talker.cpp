@@ -96,9 +96,10 @@ void messenger_server::talker::handle_logout()
         set_ok();
 }
 
-void messenger_server::talker::handle_send_file()
+void messenger_server::talker::handle_send_request()
 {
-        assert(command::command::SEND_FILE == m_command.get_command());
+        assert(command::command::SEND_FILE == m_command.get_command() || 
+               command::command::SEND_MESSAGE == m_command.get_command());
         assert(m_command.has_key("from"));
         assert(m_command.has_key("to"));
         std::string to = m_command.get_value("to");
@@ -106,16 +107,15 @@ void messenger_server::talker::handle_send_file()
         assert(m_server->does_user_exist(to));
         assert(m_server->get_status(to));
         assert(0 != m_server);
-        m_server->send_file_to(to, m_command);
+        m_server->send_data_to(to, m_command);
 }
 
-void messenger_server::talker::receive_file(const command::command& c)
+void messenger_server::talker::receive_data(const command::command& c)
 {
-        assert(command::command::SEND_FILE == c.get_command());
+        assert(command::command::SEND_FILE == c.get_command() || 
+               command::command::SEND_MESSAGE == c.get_command());
         assert(c.has_key("from"));
         assert(c.has_key("to"));
-        assert(c.has_key("filename"));
-        assert(c.has_key("data"));
         send_response(c.get_cmd_str());
 }
 
@@ -149,9 +149,10 @@ void messenger_server::talker::parse()
 			handle_logout();
 			break;
                 case command::command::SEND_FILE:
-                        handle_send_file();
+                case command::command::SEND_MESSAGE:
+                        handle_send_request();
                         break;
-                case command::command::SEND_USERS :
+                case command::command::SEND_USERS:
                         handle_users_list();
                         break;
                 default:

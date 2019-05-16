@@ -26,6 +26,7 @@ public:
         QPushButton* get_logout() const;
         void set_username(const std::string& n);
         std::string get_selected_username() const;
+        void append_message(const std::string& m);
 private:
         void create_menubar(QBoxLayout* m);
         void create_labels(QBoxLayout* m);

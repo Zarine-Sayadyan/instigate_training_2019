@@ -83,9 +83,10 @@ void messenger_server::server::logout_user(const std::string& s)
 }
 
 void messenger_server::server::
-send_file_to(const std::string& u, const command::command& c)
+send_data_to(const std::string& u, const command::command& c)
 {
-        assert(command::command::SEND_FILE == c.get_command());
+        assert(command::command::SEND_FILE == c.get_command() || 
+               command::command::SEND_MESSAGE == c.get_command());
         assert(does_user_exist(u));
         assert(get_status(u));
         talker* t = 0;
@@ -97,7 +98,7 @@ send_file_to(const std::string& u, const command::command& c)
                 }
         }
         m_mutex.unlock();
-        t->receive_file(c);
+        t->receive_data(c);
 }
 
 void messenger_server::server::register_user(const std::string& s)

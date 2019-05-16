@@ -50,6 +50,7 @@ private:
         void handle_register(const command::command& c);
         void handle_login(const command::command& c);
         void handle_logout(const command::command& c);
+        void handle_send_message(const command::command& c);
         void handle_send_file(const command::command& c);
         void handle_user_list(const command::command& c);
         void request_user_list();

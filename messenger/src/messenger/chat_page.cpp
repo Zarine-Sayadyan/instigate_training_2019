@@ -10,20 +10,36 @@
 
 void chat_page::keyPressEvent(QKeyEvent *event)
 {
-        std::cout << "enter pressed" << std::endl;
         if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) {
-                message_send();
+                send_message();
         }
 }
 
-void chat_page::message_send()
+void chat_page::append_message(const std::string& m)
 {
-        if (! m_line_edit->text().isEmpty()) {
-                m_text_edit->setAlignment(Qt::AlignRight);
-                m_text_edit->append(m_line_edit->text());
-                m_line_edit->clear();
-                m_line_edit->setFocus();
+        assert(0 != m_text_edit);
+        m_text_edit->setAlignment(Qt::AlignLeft);
+        m_text_edit->append(m.c_str());
+}
+
+void chat_page::send_message()
+{
+        if (m_line_edit->text().isEmpty()) {
+                return;
         }
+        m_text_edit->setAlignment(Qt::AlignRight);
+        QString m = m_line_edit->text();
+        m_text_edit->append(m);
+        m_line_edit->clear();
+        m_line_edit->setFocus();
+        assert(0 != m_messenger);
+        command::command c(command::command::SEND_MESSAGE);
+        assert(! m_messenger->get_username().empty());
+        assert(! m_messenger->get_selected_username().empty());
+        c.add_value("from", m_messenger->get_username());
+        c.add_value("to", m_messenger->get_selected_username());
+        c.add_value("data", m.toStdString());
+        m_messenger->send_command(c.get_cmd_str());
 }
 
 // attach file click handler
@@ -72,7 +88,7 @@ chat_page::chat_page(messenger* m, QWidget* parent)
         layout->addWidget(m_send, 1, 3);
         layout->addWidget(m_file, 1, 0);
         setLayout(layout);
-        QObject::connect(m_send, SIGNAL(clicked()), SLOT(message_send()));
+        QObject::connect(m_send, SIGNAL(clicked()), SLOT(send_message()));
         QObject::connect(m_file, SIGNAL(clicked()), SLOT(send_file()));
         m_line_edit->setFocus();
 }

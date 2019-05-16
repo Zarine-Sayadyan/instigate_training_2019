@@ -21,6 +21,12 @@ std::string main_page::get_selected_username() const
         return "";
 }
 
+void main_page::append_message(const std::string& m)
+{
+        assert(0 != m_chat);
+        m_chat->append_message(m);
+}
+
 void main_page::create_menubar(QBoxLayout* l)
 {
         assert(0 != l);

@@ -18,7 +18,6 @@ class login_page : public QWidget
         Q_OBJECT
 
 public:
-        QPushButton* get_ok_button() const;
 	void show_error(const std::string& e);
 private:
         void keyPressEvent(QKeyEvent* event);

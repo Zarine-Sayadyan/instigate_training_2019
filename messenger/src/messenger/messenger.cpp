@@ -165,6 +165,18 @@ void messenger::handle_user_list(const command::command& c)
         k.parse_list(m_list);
 }
 
+void messenger::handle_send_message(const command::command& c)
+{
+        assert(command::command::SEND_MESSAGE == c.get_command());
+        assert(c.has_key("to"));
+        assert(m_username == c.get_value("to"));
+        assert(c.has_key("from"));
+        assert(c.has_key("data"));
+        assert(0 != m_main);
+        std::string data = c.get_value("data");
+        m_main->append_message(data);
+}
+
 /// to handle send file command, it must receive the file
 void messenger::handle_send_file(const command::command& c)
 {
@@ -213,8 +225,11 @@ void messenger::parse(const std::string& s)
                 case command::command::SEND_FILE:
                         handle_send_file(c);
                         break;
-                case command::command::SEND_USERS :
+                case command::command::SEND_USERS:
                         handle_user_list(c);
+                        break;
+                case command::command::SEND_MESSAGE:
+                        handle_send_message(c);
                         break;
                 default:
                         assert(false);
@@ -252,8 +267,6 @@ messenger::messenger()
         connect(m_timer, SIGNAL(timeout()), this, SLOT(handle_messages()));
         m_timer->start(500);
 
-         //QObject::connect(m_login->get_ok_button(), SIGNAL(clicked()),
-           //              this, SLOT(show_main()));
         // QObject::connect(m_main->get_logout(), SIGNAL(clicked()),
             //             this, SLOT(show_login()));
 }
