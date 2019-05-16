@@ -65,6 +65,24 @@ void messenger_server::server::logout_user(const std::string& s)
         // update_status(s);
 }
 
+void messenger_server::server::
+send_file_to(const std::string& u, const command::command& c)
+{
+        assert(command::command::SEND_FILE == c.get_command());
+        assert(does_user_exist(u));
+        assert(get_status(u));
+        talker* t = 0;
+        m_mutex.lock();
+        for (auto i = m_talkers.begin(); i != m_talkers.end(); ++i) {
+                if ((*i)->get_username() == u) {
+                        t = *i;
+                        break;
+                }
+        }
+        m_mutex.unlock();
+        t->receive_file(c);
+}
+
 void messenger_server::server::register_user(const std::string& s)
 {
         assert(! does_user_exist(s));

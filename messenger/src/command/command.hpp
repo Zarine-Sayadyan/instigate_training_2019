@@ -21,7 +21,7 @@ class command::command : public QObject
 {
         Q_OBJECT
 public:
-       enum  type {REGISTER, LOGIN, LOGOUT, UPDATE};
+       enum  type {REGISTER, LOGIN, LOGOUT, UPDATE, SEND_FILE};
 public:
        void set_command(const std::string& s = "{}");
        bool has_key(const std::string& c) const;
@@ -34,7 +34,7 @@ public:
        std::string get_cmd_str() const;
 private:
        std::string m_command;
-       std::string m_cmd[4] = {"REGISTER", "LOGIN", "LOGOUT", "UPDATE"};
+       std::string m_cmd[5] = {"REGISTER", "LOGIN", "LOGOUT", "UPDATE", "SEND_FILE"};
 private:
        QJsonObject str_to_json() const;
 public:

@@ -27,8 +27,9 @@ class messenger_server::talker : public threads::thread
 {
 public:
         void run();
-
         void send_update_command(const std::string& n, bool status);
+        const std::string& get_username() const;
+        void receive_file(const command::command& c);
 private:
         void set_registration_failed();
         void set_login_failed();
@@ -38,6 +39,7 @@ private:
         void send_response(const std::string&);
         void handle_register();
         void handle_login();
+        void handle_send_file();
         void handle_logout();
 private:
         messenger_server::server* m_server;

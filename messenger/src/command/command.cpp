@@ -29,7 +29,7 @@ get_command() const
         QJsonObject obj = str_to_json();
         QString cmd = obj["command"].toString();
         int n = sizeof(m_cmd)/sizeof(m_cmd[0]);
-        assert(4 == n);
+        assert(5 == n);
         auto it = std::find(m_cmd, m_cmd + n, cmd.toStdString());
         int d = (int)std::distance(m_cmd, it);
         // std::cout << "command number is " << d << std::endl;
@@ -123,7 +123,7 @@ command(command::type t)
         : m_command("{}")
 {
         int n = sizeof(m_cmd)/sizeof(m_cmd[0]);
-        assert(4 == n);
+        assert(5 == n);
         assert((int)t < n);
         add_value("command", m_cmd[t]);
 }

@@ -6,6 +6,7 @@
  * @brief Contains Messenger Server declaration
  */
 
+#include <command/command.hpp>
 #include <ipc/socket.hpp>
 #include <threads/mutex.hpp>
 
@@ -51,6 +52,7 @@ public:
         void insert_talker(messenger_server::talker* t);
         void insert_user(const messenger_server::user& u);
         bool get_status(const std::string& n);
+        void send_file_to(const std::string& u, const command::command& c);
 
 private:
         typedef std::vector<talker*> talkers;

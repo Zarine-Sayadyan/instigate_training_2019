@@ -6,14 +6,15 @@
 
 void talker::run()
 {
+        unsigned char msg[512];
         while (1) {
                 try {
-                        unsigned char msg[512];
+                        memset(msg, 0, sizeof(msg));
                         int s = sizeof(msg);
                         int r = m_rx.recv(msg, s);
                         assert(r < s);
+                        std::cout << "size=" << r << " recv command="<< msg << std::endl;
                         assert('\0' == msg[r]);
-                        std::cout << "recv command="<< msg << std::endl;
                         std::string str((const char*)msg);
                         assert(0 != m_messenger);
                         m_messenger->push_command(str);

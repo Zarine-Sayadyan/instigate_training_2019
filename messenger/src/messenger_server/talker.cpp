@@ -6,6 +6,11 @@
 #include <cassert>
 #include <iostream>
 
+const std::string& messenger_server::talker::
+get_username() const
+{
+        return m_user;
+}
 
 void messenger_server::talker::
 send_update_command(const std::string& n, bool status)
@@ -82,6 +87,29 @@ void messenger_server::talker::handle_logout()
         set_ok();
 }
 
+void messenger_server::talker::handle_send_file()
+{
+        assert(command::command::SEND_FILE == m_command.get_command());
+        assert(m_command.has_key("from"));
+        assert(m_command.has_key("to"));
+        std::string to = m_command.get_value("to");
+        assert(! to.empty());
+        assert(m_server->does_user_exist(to));
+        assert(m_server->get_status(to));
+        assert(0 != m_server);
+        m_server->send_file_to(to, m_command);
+}
+
+void messenger_server::talker::receive_file(const command::command& c)
+{
+        assert(command::command::SEND_FILE == c.get_command());
+        assert(c.has_key("from"));
+        assert(c.has_key("to"));
+        assert(c.has_key("filename"));
+        assert(c.has_key("data"));
+        send_response(c.get_cmd_str());
+}
+
 void messenger_server::talker::receive_command()
 {
         char message[512];
@@ -97,6 +125,7 @@ void messenger_server::talker::receive_command()
         }
 }
 
+
 void messenger_server::talker::parse()
 {
         command::command::type c = m_command.get_command();
@@ -110,9 +139,9 @@ void messenger_server::talker::parse()
                 case command::command::LOGOUT:
 			handle_logout();
 			break;
-                // case SEND_FILE:
-                //      m_server->send_file_to(find_talker("to"), c);
-                //       
+                case command::command::SEND_FILE:
+                        handle_send_file();
+                        break;
                 default:
                         assert(false);
                         break;
@@ -126,7 +155,8 @@ void messenger_server::talker::send_response(const std::string& n)
         std::cout << "sending response=" << n <<std::endl;
         m_mutex.lock();
         try {
-                m_tx.send((const unsigned char*)n.c_str(), (unsigned  int)n.size());
+                m_tx.send((const unsigned char*)n.c_str(), 
+                                (unsigned int)n.size());
         }  catch(const char* s) {
                 std::cout << "failed  to send " << std::endl;
         }

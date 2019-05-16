@@ -46,6 +46,17 @@ void messenger::send_command(const std::string& t)
         m_server.send((const unsigned char*)t.c_str(), t.size());
 }
 
+void messenger::set_username(const std::string& u)
+{
+        assert(! u.empty());
+        m_username = u;
+}
+
+const std::string& messenger::get_username() const
+{
+        return m_username;
+}
+
 // n can be this JSON
 // { “command” : “REGISTER”, “username” : “USER”, "response": "DONE"}
 // { “command” : “REGISTER”, “username” : “USER”, "response": "FAILED", "reason": "error"}
@@ -56,11 +67,13 @@ void messenger::send_command(const std::string& t)
         assert(! m_main->isVisible()); 
         assert(m_login->isVisible());
         assert(command::command::REGISTER == c.get_command());
+        assert(c.has_key("username"));
         assert(c.has_key("response"));
         std::string r = c.get_value("response");
         assert("DONE" == r || "FAILED" == r);
         assert("FAILED" != r || c.has_key("reason"));
         if ("DONE" == r) {
+                set_username(c.get_value("username"));
                 show_main();
         } else {
                 std::string e = c.get_value("reason"); 
@@ -129,7 +142,7 @@ void messenger::parse(const std::string& s)
                 case command::command::LOGOUT:
 			handle_logout(c);
 			break;
-                // case command::SEND_FILE:
+              //  case command::command::SEND_FILE:
                 // my name is to
                 // open_save_as_dialog("filename", )
                 // open file write from base64
@@ -155,6 +168,7 @@ messenger::messenger()
         , m_login(0)
         , m_main(0)
         , m_timer(0)
+        , m_username("")
 {
         assert(m_server.is_valid());
         m_server.connect("127.0.0.1", 9000);

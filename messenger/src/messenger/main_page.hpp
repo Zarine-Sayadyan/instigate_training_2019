@@ -20,21 +20,22 @@ class messenger;
 
 class main_page : public QWidget
 {
-    Q_OBJECT
+        Q_OBJECT
 public:
-    QPushButton* get_logout() const;
-
+        QPushButton* get_logout() const;
 private:
-    messenger* m_messenger;
-    QTableView *tblv;
-    QLabel *label11, *label12, *label21, *label22;
-    QPushButton *btn_logout;
-    int nrow, ncol;
+        std::string get_selected_username() const;
+private:
+        messenger* m_messenger;
+        QTableView *tblv;
+        QLabel *label11, *label12, *label21, *label22;
+        QPushButton *btn_logout;
+        int nrow, ncol;
 
 private slots:
-//    void btnApply_clicked();
+        void send_file();
 public:
-    main_page(messenger* m);
+        main_page(messenger* m);
 };
 
 #endif // MESSENGER_MAIN_PAGE_HPP

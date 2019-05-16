@@ -26,11 +26,14 @@ private:
         login_page* m_login;
         main_page* m_main;
         QTimer* m_timer;
+        std::string m_username;
         std::queue<std::string> m_queue;
 public:
         void push_command(const std::string& str);
         std::string pop_command();
         void send_command(const std::string& t);
+	const std::string& get_username() const;
+	void set_username(const std::string& u);
 
 private slots:
         void handle_messages();
