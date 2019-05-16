@@ -141,7 +141,6 @@ void messenger_server::server::insert_talker(messenger_server::talker* t)
         m_mutex.lock();
         m_talkers.push_back(t);
         m_mutex.unlock();
-        std::cout << "talkers=" << m_talkers.size() << " add new talker for " << t->get_username() << std::endl;
 }
 
 void messenger_server::server::run()
@@ -152,6 +151,7 @@ void messenger_server::server::run()
                 talker* t = new talker(this, c, c.duplicate());
                 t->create_thread();
                 insert_talker(t);
+                std::cout << "talkers size=" << m_talkers.size() << std::endl;
         }
 }
 

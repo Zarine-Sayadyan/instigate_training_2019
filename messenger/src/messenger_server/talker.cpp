@@ -112,6 +112,10 @@ void messenger_server::talker::handle_send_file()
         assert(m_server->get_status(to));
         assert(0 != m_server);
         m_server->send_file_to(to, m_command);
+        command::command c(m_command.get_cmd_str());
+        c.add_value("response", "DONE");
+        c.set_value("data", "NONE");
+        m_response = c.get_cmd_str();
 }
 
 void messenger_server::talker::receive_file(const command::command& c)
@@ -135,7 +139,8 @@ void messenger_server::talker::receive_command()
                 m_command.set_command();
         } else {
                 m_command.set_command(message);
-                std::cout<< "recv command='" << message << "' r = " << r << std::endl;
+                std::cout << "recv command=" << message << std::endl << std::endl;
+                m_response = "";
         }
 }
 
@@ -168,7 +173,7 @@ void messenger_server::talker::send_response(const std::string& n)
 {
         assert(! n.empty());
         assert(m_tx.is_valid());
-        std::cout << "sending response=" << n <<std::endl;
+        std::cout << "response=" << n <<std::endl << std::endl;
         m_mutex.lock();
         try {
                 m_tx.send((const unsigned char*)n.c_str(), 
