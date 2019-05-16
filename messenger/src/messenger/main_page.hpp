@@ -15,7 +15,9 @@
 #include <QHeaderView>
 #include <QToolBar>
 #include <QMenuBar>
+
 class messenger;
+class chat_page;
 
 class main_page : public QWidget
 {
@@ -24,12 +26,17 @@ public:
         QPushButton* get_logout() const;
 private:
         std::string get_selected_username() const;
+        void create_menubar(QBoxLayout* m);
+        void create_labels(QBoxLayout* m);
+        void create_table_headers(QBoxLayout* m);
+        void create_table(QBoxLayout* m);
 private:
         messenger* m_messenger;
-        QTableView *tblv;
+        QTableView* tblv;
         QLabel *label11, *label12, *label21, *label22;
         QPushButton *btn_logout;
         int nrow, ncol;
+        chat_page* m_chat;
 
 private slots:
         void send_file();

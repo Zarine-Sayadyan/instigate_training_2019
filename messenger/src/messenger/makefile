@@ -20,6 +20,7 @@
 cpp_files := login_page.cpp \
 	main.cpp \
 	main_page.cpp \
+	chat_page.cpp \
 	messenger.cpp \
 	talker_client.cpp
 
@@ -29,7 +30,7 @@ public_headers :=
 
 # Building QT project.
 # TODO: Add detailed comments.
-qt_headers := login_page.hpp main_page.hpp messenger.hpp
+qt_headers := login_page.hpp main_page.hpp messenger.hpp chat_page.hpp
 
 moc_flags :=
 
