@@ -10,6 +10,12 @@ QPushButton* main_page::get_logout() const
         return btn_logout;
 }
 
+void main_page::set_username(const std::string& n)
+{
+        assert(0 != m_user_label);
+        m_user_label->setText(n.c_str());
+}
+
 std::string main_page::get_selected_username() const
 {
         return "";
@@ -48,23 +54,13 @@ void main_page::create_menubar(QBoxLayout* l)
 
 void main_page::create_labels(QBoxLayout* l)
 {
-        QHBoxLayout* horLayout1 = new QHBoxLayout;
-        label11 = new QLabel("User : ");
-        label12 = new QLabel("David");
-        horLayout1->addWidget(label11);
-        horLayout1->addWidget(label12);
-        l->addLayout(horLayout1);
-}
-
-void main_page::create_table_headers(QBoxLayout* l)
-{
-        //create input number of column
-        QHBoxLayout* horLayout2 = new QHBoxLayout;
-        label21 = new QLabel(tr("Status : "));
-        label22 = new QLabel(tr("Connected"));
-        horLayout2->addWidget(label21);
-        horLayout2->addWidget(label22);
-        l->addLayout(horLayout2);
+        QHBoxLayout* h = new QHBoxLayout;
+        QLabel* u = new QLabel("User: ");
+        assert(0 != m_messenger);
+        m_user_label = new QLabel(m_messenger->get_username().c_str());
+        h->addWidget(u);
+        h->addWidget(m_user_label);
+        l->addLayout(h);
 }
 
 void main_page::create_table(QBoxLayout* l)
@@ -120,7 +116,6 @@ main_page::main_page(messenger* m)
 
         create_menubar(hl);
         create_labels(ml);
-        create_table_headers(ml);
         create_table(ml);
         btn_logout = new QPushButton(tr("Logout"));
         ml->addWidget(btn_logout);

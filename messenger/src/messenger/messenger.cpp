@@ -73,6 +73,8 @@ void messenger::set_username(const std::string& u)
 {
         assert(! u.empty());
         m_username = u;
+        assert(0 != m_main);
+        m_main->set_username(u);
 }
 
 const std::string& messenger::get_username() const
@@ -117,6 +119,7 @@ void messenger::handle_login(const command::command& c)
         assert("DONE" == r || "FAILED" == r);
         assert("FAILED" != r || c.has_key("reason"));
         if ("DONE" == r) {
+                set_username(c.get_value("username"));
                 show_main();
         } else {
                 std::string e = c.get_value("reason"); 
