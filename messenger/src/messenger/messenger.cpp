@@ -69,7 +69,7 @@ void messenger::request_user_list()
         send_command(c.get_cmd_str());
 }
 
-void messenger::send_command(const std::string& t) 
+void messenger::send_command(const std::string& t)
 {
         assert(! t.empty());
         std::cout << "send command=" << t << std::endl;
@@ -96,7 +96,7 @@ void messenger::handle_register(const command::command& c)
 {
         assert(0 != m_login);
         assert(0 != m_main);
-        assert(! m_main->isVisible()); 
+        assert(! m_main->isVisible());
         assert(m_login->isVisible());
         assert(command::command::REGISTER == c.get_command());
         assert(c.has_key("username"));
@@ -106,6 +106,9 @@ void messenger::handle_register(const command::command& c)
         assert("FAILED" != r || c.has_key("reason"));
         if ("DONE" == r) {
                 set_username(c.get_value("username"));
+                request_user_list();
+                m_main->update();
+                m_main->repaint();
                 show_main();
         } else {
                 std::string e = c.get_value("reason"); 
@@ -167,6 +170,9 @@ void messenger::handle_user_list(const command::command& c)
         command::command k(str_json.toStdString());
         m_list.clear();
         k.parse_list(m_list);
+        delete m_main;
+        m_main = new main_page(this);
+        m_main->show();
         // update
 }
 

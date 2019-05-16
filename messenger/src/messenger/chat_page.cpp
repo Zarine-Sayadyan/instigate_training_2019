@@ -7,6 +7,7 @@
 #include <QFileDialog>
 
 #include <iostream>
+#include <cassert>
 
 void chat_page::keyPressEvent(QKeyEvent *event)
 {

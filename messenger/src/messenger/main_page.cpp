@@ -4,13 +4,20 @@
 
 #include <QFileInfo>
 #include <QFileDialog>
+#include <cassert>
 
+
+void main_page::update_table()
+{
+    set_main_page();
+    update();
+    std::cout << "updating table" << std::endl;
+}
 
 void main_page::showEvent( QShowEvent* event )
 {
         std::cout << "Updating window" << std::endl;
-        assert(0 != m_messenger);
-        m_messenger->request_user_list();
+
         QWidget::showEvent( event );
 }
 
@@ -24,12 +31,13 @@ void main_page::set_username(const std::string& n)
         assert(0 != m_user_label);
         m_user_label->setText(n.c_str());
 }
-
+/*
 std::string main_page::get_selected_username() const
 {
         return "";
 }
 
+*/
 void main_page::append_message(const std::string& m)
 {
         assert(0 != m_chat);
@@ -58,7 +66,7 @@ void main_page::create_labels(QBoxLayout* l)
         l->addLayout(h);
 }
 
-void main_page::create_table(QBoxLayout* l)
+void main_page::create_table()
 {
         //create QTableView
         tblv = new QTableView();
@@ -71,6 +79,7 @@ void main_page::create_table(QBoxLayout* l)
         //get number of input row and column
         assert(0 != m_messenger);
         nrow = m_messenger->get_list_size();
+        std::cout << "user list size is" << nrow << std::endl;
         ncol = 2;
 
         //create model
@@ -83,19 +92,33 @@ void main_page::create_table(QBoxLayout* l)
         //fill model value
         for (int r = 0; r < nrow; r++ ) {
                 QString sstr1 = QString::fromStdString(m_messenger->get_first(r));
+                std::cout << m_messenger->get_first(r) << std::endl;
                 QStandardItem *item1 = new QStandardItem(sstr1);
                 QString sstr2 = QString::fromStdString(m_messenger->get_second(r));
+                std::cout << m_messenger->get_second(r) << std::endl;
                 QStandardItem *item2 = new QStandardItem(sstr2);
                 model->setItem(r, 0, item1);
                 model->setItem(r, 1, item2);
         }
         tblv->setModel(model);
-        l->addWidget(tblv);
 }
 
 main_page::main_page(messenger* m)
         : QWidget()
         , m_messenger(m)
+{
+    set_main_page();
+}
+
+void main_page::get_selected_username(const QModelIndex& index)
+{
+    QModelIndex i = index.sibling(index.row(),0);
+    QString cell_text = i.data().toString();
+    m_select_user = cell_text.toStdString();
+    std::cout << "Selected user is " << m_select_user << std::endl;
+}
+
+void main_page::set_main_page()
 {
         QHBoxLayout* hl = new QHBoxLayout();
         setLayout(hl);
@@ -111,8 +134,20 @@ main_page::main_page(messenger* m)
 
         create_menubar(hl);
         create_labels(ml);
-        create_table(ml);
+        create_table();
+        ml->addWidget(tblv);
         btn_logout = new QPushButton(tr("Logout"));
         ml->addWidget(btn_logout);
+        QObject::connect(tblv, SIGNAL(clicked(const QModelIndex&)),
+                this, SLOT(get_selected_username(const QModelIndex&)));
 }
+
+
+
+
+
+
+
+
+
 
