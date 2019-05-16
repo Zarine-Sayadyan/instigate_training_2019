@@ -15,7 +15,6 @@
 #include <QHeaderView>
 #include <QToolBar>
 #include <QMenuBar>
-
 class messenger;
 
 class main_page : public QWidget

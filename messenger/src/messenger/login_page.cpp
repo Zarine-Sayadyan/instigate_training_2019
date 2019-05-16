@@ -36,6 +36,7 @@ void login_page::register_or_login()
         c.add_value("username", u);
         std::string t = c.get_cmd_str();
         m_messenger->send_command(t);
+        m_messenger->set_name(u);
 }
 
 login_page::login_page(messenger* m)

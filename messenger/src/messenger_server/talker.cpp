@@ -6,6 +6,14 @@
 #include <cassert>
 #include <iostream>
 
+void messenger_server::talker::handle_users_list ()
+{
+    assert (0 != m_server);
+    std::string usr_list = m_server->get_user_list();
+    command::command c(m_command.get_cmd_str());
+    c.add_value("userlist", usr_list);
+    m_response = c.get_cmd_str();
+}
 
 void messenger_server::talker::
 send_update_command(const std::string& n, bool status)
@@ -99,24 +107,27 @@ void messenger_server::talker::receive_command()
 
 void messenger_server::talker::parse()
 {
-        command::command::type c = m_command.get_command();
-	switch (c) {
-                case command::command::REGISTER :
-			handle_register();
-			break;
-                case command::command::LOGIN:
-			handle_login();
-			break;
-                case command::command::LOGOUT:
-			handle_logout();
-			break;
-                // case SEND_FILE:
-                //      m_server->send_file_to(find_talker("to"), c);
-                //       
-                default:
-                        assert(false);
-                        break;
-        }
+    command::command::type c = m_command.get_command();
+    switch (c) {
+        case command::command::REGISTER :
+            handle_register();
+            break;
+        case command::command::LOGIN :
+            handle_login();
+            break;
+        case command::command::LOGOUT :
+            handle_logout();
+            break;
+            // case SEND_FILE:
+            //      m_server->send_file_to(find_talker("to"), c);
+            //       
+        case command::command::SEND_USERS :
+            handle_users_list();
+            break;
+        default:
+            assert(false);
+            break;
+    }
 }
 
 void messenger_server::talker::send_response(const std::string& n)

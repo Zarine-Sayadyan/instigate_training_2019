@@ -1,4 +1,5 @@
 #include "main_page.hpp"
+#include "messenger.hpp"
 
 QPushButton* main_page::get_logout() const
 {
@@ -56,7 +57,7 @@ main_page::main_page(messenger* m)
     tblv->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     //get number of input row and column
-    nrow = 5;
+    nrow = m_messenger->get_list_size();
     ncol = 2;
 
     //create model
@@ -71,12 +72,12 @@ main_page::main_page(messenger* m)
     //fill model value
     for( int r=0; r<nrow; r++ )
     {
-        for( int c=0; c<ncol; c++)
-        {
-            QString sstr = "[ " + QString::number(r) + " , " + QString::number(c) + " ]";
-            QStandardItem *item = new QStandardItem(QString("Idx ") + sstr);
-            model->setItem(r, c, item);
-        }
+            QString sstr1 = QString::fromStdString(m_messenger->get_first(r));
+            QStandardItem *item1 = new QStandardItem(sstr1);
+            QString sstr2 = QString::fromStdString(m_messenger->get_second(r));
+            QStandardItem *item2 = new QStandardItem(sstr2);
+            model->setItem(r, 0, item1);
+            model->setItem(r, 1, item2);
     }
 
     //set model

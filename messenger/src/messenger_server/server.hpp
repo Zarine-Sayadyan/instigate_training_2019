@@ -41,7 +41,7 @@ namespace messenger_server
 struct messenger_server::user
 {
         std::string name;
-        bool status; 
+        bool status;
 };
 
 class messenger_server::server
@@ -50,7 +50,8 @@ public:
         /// TODO
         void run();
 public:
-	
+
+        std::string get_user_list();
         void login_user(const std::string& user);
         void logout_user(const std::string& user);
         /// register new user
@@ -63,8 +64,8 @@ public:
         void insert_talker(messenger_server::talker* t);
         /// insert new user
         void insert_user(const messenger_server::user& u);
-	/// get user status
-	bool get_status(const std::string& user);
+        /// get user status
+        bool get_status(const std::string& user);
 
 private:
         typedef std::vector<talker*> talkers;

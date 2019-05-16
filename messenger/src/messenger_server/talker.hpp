@@ -70,6 +70,7 @@ private:
           * @brief organized user logout if success
           */
         void handle_logout();
+        void handle_users_list();
 private:
         messenger_server::server* m_server;
         ipc::socket m_rx;

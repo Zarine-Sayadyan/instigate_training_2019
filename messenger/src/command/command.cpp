@@ -3,6 +3,18 @@
 #include <cassert>
 #include <iostream>
 
+
+void command::command::parse_list(std::vector<std::pair<std::string, std::string>>& list)
+{
+        QJsonObject obj = str_to_json();
+        int i = 0;
+        foreach(const QString& key, obj.keys()) {
+            QJsonValue value = obj.value(key);
+            list[i].first = key.toStdString();
+            list[i].second = value.toString().toStdString();
+        }
+}
+
 void command::command::set_command(const std::string& s)
 {
         m_command = s;
