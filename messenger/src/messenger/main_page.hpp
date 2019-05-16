@@ -25,8 +25,8 @@ class main_page : public QWidget
 public:
         QPushButton* get_logout() const;
         void set_username(const std::string& n);
-private:
         std::string get_selected_username() const;
+private:
         void create_menubar(QBoxLayout* m);
         void create_labels(QBoxLayout* m);
         void create_table(QBoxLayout* m);
@@ -38,8 +38,6 @@ private:
         int nrow, ncol;
         chat_page* m_chat;
 
-private slots:
-        void send_file();
 public:
         main_page(messenger* m);
 };

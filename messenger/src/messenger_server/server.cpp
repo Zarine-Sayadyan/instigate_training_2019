@@ -161,6 +161,7 @@ messenger_server::server::server(unsigned short port)
         , m_talkers()
 {
         assert(m_socket.is_valid());
+        std::cout << "Server listening on port " << port << std::endl;
         m_socket.bind(port);
         m_socket.listen();
 }

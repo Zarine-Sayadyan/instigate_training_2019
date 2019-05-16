@@ -41,6 +41,7 @@ public:
         int get_list_size();
         std::string get_first(int i);
         std::string get_second(int i);
+        std::string get_selected_username() const;
 
 private slots:
         void handle_messages();

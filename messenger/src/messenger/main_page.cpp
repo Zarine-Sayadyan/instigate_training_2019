@@ -21,26 +21,6 @@ std::string main_page::get_selected_username() const
         return "";
 }
 
-// attach file click handler
-void main_page::send_file()
-{
-        assert(0 != m_messenger);
-        command::command c(command::command::SEND_FILE);
-        assert(! m_messenger->get_username().empty());
-        assert(! get_selected_username().empty());
-        c.add_value("from", m_messenger->get_username());
-        c.add_value("to", get_selected_username());
-        QString f = QFileDialog::getOpenFileName(this, "Select file to send",
-                QDir::currentPath(), "All files (*.*)");
-        assert(! f.isEmpty());
-        c.add_value("filename", QFileInfo(f).completeBaseName().toStdString());
-        QFile file(f);
-        file.open(QFile::ReadOnly);
-        QByteArray fileBytes = file.readAll();
-        c.add_value("data", fileBytes.toBase64().data());
-        m_messenger->send_command(c.get_cmd_str());
-}
-
 void main_page::create_menubar(QBoxLayout* l)
 {
         assert(0 != l);
@@ -111,7 +91,7 @@ main_page::main_page(messenger* m)
         QVBoxLayout* cl = new QVBoxLayout();
         hl->addLayout(cl);
 
-        m_chat = new chat_page();
+        m_chat = new chat_page(m_messenger);
         cl->addWidget(m_chat);
 
         create_menubar(hl);

@@ -1,5 +1,5 @@
-#ifndef CHAT_HPP
-#define CHAT_HPP
+#ifndef CHAT_PAGE_HPP
+#define CHAT_PAGE_HPP
 
 #include <QObject>
 #include <QPushButton>
@@ -9,22 +9,25 @@
 #include <QMessageBox>
 #include <QTextEdit>
 
+class messenger;
+
 class chat_page : public QWidget
 {
         Q_OBJECT
 private slots:
         void message_send();
-        void open_file();
+        void send_file();
 protected:
         virtual void keyPressEvent(QKeyEvent *);
 private:
+        messenger* m_messenger;
         QTextEdit* m_text_edit;
         QLineEdit* m_line_edit;
         QPushButton* m_send;
         QPushButton* m_file;
 public:
-        chat_page(QWidget* parent = 0);
+        chat_page(messenger* m, QWidget* parent = 0);
 };
 
-#endif // NODEPAD_HPP
+#endif
 

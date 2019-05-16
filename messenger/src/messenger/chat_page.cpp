@@ -1,4 +1,5 @@
 #include "chat_page.hpp"
+#include "messenger.hpp"
 
 #include <QString>
 #include <QShortcut>
@@ -24,21 +25,35 @@ void chat_page::message_send()
                 m_line_edit->setFocus();
         }
 }
-void chat_page::open_file()
+
+// attach file click handler
+void chat_page::send_file()
 {
-        QString filename =  QFileDialog::getOpenFileName(
-                        this,
-                        "Open Document",
-                        QDir::currentPath(),
-                        "All files (*.*) ;; Document files (*.doc *.rtf);; PNG files (*.png)");
-        if (! filename.isNull() ) {
+        assert(0 != m_messenger);
+        command::command c(command::command::SEND_FILE);
+        assert(! m_messenger->get_username().empty());
+        assert(! m_messenger->get_selected_username().empty());
+        c.add_value("from", m_messenger->get_username());
+        c.add_value("to", m_messenger->get_selected_username());
+        QString f = QFileDialog::getOpenFileName(this, "Select file to send",
+                QDir::currentPath(), "All files (*.*)");
+        if (! f.isNull() ) {
+                c.add_value("filename", 
+                                QFileInfo(f).completeBaseName().toStdString());
+                QFile file(f);
+                file.open(QFile::ReadOnly);
+                QByteArray fileBytes = file.readAll();
+                c.add_value("data", fileBytes.toBase64().data());
+                m_messenger->send_command(c.get_cmd_str());
+                assert(m_text_edit);
                 m_text_edit->setAlignment(Qt::AlignRight);
-                m_text_edit->append(filename);
+                m_text_edit->append(f);
         }
 }
 
-chat_page::chat_page(QWidget* parent)
+chat_page::chat_page(messenger* m, QWidget* parent)
         : QWidget(parent)
+        , m_messenger(m)
 {
         setWindowTitle("Chat");
         setFixedSize(700, 500);
@@ -58,6 +73,6 @@ chat_page::chat_page(QWidget* parent)
         layout->addWidget(m_file, 1, 0);
         setLayout(layout);
         QObject::connect(m_send, SIGNAL(clicked()), SLOT(message_send()));
-        QObject::connect(m_file, SIGNAL(clicked()), SLOT(open_file()));
+        QObject::connect(m_file, SIGNAL(clicked()), SLOT(send_file()));
         m_line_edit->setFocus();
 }

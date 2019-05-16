@@ -25,6 +25,12 @@ int messenger::get_list_size()
         return (int)m_list.size();
 }
 
+std::string messenger::get_selected_username() const
+{
+        assert(0 != m_main);
+        return "David";// m_main->get_selected_username();
+}
+
 void messenger::show_login()
 {
         assert(0 != m_login);
@@ -67,7 +73,7 @@ void messenger::send_command(const std::string& t)
 {
         assert(! t.empty());
         std::cout << "send command=" << t << std::endl;
-        m_server.send((const unsigned char*)t.c_str(), t.size());
+        m_server.send((const unsigned char*)t.c_str(), (unsigned int)t.size());
 }
 
 void messenger::set_username(const std::string& u)
