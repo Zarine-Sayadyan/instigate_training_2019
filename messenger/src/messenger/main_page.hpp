@@ -1,6 +1,7 @@
 #ifndef MESSENGER_MAIN_PAGE_HPP
 #define MESSENGER_MAIN_PAGE_HPP
 
+#include <iostream>
 #include <QtGui>
 #include <QWidget>
 #include <QTableView>
@@ -30,6 +31,7 @@ private:
         QLabel *label11, *label12, *label21, *label22;
         QPushButton *btn_logout;
         int nrow, ncol;
+        void showEvent( QShowEvent* event ); 
 
 private slots:
         void send_file();

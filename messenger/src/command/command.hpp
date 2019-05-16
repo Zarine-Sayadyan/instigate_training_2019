@@ -29,8 +29,10 @@ public:
        bool has_key(const std::string& c) const;
        type get_command() const;
        std::string get_value(const std::string& key) const;
+       QJsonObject get_json_value(const std::string& key) const;
        void set_value(const std::string& key, const std::string& value);
        void add_value(const std::string& key, const std::string& value);
+       void add_json(const std::string& key, const std::string& value);
        void remove_key(const std::string& key);
        void append(std::string str);
        std::string get_cmd_str() const;

@@ -149,12 +149,16 @@ void messenger::handle_user_list(const command::command& c)
 {
         assert(command::command::SEND_USERS == c.get_command());
         assert(c.has_key("userlist"));
-        std::string s = c.get_value("userlist");
-        command::command k(s);
+        QJsonObject s = c.get_json_value("userlist");
+        QJsonDocument doc(s);
+        QString str_json(doc.toJson(QJsonDocument::Compact));
+        std::cout << "Recieve user list is " <<
+                str_json.toStdString() << std::endl;
+        command::command k(str_json.toStdString());
         m_list.clear();
         k.parse_list(m_list);
+        // update
 }
-
 
 // n can be this JSON
 // { “command” : “REGISTER”, “username” : “USER”, "response": "DONE"}

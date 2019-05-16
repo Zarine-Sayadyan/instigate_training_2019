@@ -41,7 +41,7 @@ public:
         int get_list_size();
         std::string get_first(int i);
         std::string get_second(int i);
-
+        void request_user_list();
 private slots:
         void handle_messages();
 private:
@@ -50,7 +50,6 @@ private:
         void handle_login(const command::command& c);
         void handle_logout(const command::command& c);
         void handle_user_list(const command::command& c);
-        void request_user_list();
 
 public:
         messenger();

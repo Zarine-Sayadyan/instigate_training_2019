@@ -4,6 +4,15 @@
 #include <QFileInfo>
 #include <QFileDialog>
 
+
+void main_page::showEvent( QShowEvent* event )
+{
+        std::cout << "Updating window" << std::endl;
+        assert(0 != m_messenger);
+        m_messenger->request_user_list();
+        QWidget::showEvent( event );
+}
+
 QPushButton* main_page::get_logout() const
 {
         return btn_logout;

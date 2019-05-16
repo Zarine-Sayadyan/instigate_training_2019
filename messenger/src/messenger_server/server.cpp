@@ -24,6 +24,7 @@ std::string messenger_server::server::get_user_list()
         }
         l.erase(0, 3);
         l = "{" + l + "}";
+        std::cout << "user_list_line= " << l << std::endl;
         return l;
 }
 

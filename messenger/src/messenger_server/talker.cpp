@@ -17,7 +17,7 @@ void messenger_server::talker::handle_users_list()
         assert(0 != m_server);
         std::string usr_list = m_server->get_user_list();
         command::command c(m_command.get_cmd_str());
-        c.add_value("userlist", usr_list);
+        c.add_json("userlist", usr_list);
         m_response = c.get_cmd_str();
 }
 

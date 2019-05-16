@@ -6,13 +6,23 @@
 
 void command::command::parse_list(std::vector<std::pair<std::string, std::string>>& list)
 {
+        std::cout << "m_command = " << m_command << std::endl;
+        std::cout << "Begin parse list" << std::endl;
         QJsonObject obj = str_to_json();
         int i = 0;
         foreach(const QString& key, obj.keys()) {
-            QJsonValue value = obj.value(key);
-            list[i].first = key.toStdString();
-            list[i].second = value.toString().toStdString();
+            QJsonValue val = obj.value(key);
+            QString q_val_string = val.toString();
+            std::string val_string = q_val_string.toStdString();
+            std::pair<std::string,std::string> p;
+            p.first = key.toStdString();
+            p.second = val_string;
+            list.push_back(p);
+            std::cout << list[i].first << std::endl;
+            std::cout << list[i].second << std::endl;
+            i++;
         }
+        std::cout << "End parse list" << std::endl;
 }
 
 void command::command::set_command(const std::string& s)
@@ -73,6 +83,14 @@ get_value(const std::string& key) const
 	return cmd.toStdString();
 }
 
+QJsonObject command::command::
+get_json_value(const std::string& key) const
+{
+	QJsonObject obj = str_to_json();
+	QString qkey = QString::fromStdString(key);
+        return obj[qkey].toObject();
+}
+
 void command::command::
 set_value(const std::string& key, const std::string& value)
 {
@@ -92,6 +110,20 @@ add_value(const std::string& key, const std::string& value)
 	QString qkey = QString::fromStdString(key);
 	QString qval = QString::fromStdString(value);
 	obj.insert(qkey, qval);
+	QJsonDocument qdoc(obj);
+	QString s(qdoc.toJson(QJsonDocument::Compact));
+	m_command = s.toStdString();
+}
+
+void command::command::
+add_json(const std::string& key, const std::string& value)
+{
+	QString str = QString::fromStdString(value);
+	QJsonDocument d = QJsonDocument::fromJson(str.toUtf8());
+	QJsonObject val_obj = d.object();
+	QJsonObject obj = str_to_json();
+	QString qkey = QString::fromStdString(key);
+	obj.insert(qkey, val_obj);
 	QJsonDocument qdoc(obj);
 	QString s(qdoc.toJson(QJsonDocument::Compact));
 	m_command = s.toStdString();
