@@ -41,6 +41,7 @@ public:
         int get_list_size();
         std::string get_first(int i);
         std::string get_second(int i);
+        std::string get_selected_username() const;
         void request_user_list();
 private slots:
         void handle_messages();
@@ -49,7 +50,14 @@ private:
         void handle_register(const command::command& c);
         void handle_login(const command::command& c);
         void handle_logout(const command::command& c);
+        void handle_send_message(const command::command& c);
+        void handle_send_file(const command::command& c);
         void handle_user_list(const command::command& c);
+<<<<<<< HEAD
+=======
+        void request_user_list();
+        void receive_file(const command::command& c);
+>>>>>>> 48ad77175e472d0166f0ad538d46bd48923b9564
 
 public:
         messenger();

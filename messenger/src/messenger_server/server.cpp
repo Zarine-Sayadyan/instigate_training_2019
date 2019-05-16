@@ -84,9 +84,10 @@ void messenger_server::server::logout_user(const std::string& s)
 }
 
 void messenger_server::server::
-send_file_to(const std::string& u, const command::command& c)
+send_data_to(const std::string& u, const command::command& c)
 {
-        assert(command::command::SEND_FILE == c.get_command());
+        assert(command::command::SEND_FILE == c.get_command() || 
+               command::command::SEND_MESSAGE == c.get_command());
         assert(does_user_exist(u));
         assert(get_status(u));
         talker* t = 0;
@@ -98,7 +99,7 @@ send_file_to(const std::string& u, const command::command& c)
                 }
         }
         m_mutex.unlock();
-        t->receive_file(c);
+        t->receive_data(c);
 }
 
 void messenger_server::server::register_user(const std::string& s)
@@ -142,7 +143,6 @@ void messenger_server::server::insert_talker(messenger_server::talker* t)
         m_mutex.lock();
         m_talkers.push_back(t);
         m_mutex.unlock();
-        std::cout << "add new talker " /*<< t->get_user()*/ << std::endl;
 }
 
 void messenger_server::server::run()
@@ -153,6 +153,7 @@ void messenger_server::server::run()
                 talker* t = new talker(this, c, c.duplicate());
                 t->create_thread();
                 insert_talker(t);
+                std::cout << "talkers size=" << m_talkers.size() << std::endl;
         }
 }
 
@@ -162,6 +163,7 @@ messenger_server::server::server(unsigned short port)
         , m_talkers()
 {
         assert(m_socket.is_valid());
+        std::cout << "Server listening on port " << port << std::endl;
         m_socket.bind(port);
         m_socket.listen();
 }
@@ -170,5 +172,3 @@ messenger_server::server::~server()
 {
     // delete talkers
 }
-
-

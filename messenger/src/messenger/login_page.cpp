@@ -4,12 +4,6 @@
 #include <cassert>
 #include <iostream>
 
-QPushButton* login_page::get_ok_button() const
-{
-        assert(0 != m_button);
-        return m_button;
-}
-
 void login_page::keyPressEvent(QKeyEvent* event)
 {
         if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {

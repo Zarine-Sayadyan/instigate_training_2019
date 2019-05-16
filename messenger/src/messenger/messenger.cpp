@@ -3,6 +3,7 @@
 #include <command/command.hpp>
 
 #include <QTimer>
+#include <QFileDialog>
 
 #include <iostream>
 #include <cassert>
@@ -22,6 +23,12 @@ std::string messenger::get_second(int i)
 int messenger::get_list_size()
 {
         return (int)m_list.size();
+}
+
+std::string messenger::get_selected_username() const
+{
+        assert(0 != m_main);
+        return "David";// m_main->get_selected_username();
 }
 
 void messenger::show_login()
@@ -66,13 +73,15 @@ void messenger::send_command(const std::string& t)
 {
         assert(! t.empty());
         std::cout << "send command=" << t << std::endl;
-        m_server.send((const unsigned char*)t.c_str(), t.size());
+        m_server.send((const unsigned char*)t.c_str(), (unsigned int)t.size());
 }
 
 void messenger::set_username(const std::string& u)
 {
         assert(! u.empty());
         m_username = u;
+        assert(0 != m_main);
+        m_main->set_username(u);
 }
 
 const std::string& messenger::get_username() const
@@ -117,6 +126,7 @@ void messenger::handle_login(const command::command& c)
         assert("DONE" == r || "FAILED" == r);
         assert("FAILED" != r || c.has_key("reason"));
         if ("DONE" == r) {
+                set_username(c.get_value("username"));
                 show_main();
         } else {
                 std::string e = c.get_value("reason"); 
@@ -160,6 +170,58 @@ void messenger::handle_user_list(const command::command& c)
         // update
 }
 
+void messenger::handle_send_message(const command::command& c)
+{
+        assert(command::command::SEND_MESSAGE == c.get_command());
+        assert(c.has_key("to"));
+        assert(c.has_key("from"));
+        assert(c.has_key("data"));
+        assert(0 != m_main);
+        if (m_username == c.get_value("to")) {
+                std::string data = c.get_value("data");
+                m_main->append_message(data);
+        } else {
+                assert(c.has_key("response"));
+                // inform user about message delivery
+        }
+}
+
+void messenger::receive_file(const command::command& c)
+{
+        assert(c.has_key("filename"));
+        assert(c.has_key("data"));
+        std::string f = c.get_value("filename");
+        assert(! f.empty());
+        assert(0 != m_main);
+        QString filepath = QFileDialog::getSaveFileName(m_main, 
+                "Save File As...", QString(f.c_str()));
+        if (! filepath.isEmpty()) {
+                QFile file(filepath);
+                std::string data = c.get_value("data");
+                QByteArray fileBytes(data.c_str());
+                if (file.open(QIODevice::WriteOnly)) {
+                        QTextStream stream(&file);
+                        stream << QByteArray::fromBase64(fileBytes);
+                }
+        }
+}
+
+/// to handle send file command, it must receive the file
+void messenger::handle_send_file(const command::command& c)
+{
+        assert(command::command::SEND_FILE == c.get_command());
+        assert(c.has_key("to"));
+        assert(c.has_key("from"));
+        assert(c.has_key("filename"));
+        assert(c.has_key("data"));
+        if (m_username == c.get_value("to")) {
+                receive_file(c);
+        } else {
+                assert(c.has_key("response"));
+                // inform user about file delivery
+        }
+}
+
 // n can be this JSON
 // { “command” : “REGISTER”, “username” : “USER”, "response": "DONE"}
 // { “command” : “REGISTER”, “username” : “USER”, "response": "FAILED", "reason": "error"}
@@ -181,10 +243,13 @@ void messenger::parse(const std::string& s)
 			handle_logout(c);
 			break;
                 case command::command::SEND_FILE:
-                        // handle_send_file(c);
+                        handle_send_file(c);
                         break;
-                case command::command::SEND_USERS :
+                case command::command::SEND_USERS:
                         handle_user_list(c);
+                        break;
+                case command::command::SEND_MESSAGE:
+                        handle_send_message(c);
                         break;
                 default:
                         assert(false);
@@ -222,8 +287,6 @@ messenger::messenger()
         connect(m_timer, SIGNAL(timeout()), this, SLOT(handle_messages()));
         m_timer->start(500);
 
-         //QObject::connect(m_login->get_ok_button(), SIGNAL(clicked()),
-           //              this, SLOT(show_main()));
         // QObject::connect(m_main->get_logout(), SIGNAL(clicked()),
             //             this, SLOT(show_login()));
 }

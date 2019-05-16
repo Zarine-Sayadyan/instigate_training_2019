@@ -16,25 +16,30 @@
 #include <QHeaderView>
 #include <QToolBar>
 #include <QMenuBar>
+
 class messenger;
+class chat_page;
 
 class main_page : public QWidget
 {
         Q_OBJECT
 public:
         QPushButton* get_logout() const;
-private:
+        void set_username(const std::string& n);
         std::string get_selected_username() const;
+        void append_message(const std::string& m);
+private:
+        void create_menubar(QBoxLayout* m);
+        void create_labels(QBoxLayout* m);
+        void create_table(QBoxLayout* m);
+        void showEvent(QShowEvent* event); 
 private:
         messenger* m_messenger;
-        QTableView *tblv;
-        QLabel *label11, *label12, *label21, *label22;
+        QTableView* tblv;
+        QLabel* m_user_label;
         QPushButton *btn_logout;
         int nrow, ncol;
-        void showEvent( QShowEvent* event ); 
-
-private slots:
-        void send_file();
+        chat_page* m_chat;
 public:
         main_page(messenger* m);
 };

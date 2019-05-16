@@ -42,7 +42,7 @@ public:
          */
         void send_update_command(const std::string& n, bool status);
         const std::string& get_username() const;
-        void receive_file(const command::command& c);
+        void receive_data(const command::command& c);
 private:
         /** 
          *  @fn set_registration_failed
@@ -74,7 +74,7 @@ private:
          * @fn handle_send_file
          * @brief handle SEND_FILE command  
          */
-        void handle_send_file();
+        void handle_send_request();
         /** @fn handle_logout
           * @brief organized user logout if success
           */

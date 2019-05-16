@@ -1,5 +1,6 @@
 #include "main_page.hpp"
 #include "messenger.hpp"
+#include "chat_page.hpp"
 
 #include <QFileInfo>
 #include <QFileDialog>
@@ -18,61 +19,47 @@ QPushButton* main_page::get_logout() const
         return btn_logout;
 }
 
+void main_page::set_username(const std::string& n)
+{
+        assert(0 != m_user_label);
+        m_user_label->setText(n.c_str());
+}
+
 std::string main_page::get_selected_username() const
 {
         return "";
 }
 
-// attach file click handler
-void main_page::send_file()
+void main_page::append_message(const std::string& m)
 {
-        assert(0 != m_messenger);
-        command::command c(command::command::SEND_FILE);
-        assert(! m_messenger->get_username().empty());
-        assert(! get_selected_username().empty());
-        c.add_value("from", m_messenger->get_username());
-        c.add_value("to", get_selected_username());
-        QString f = QFileDialog::getOpenFileName(this, "Select file to send",
-                QDir::currentPath(), "All files (*.*)");
-        assert(! f.isEmpty());
-        c.add_value("filename", QFileInfo(f).completeBaseName().toStdString());
-        QFile file(f);
-        file.open(QFile::ReadOnly);
-        QByteArray fileBytes = file.readAll();
-        c.add_value("data", fileBytes.toBase64().data());
-        m_messenger->send_command(c.get_cmd_str());
+        assert(0 != m_chat);
+        m_chat->append_message(m);
 }
 
-main_page::main_page(messenger* m)
-        : QWidget()
-        , m_messenger(m)
+void main_page::create_menubar(QBoxLayout* l)
 {
-        //create toolbar
+        assert(0 != l);
         QMenuBar* menuBar = new QMenuBar();
-        QMenu *fileMenu = new QMenu("Menu");
+        QMenu* fileMenu = new QMenu("Menu");
         menuBar->addMenu(fileMenu);
         fileMenu->addAction("Go Invisible");
         fileMenu->addAction("Logout");
+        l->setMenuBar(menuBar);
+}
 
-        //create layout
-        QVBoxLayout *mainLayout = new QVBoxLayout();
-        QHBoxLayout *horLayout1 = new QHBoxLayout;
-        QHBoxLayout *horLayout2 = new QHBoxLayout;
+void main_page::create_labels(QBoxLayout* l)
+{
+        QHBoxLayout* h = new QHBoxLayout;
+        QLabel* u = new QLabel("User: ");
+        assert(0 != m_messenger);
+        m_user_label = new QLabel(m_messenger->get_username().c_str());
+        h->addWidget(u);
+        h->addWidget(m_user_label);
+        l->addLayout(h);
+}
 
-        //create input number of row
-        label11 = new QLabel(tr("User : "));
-        label12 = new QLabel(tr("David"));
-        horLayout1->addWidget(label11);
-        horLayout1->addWidget(label12);
-
-        //create input number of column
-        label21 = new QLabel(tr("Status : "));
-        label22 = new QLabel(tr("Connected"));
-        horLayout2->addWidget(label21);
-        horLayout2->addWidget(label22);
-
-        btn_logout = new QPushButton(tr("Logout"));
-
+void main_page::create_table(QBoxLayout* l)
+{
         //create QTableView
         tblv = new QTableView();
         tblv->setSelectionBehavior(QAbstractItemView::SelectItems );
@@ -82,17 +69,16 @@ main_page::main_page(messenger* m)
         tblv->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
         //get number of input row and column
+        assert(0 != m_messenger);
         nrow = m_messenger->get_list_size();
         ncol = 2;
 
         //create model
-        QStandardItemModel *model = new QStandardItemModel( nrow, ncol, this );
+        QStandardItemModel* model = new QStandardItemModel(nrow, ncol, this);
 
-        //create QTableview Horizontal Header
         QStringList header;
         header << "Names" << "Status";
-        //for (int r=0; r<header.size(); r++)
-        model->setHorizontalHeaderLabels( header);
+        model->setHorizontalHeaderLabels(header);
 
         //fill model value
         for (int r = 0; r < nrow; r++ ) {
@@ -103,15 +89,30 @@ main_page::main_page(messenger* m)
                 model->setItem(r, 0, item1);
                 model->setItem(r, 1, item2);
         }
-
-        //set model
         tblv->setModel(model);
-        //setting layout
-        mainLayout->setMenuBar(menuBar);
-        mainLayout->addLayout(horLayout1);
-        mainLayout->addLayout(horLayout2);
-        mainLayout->addWidget(btn_logout);
-        mainLayout->addWidget(tblv);
-        setLayout(mainLayout);
+        l->addWidget(tblv);
+}
+
+main_page::main_page(messenger* m)
+        : QWidget()
+        , m_messenger(m)
+{
+        QHBoxLayout* hl = new QHBoxLayout();
+        setLayout(hl);
+
+        QVBoxLayout* ml = new QVBoxLayout();
+        hl->addLayout(ml);
+
+        QVBoxLayout* cl = new QVBoxLayout();
+        hl->addLayout(cl);
+
+        m_chat = new chat_page(m_messenger);
+        cl->addWidget(m_chat);
+
+        create_menubar(hl);
+        create_labels(ml);
+        create_table(ml);
+        btn_logout = new QPushButton(tr("Logout"));
+        ml->addWidget(btn_logout);
 }
 
