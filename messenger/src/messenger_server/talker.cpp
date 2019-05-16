@@ -12,6 +12,15 @@ get_username() const
         return m_user;
 }
 
+void messenger_server::talker::handle_users_list()
+{
+        assert(0 != m_server);
+        std::string usr_list = m_server->get_user_list();
+        command::command c(m_command.get_cmd_str());
+        c.add_value("userlist", usr_list);
+        m_response = c.get_cmd_str();
+}
+
 void messenger_server::talker::
 send_update_command(const std::string& n, bool status)
 {
@@ -141,6 +150,9 @@ void messenger_server::talker::parse()
 			break;
                 case command::command::SEND_FILE:
                         handle_send_file();
+                        break;
+                case command::command::SEND_USERS :
+                        handle_users_list();
                         break;
                 default:
                         assert(false);

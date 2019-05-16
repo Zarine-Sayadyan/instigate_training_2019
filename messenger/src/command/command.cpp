@@ -3,6 +3,18 @@
 #include <cassert>
 #include <iostream>
 
+
+void command::command::parse_list(std::vector<std::pair<std::string, std::string>>& list)
+{
+        QJsonObject obj = str_to_json();
+        int i = 0;
+        foreach(const QString& key, obj.keys()) {
+            QJsonValue value = obj.value(key);
+            list[i].first = key.toStdString();
+            list[i].second = value.toString().toStdString();
+        }
+}
+
 void command::command::set_command(const std::string& s)
 {
         m_command = s;
@@ -29,7 +41,7 @@ get_command() const
         QJsonObject obj = str_to_json();
         QString cmd = obj["command"].toString();
         int n = sizeof(m_cmd)/sizeof(m_cmd[0]);
-        assert(5 == n);
+        assert(6 == n);
         auto it = std::find(m_cmd, m_cmd + n, cmd.toStdString());
         int d = (int)std::distance(m_cmd, it);
         // std::cout << "command number is " << d << std::endl;
@@ -123,7 +135,7 @@ command(command::type t)
         : m_command("{}")
 {
         int n = sizeof(m_cmd)/sizeof(m_cmd[0]);
-        assert(5 == n);
+        assert(6 == n);
         assert((int)t < n);
         add_value("command", m_cmd[t]);
 }

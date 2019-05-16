@@ -39,17 +39,16 @@ main_page::main_page(messenger* m)
         , m_messenger(m)
 {
         //create toolbar
-
         QMenuBar* menuBar = new QMenuBar();
-        QMenu* fileMenu = new QMenu("Menu");
+        QMenu *fileMenu = new QMenu("Menu");
         menuBar->addMenu(fileMenu);
         fileMenu->addAction("Go Invisible");
         fileMenu->addAction("Logout");
 
         //create layout
-        QVBoxLayout* mainLayout = new QVBoxLayout;
-        QHBoxLayout* horLayout1 = new QHBoxLayout;
-        QHBoxLayout* horLayout2 = new QHBoxLayout;
+        QVBoxLayout *mainLayout = new QVBoxLayout();
+        QHBoxLayout *horLayout1 = new QHBoxLayout;
+        QHBoxLayout *horLayout2 = new QHBoxLayout;
 
         //create input number of row
         label11 = new QLabel(tr("User : "));
@@ -64,24 +63,21 @@ main_page::main_page(messenger* m)
         horLayout2->addWidget(label22);
 
         btn_logout = new QPushButton(tr("Logout"));
-        QObject::connect(btn_logout, SIGNAL(clicked()), 
-                        this, SLOT(send_file()));
-
 
         //create QTableView
         tblv = new QTableView();
-        tblv->setSelectionBehavior(QAbstractItemView::SelectItems);
-        tblv->setSelectionMode(QAbstractItemView::ExtendedSelection);
+        tblv->setSelectionBehavior(QAbstractItemView::SelectItems );
+        tblv->setSelectionMode( QAbstractItemView::ExtendedSelection );
         tblv->setEditTriggers(QAbstractItemView::NoEditTriggers);
         tblv->resizeColumnsToContents();
         tblv->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
         //get number of input row and column
-        nrow = 5;
+        nrow = m_messenger->get_list_size();
         ncol = 2;
 
         //create model
-        QStandardItemModel* model = new QStandardItemModel(nrow, ncol, this);
+        QStandardItemModel *model = new QStandardItemModel( nrow, ncol, this );
 
         //create QTableview Horizontal Header
         QStringList header;
@@ -90,26 +86,23 @@ main_page::main_page(messenger* m)
         model->setHorizontalHeaderLabels( header);
 
         //fill model value
-        for( int r=0; r<nrow; r++ )
-        {
-                for( int c=0; c<ncol; c++)
-                {
-                        QString sstr = "[ " + QString::number(r) + " , " + QString::number(c) + " ]";
-                        QStandardItem *item = new QStandardItem(QString("Idx ") + sstr);
-                        model->setItem(r, c, item);
-                }
+        for (int r = 0; r < nrow; r++ ) {
+                QString sstr1 = QString::fromStdString(m_messenger->get_first(r));
+                QStandardItem *item1 = new QStandardItem(sstr1);
+                QString sstr2 = QString::fromStdString(m_messenger->get_second(r));
+                QStandardItem *item2 = new QStandardItem(sstr2);
+                model->setItem(r, 0, item1);
+                model->setItem(r, 1, item2);
         }
 
         //set model
-
         tblv->setModel(model);
         //setting layout
         mainLayout->setMenuBar(menuBar);
         mainLayout->addLayout(horLayout1);
         mainLayout->addLayout(horLayout2);
-        mainLayout->addWidget(tblv);
         mainLayout->addWidget(btn_logout);
+        mainLayout->addWidget(tblv);
         setLayout(mainLayout);
-
 }
 

@@ -7,6 +7,23 @@
 #include <iostream>
 #include <cassert>
 
+std::string messenger::get_first(int i)
+{
+        assert(i < m_list.size());
+        return m_list[i].first;
+}
+
+std::string messenger::get_second(int i)
+{
+        assert(i < m_list.size());
+        return m_list[i].second;
+}
+
+int messenger::get_list_size()
+{
+        return (int)m_list.size();
+}
+
 void messenger::show_login()
 {
         assert(0 != m_login);
@@ -39,6 +56,12 @@ std::string messenger::pop_command()
         return str;
 }
 
+void messenger::request_user_list()
+{
+        command::command c(command::command::SEND_USERS);
+        send_command(c.get_cmd_str());
+}
+
 void messenger::send_command(const std::string& t) 
 {
         assert(! t.empty());
@@ -60,7 +83,7 @@ const std::string& messenger::get_username() const
 // n can be this JSON
 // { “command” : “REGISTER”, “username” : “USER”, "response": "DONE"}
 // { “command” : “REGISTER”, “username” : “USER”, "response": "FAILED", "reason": "error"}
- void messenger::handle_register(const command::command& c)
+void messenger::handle_register(const command::command& c)
 {
         assert(0 != m_login);
         assert(0 != m_main);
@@ -82,7 +105,7 @@ const std::string& messenger::get_username() const
         }
 }
 
- void messenger::handle_login(const command::command& c)
+void messenger::handle_login(const command::command& c)
 {
         assert(0 != m_login);
         assert(0 != m_main);
@@ -102,7 +125,7 @@ const std::string& messenger::get_username() const
         }
 }
 
- void messenger::handle_logout(const command::command& c)
+void messenger::handle_logout(const command::command& c)
 {
         assert(0 != m_login);
         assert(0 != m_main);
@@ -121,6 +144,17 @@ const std::string& messenger::get_username() const
                 m_login->show_error(e);
         }
 }
+
+void messenger::handle_user_list(const command::command& c)
+{
+        assert(command::command::SEND_USERS == c.get_command());
+        assert(c.has_key("userlist"));
+        std::string s = c.get_value("userlist");
+        command::command k(s);
+        m_list.clear();
+        k.parse_list(m_list);
+}
+
 
 // n can be this JSON
 // { “command” : “REGISTER”, “username” : “USER”, "response": "DONE"}
@@ -142,23 +176,24 @@ void messenger::parse(const std::string& s)
                 case command::command::LOGOUT:
 			handle_logout(c);
 			break;
-              //  case command::command::SEND_FILE:
-                // my name is to
-                // open_save_as_dialog("filename", )
-                // open file write from base64
-
+                case command::command::SEND_FILE:
+                        // handle_send_file(c);
+                        break;
+                case command::command::SEND_USERS :
+                        handle_user_list(c);
+                        break;
                 default:
                         assert(false);
                         break;
         }
-
 }
+
 void messenger::handle_messages()
 {
-        if (! m_queue.empty()) {
-                std::string str = pop_command();
-                parse(str);
-        }
+    if (! m_queue.empty()) {
+        std::string str = pop_command();
+        parse(str);
+    }
 }
 
 //constructor and destructor
@@ -191,8 +226,7 @@ messenger::messenger()
 
 messenger::~messenger()
 {
-        delete m_timer;
-        delete m_login;
-        delete m_main;
+    delete m_timer;
+    delete m_login;
+    delete m_main;
 }
-

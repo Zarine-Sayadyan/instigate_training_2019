@@ -12,6 +12,8 @@
 #include <QString>
 
 #include <string>
+#include <vector>
+#include <utility>
 
 namespace command {
         class command;
@@ -21,7 +23,7 @@ class command::command : public QObject
 {
         Q_OBJECT
 public:
-       enum  type {REGISTER, LOGIN, LOGOUT, UPDATE, SEND_FILE};
+       enum  type {REGISTER, LOGIN, LOGOUT, UPDATE, SEND_FILE, SEND_USERS};
 public:
        void set_command(const std::string& s = "{}");
        bool has_key(const std::string& c) const;
@@ -32,9 +34,10 @@ public:
        void remove_key(const std::string& key);
        void append(std::string str);
        std::string get_cmd_str() const;
+       void parse_list(std::vector<std::pair<std::string, std::string>>& list);
 private:
        std::string m_command;
-       std::string m_cmd[5] = {"REGISTER", "LOGIN", "LOGOUT", "UPDATE", "SEND_FILE"};
+       std::string m_cmd[6] = {"REGISTER", "LOGIN", "LOGOUT", "UPDATE", "SEND_FILE", "SEND_USERS"};
 private:
        QJsonObject str_to_json() const;
 public:

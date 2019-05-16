@@ -10,6 +10,23 @@
 #include <cassert>
 #include <algorithm>
 
+// {"USER1" : "ONLINE", "USER2" : "OFFLINE" } 
+std::string messenger_server::server::get_user_list()
+{
+        std::string l = "";
+        for (auto it = m_users.begin(); it != m_users.end(); ++it) {
+                l += " , \"" + it->name +"\" : ";
+                if (true  == it->status) {
+                        l += "\"online\"";
+                } else {
+                        l += "\"offline\"";
+                }
+        }
+        l.erase(0, 3);
+        l = "{" + l + "}";
+        return l;
+}
+
 bool messenger_server::server::does_user_exist(const std::string& name)
 {
         m_mutex.lock();
