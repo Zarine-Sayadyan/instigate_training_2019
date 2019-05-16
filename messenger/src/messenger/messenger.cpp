@@ -169,12 +169,16 @@ void messenger::handle_send_message(const command::command& c)
 {
         assert(command::command::SEND_MESSAGE == c.get_command());
         assert(c.has_key("to"));
-        assert(m_username == c.get_value("to"));
         assert(c.has_key("from"));
         assert(c.has_key("data"));
         assert(0 != m_main);
-        std::string data = c.get_value("data");
-        m_main->append_message(data);
+        if (m_username == c.get_value("to")) {
+                std::string data = c.get_value("data");
+                m_main->append_message(data);
+        } else {
+                assert(c.has_key("response"));
+                // inform user about message delivery
+        }
 }
 
 void messenger::receive_file(const command::command& c)
