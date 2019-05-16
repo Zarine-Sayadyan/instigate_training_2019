@@ -177,13 +177,8 @@ void messenger::handle_send_message(const command::command& c)
         m_main->append_message(data);
 }
 
-/// to handle send file command, it must receive the file
-void messenger::handle_send_file(const command::command& c)
+void messenger::receive_file(const command::command& c)
 {
-        assert(command::command::SEND_FILE == c.get_command());
-        assert(c.has_key("to"));
-        assert(m_username == c.get_value("to"));
-        assert(c.has_key("from"));
         assert(c.has_key("filename"));
         assert(c.has_key("data"));
         std::string f = c.get_value("filename");
@@ -199,6 +194,22 @@ void messenger::handle_send_file(const command::command& c)
                         QTextStream stream(&file);
                         stream << QByteArray::fromBase64(fileBytes);
                 }
+        }
+}
+
+/// to handle send file command, it must receive the file
+void messenger::handle_send_file(const command::command& c)
+{
+        assert(command::command::SEND_FILE == c.get_command());
+        assert(c.has_key("to"));
+        assert(c.has_key("from"));
+        assert(c.has_key("filename"));
+        assert(c.has_key("data"));
+        if (m_username == c.get_value("to")) {
+                receive_file(c);
+        } else {
+                assert(c.has_key("response"));
+                // inform user about file delivery
         }
 }
 

@@ -41,10 +41,14 @@ void messenger_server::talker::set_registration_failed()
 
 void messenger_server::talker::set_login_failed()
 {
-        /// add already login fault
+        assert(0 != m_server);
+        assert(! m_server->does_user_exist(m_user) ||
+                        m_server->get_status(m_user));
+        std::string e = (! m_server->does_user_exist(m_user)) ? 
+                "User doesn't exist" : "User is already online";
         command::command r(m_command.get_cmd_str());
         r.add_value("response", "FAILED");
-        r.add_value("reason", "User doesn't exist");
+        r.add_value("reason", e);
         m_response = r.get_cmd_str();
 }
 
@@ -75,6 +79,7 @@ void messenger_server::talker::handle_register()
 
 void messenger_server::talker::handle_login()
 {
+        assert(command::command::LOGIN == m_command.get_command());
         m_user = m_command.get_value("username");
         assert(! m_user.empty());
         assert(0 != m_server);
@@ -108,6 +113,10 @@ void messenger_server::talker::handle_send_request()
         assert(m_server->get_status(to));
         assert(0 != m_server);
         m_server->send_data_to(to, m_command);
+        command::command c(m_command.get_cmd_str());
+        c.add_value("response", "DONE");
+        c.set_value("data", "NONE");
+        m_response = c.get_cmd_str();
 }
 
 void messenger_server::talker::receive_data(const command::command& c)
@@ -130,10 +139,10 @@ void messenger_server::talker::receive_command()
                 m_command.set_command();
         } else {
                 m_command.set_command(message);
-                std::cout<< "recv command='" << message << "' r = " << r << std::endl;
+                std::cout << "recv command=" << message << std::endl << std::endl;
+                m_response = "";
         }
 }
-
 
 void messenger_server::talker::parse()
 {
@@ -165,7 +174,7 @@ void messenger_server::talker::send_response(const std::string& n)
 {
         assert(! n.empty());
         assert(m_tx.is_valid());
-        std::cout << "sending response=" << n <<std::endl;
+        std::cout << "response=" << n <<std::endl << std::endl;
         m_mutex.lock();
         try {
                 m_tx.send((const unsigned char*)n.c_str(), 
