@@ -3,6 +3,7 @@
 #include <command/command.hpp>
 
 #include <QTimer>
+#include <QFileDialog>
 
 #include <iostream>
 #include <cassert>
@@ -155,6 +156,30 @@ void messenger::handle_user_list(const command::command& c)
         k.parse_list(m_list);
 }
 
+/// to handle send file command, it must receive the file
+void messenger::handle_send_file(const command::command& c)
+{
+        assert(command::command::SEND_FILE == c.get_command());
+        assert(c.has_key("to"));
+        assert(m_username == c.get_value("to"));
+        assert(c.has_key("from"));
+        assert(c.has_key("filename"));
+        assert(c.has_key("data"));
+        std::string f = c.get_value("filename");
+        assert(! f.empty());
+        assert(0 != m_main);
+        QString filepath = QFileDialog::getSaveFileName(m_main, 
+                "Save File As...", QString(f.c_str()));
+        if (! filepath.isEmpty()) {
+                QFile file(filepath);
+                std::string data = c.get_value("data");
+                QByteArray fileBytes(data.c_str());
+                if (file.open(QIODevice::WriteOnly)) {
+                        QTextStream stream(&file);
+                        stream << QByteArray::fromBase64(fileBytes);
+                }
+        }
+}
 
 // n can be this JSON
 // { “command” : “REGISTER”, “username” : “USER”, "response": "DONE"}
@@ -177,7 +202,7 @@ void messenger::parse(const std::string& s)
 			handle_logout(c);
 			break;
                 case command::command::SEND_FILE:
-                        // handle_send_file(c);
+                        handle_send_file(c);
                         break;
                 case command::command::SEND_USERS :
                         handle_user_list(c);
