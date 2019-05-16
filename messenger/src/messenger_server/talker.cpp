@@ -41,10 +41,14 @@ void messenger_server::talker::set_registration_failed()
 
 void messenger_server::talker::set_login_failed()
 {
-        /// add already login fault
+        assert(0 != m_server);
+        assert(! m_server->does_user_exist(m_user) ||
+                        m_server->get_status(m_user));
+        std::string e = (! m_server->does_user_exist(m_user)) ? 
+                "User doesn't exist" : "User is already online";
         command::command r(m_command.get_cmd_str());
         r.add_value("response", "FAILED");
-        r.add_value("reason", "User doesn't exist");
+        r.add_value("reason", e);
         m_response = r.get_cmd_str();
 }
 
@@ -75,6 +79,7 @@ void messenger_server::talker::handle_register()
 
 void messenger_server::talker::handle_login()
 {
+        assert(command::command::LOGIN == m_command.get_command());
         m_user = m_command.get_value("username");
         assert(! m_user.empty());
         assert(0 != m_server);
@@ -133,7 +138,6 @@ void messenger_server::talker::receive_command()
                 std::cout<< "recv command='" << message << "' r = " << r << std::endl;
         }
 }
-
 
 void messenger_server::talker::parse()
 {
