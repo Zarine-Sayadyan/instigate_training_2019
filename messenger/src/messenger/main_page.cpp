@@ -6,6 +6,7 @@
 #include <QSpacerItem>
 #include <QFileInfo>
 #include <QFileDialog>
+#include <QSplitter>
 #include <cassert>
 
 
@@ -118,7 +119,6 @@ main_page::main_page(messenger* m)
         , m_user_label(0)
         , m_chat(0)
         , m_select_user("")
-
 {
         QVBoxLayout* ml = new QVBoxLayout;
         setLayout(ml);
@@ -132,5 +132,6 @@ main_page::main_page(messenger* m)
         create_table(l);
         m_chat = new chat_page(m_messenger);
         l->addWidget(m_chat);
+
 }
 
