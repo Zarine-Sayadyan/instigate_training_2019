@@ -13,9 +13,6 @@ void talker::run()
                         int s = sizeof(msg);
                         int r = m_rx.recv(msg, s);
                         assert(r < s);
-                        std::cout << __FUNCTION__ << std::endl;
-
-                        std::cout << std::endl;
                         assert('\0' == msg[r]);
                         std::string str((const char*)msg);
                         assert(0 != m_messenger);

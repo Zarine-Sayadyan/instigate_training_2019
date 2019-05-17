@@ -55,7 +55,6 @@ void main_page::create_tool_bar(QBoxLayout* l)
 
 void main_page::fill_model()
 {
-        std::cout << __FUNCTION__ << std::endl;
         assert(0 != m_model);
         m_model->clear();
         QStringList header;
