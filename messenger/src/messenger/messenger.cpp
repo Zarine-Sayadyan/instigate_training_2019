@@ -84,6 +84,10 @@ void messenger::set_username(const std::string& u)
         m_main->set_username(u);
 }
 
+std::string messenger::get_username()
+{
+        return m_username;
+}
 const std::string& messenger::get_username() const
 {
         return m_username;

@@ -38,6 +38,7 @@ public:
         void send_command(const std::string& t);
 	const std::string& get_username() const;
 	void set_username(const std::string& u);
+        std::string get_username();
         int get_list_size();
         std::string get_first(int i);
         std::string get_second(int i);

@@ -18,13 +18,22 @@ void main_page::set_username(const std::string& n)
         assert(0 != m_user_label);
         m_user_label->setText(n.c_str());
 }
+
 /*
 std::string main_page::get_selected_username() const
 {
         return "";
 }
-
 */
+void main_page::logout()
+{
+        assert(0 != m_logout);
+        command::command c(command::command::LOGOUT);
+        c.add_value("username", m_messenger->get_username());
+        std::string t = c.get_cmd_str();
+        m_messenger->send_command(t);
+}
+
 void main_page::append_message(const std::string& m)
 {
         assert(0 != m_chat);
@@ -95,6 +104,7 @@ main_page::main_page(messenger* m)
         : QWidget()
         , m_messenger(m)
         , tblv(0)
+        , m_logout(0)
         , nrow(0)
         , ncol(2)
         , m_user_label(0)
@@ -119,6 +129,8 @@ main_page::main_page(messenger* m)
         ml->addWidget(tblv);
         QObject::connect(tblv, SIGNAL(clicked(const QModelIndex&)),
                 this, SLOT(get_selected_username(const QModelIndex&)));
+        QObject::connect(m_logout, SIGNAL(clicked()),
+                this, SLOT(logout()));
 }
 
 

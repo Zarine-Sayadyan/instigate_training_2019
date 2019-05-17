@@ -39,6 +39,7 @@ private:
         std::string m_select_user;
 private slots:
         void get_selected_username(const QModelIndex& index);
+        void logout();
 public:
         main_page(messenger* m);
 };
