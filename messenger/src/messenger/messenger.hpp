@@ -53,6 +53,7 @@ private:
         void handle_send_message(const command::command& c);
         void handle_send_file(const command::command& c);
         void handle_user_list(const command::command& c);
+        void handle_update_message(const command::command& c);
         void receive_file(const command::command& c);
 public:
         messenger();

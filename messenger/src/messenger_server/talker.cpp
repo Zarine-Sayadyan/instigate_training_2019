@@ -74,6 +74,7 @@ void messenger_server::talker::handle_register()
         } else {
                 m_server->register_user(m_user);
                 set_ok();
+                m_update_required = true;
         }
 }
 
@@ -85,10 +86,11 @@ void messenger_server::talker::handle_login()
         assert(0 != m_server);
         if (m_server->does_user_exist(m_user) &&
                         ! m_server->get_status(m_user)) {
-            m_server->login_user(m_user);
-            set_ok();
+                m_server->login_user(m_user);
+                set_ok();
+                m_update_required = true;
         } else {
-            set_login_failed();
+                set_login_failed();
         }
 }
 
@@ -99,6 +101,7 @@ void messenger_server::talker::handle_logout()
         assert(m_server->get_status(m_user));
         m_server->logout_user(m_user);
         set_ok();
+        m_update_required = true;
 }
 
 void messenger_server::talker::handle_send_request()
@@ -135,6 +138,7 @@ void messenger_server::talker::receive_command()
         int r = m_rx.recv((unsigned char*)message, sizeof(message));
         assert(r < (int)sizeof(message));
         assert('\0' == message[r]);
+        m_update_required = false;
         if ('\0' == message[0]) {
                 m_command.set_command();
         } else {
@@ -185,6 +189,14 @@ void messenger_server::talker::send_response(const std::string& n)
         m_mutex.unlock();
 }
 
+void messenger_server::talker::send_update_status()
+{
+        assert(0 != m_server);
+        if (m_update_required) {
+                m_server->update_status(m_user);
+        }
+}
+
 void messenger_server::talker::run()
 {
         try {
@@ -195,6 +207,7 @@ void messenger_server::talker::run()
                               command::command().get_cmd_str()) {
                                 parse();
                                 send_response(m_response);
+                                send_update_status();
                         }
                 }
         } catch (const char* m) {
@@ -209,6 +222,9 @@ talker(messenger_server::server* s, ipc::socket r, ipc::socket t)
         , m_tx(t)
         , m_command()
         , m_response("")
+        , m_user("")
+        , m_mutex()
+        , m_update_required(false)
 {
         assert(0 != m_server);
         assert(m_rx.is_valid());

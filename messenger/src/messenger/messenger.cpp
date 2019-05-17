@@ -172,6 +172,12 @@ void messenger::handle_user_list(const command::command& c)
         m_main->update();
 }
 
+void messenger::handle_update_message(const command::command& c)
+{
+        (void)c;
+        request_user_list();
+}
+
 void messenger::handle_send_message(const command::command& c)
 {
         assert(command::command::SEND_MESSAGE == c.get_command());
@@ -252,6 +258,9 @@ void messenger::parse(const std::string& s)
                         break;
                 case command::command::SEND_MESSAGE:
                         handle_send_message(c);
+                        break;
+                case command::command::UPDATE:
+                        handle_update_message(c);
                         break;
                 default:
                         assert(false);

@@ -61,6 +61,7 @@ private:
         void receive_command();
         /// Send response to user
         void send_response(const std::string&);
+        void send_update_status();
         /** @fn handle_register
           * @brief In case if success, user registration is organized,
           * otherwise fails
@@ -88,6 +89,7 @@ private:
         std::string m_response;
         std::string m_user;
         threads::mutex m_mutex;
+        bool m_update_required;
 
 public:
 	/**
