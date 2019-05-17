@@ -170,9 +170,9 @@ void messenger::handle_user_list(const command::command& c)
         command::command k(str_json.toStdString());
         m_list.clear();
         k.parse_list(m_list);
-        delete m_main;
-        m_main = new main_page(this);
-        m_main->show();
+        // delete m_main;
+        // m_main = new main_page(this);
+        // m_main->show();
         // update
 }
 
@@ -292,9 +292,6 @@ messenger::messenger()
         m_timer = new QTimer(this);
         connect(m_timer, SIGNAL(timeout()), this, SLOT(handle_messages()));
         m_timer->start(500);
-
-        // QObject::connect(m_main->get_logout(), SIGNAL(clicked()),
-            //             this, SLOT(show_login()));
 }
 
 messenger::~messenger()

@@ -24,24 +24,19 @@ class main_page : public QWidget
 {
         Q_OBJECT
 public:
-        QPushButton* get_logout() const;
         void set_username(const std::string& n);
         void append_message(const std::string& m);
-        void update_table();
 private:
-        void set_main_page();
         void create_menubar(QBoxLayout* m);
-        void create_labels(QBoxLayout* m);
-        void create_table();
+        void create_table(QBoxLayout* m);
         void showEvent(QShowEvent* event); 
 private:
-        std::string m_select_user;
         messenger* m_messenger;
         QTableView* tblv;
-        QLabel* m_user_label;
-        QPushButton *btn_logout;
         int nrow, ncol;
+        QLabel* m_user_label;
         chat_page* m_chat;
+        std::string m_select_user;
 private slots:
         void get_selected_username(const QModelIndex& index);
 public:

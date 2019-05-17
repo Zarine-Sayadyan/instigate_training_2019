@@ -7,23 +7,10 @@
 #include <cassert>
 
 
-void main_page::update_table()
-{
-    set_main_page();
-    update();
-    std::cout << "updating table" << std::endl;
-}
-
 void main_page::showEvent( QShowEvent* event )
 {
         std::cout << "Updating window" << std::endl;
-
         QWidget::showEvent( event );
-}
-
-QPushButton* main_page::get_logout() const
-{
-        return btn_logout;
 }
 
 void main_page::set_username(const std::string& n)
@@ -47,54 +34,42 @@ void main_page::append_message(const std::string& m)
 void main_page::create_menubar(QBoxLayout* l)
 {
         assert(0 != l);
-        QMenuBar* menuBar = new QMenuBar();
-        QMenu* fileMenu = new QMenu("Menu");
-        menuBar->addMenu(fileMenu);
-
+        // QHBoxLayout* h = new QHBoxLayout;
+        // QLabel* u = new QLabel("User: ");
+        // assert(0 != m_messenger);
         m_user_label = new QLabel(m_messenger->get_username().c_str());
-        fileMenu->addAction(m_messenger->get_username().c_str());
-	
-        fileMenu->addAction("Logout");
-
-
-        l->setMenuBar(menuBar);
+        // h->addWidget(u);
+        // h->addWidget(m_user_label);
+        // l->addLayout(h);
+        // btn_logout = new QPushButton();
+        // ml->addWidget(btn_logout);
 }
 
-void main_page::create_labels(QBoxLayout* l)
-{
-        QHBoxLayout* h = new QHBoxLayout;
-        QLabel* u = new QLabel("User: ");
-        assert(0 != m_messenger);
-        m_user_label = new QLabel(m_messenger->get_username().c_str());
-        h->addWidget(u);
-        h->addWidget(m_user_label);
-        l->addLayout(h);
-}
-
-void main_page::create_table()
+void main_page::create_table(QBoxLayout* l)
 {
         //create QTableView
         tblv = new QTableView();
-        tblv->setSelectionBehavior(QAbstractItemView::SelectItems );
-        tblv->setSelectionMode( QAbstractItemView::ExtendedSelection );
+        tblv->setSelectionBehavior(QAbstractItemView::SelectItems);
+        tblv->setSelectionMode(QAbstractItemView::ExtendedSelection);
         tblv->setEditTriggers(QAbstractItemView::NoEditTriggers);
         tblv->resizeColumnsToContents();
         tblv->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
         //get number of input row and column
-        assert(0 != m_messenger);
-        nrow = m_messenger->get_list_size();
-        std::cout << "user list size is" << nrow << std::endl;
-        ncol = 2;
 
         //create model
-        QStandardItemModel* model = new QStandardItemModel(nrow, ncol, this);
+        QStandardItemModel* model = new QStandardItemModel(0, 2, this);
 
         QStringList header;
         header << "Names" << "Status";
         model->setHorizontalHeaderLabels(header);
+        tblv->setModel(model);
 
         //fill model value
+        assert(0 != m_messenger);
+        nrow = m_messenger->get_list_size();
+        std::cout << "user list size is" << nrow << std::endl;
+        ncol = 2;
         for (int r = 0; r < nrow; r++ ) {
                 QString sstr1 = QString::fromStdString(m_messenger->get_first(r));
                 std::cout << m_messenger->get_first(r) << std::endl;
@@ -105,26 +80,27 @@ void main_page::create_table()
                 model->setItem(r, 0, item1);
                 model->setItem(r, 1, item2);
         }
-	tblv->setStyleSheet("margin: 10 0"); 
-        tblv->setModel(model);
+}
+
+
+void main_page::get_selected_username(const QModelIndex& index)
+{
+        QModelIndex i = index.sibling(index.row(),0);
+        QString cell_text = i.data().toString();
+        m_select_user = cell_text.toStdString();
+        std::cout << "Selected user is " << m_select_user << std::endl;
 }
 
 main_page::main_page(messenger* m)
         : QWidget()
         , m_messenger(m)
-{
-    set_main_page();
-}
+        , tblv(0)
+        , nrow(0)
+        , ncol(2)
+        , m_user_label(0)
+        , m_chat(0)
+        , m_select_user()
 
-void main_page::get_selected_username(const QModelIndex& index)
-{
-    QModelIndex i = index.sibling(index.row(),0);
-    QString cell_text = i.data().toString();
-    m_select_user = cell_text.toStdString();
-    std::cout << "Selected user is " << m_select_user << std::endl;
-}
-
-void main_page::set_main_page()
 {
         QHBoxLayout* hl = new QHBoxLayout();
         setLayout(hl);
@@ -139,28 +115,11 @@ void main_page::set_main_page()
         cl->addWidget(m_chat);
 
         create_menubar(hl);
-       // create_labels(ml);
-        create_table();
+        create_table(ml);
         ml->addWidget(tblv);
-      
-       
-
-
-
-
-
-
-
-
-
-
-
-//	btn_logout = new QPushButton();
-//	ml->addWidget(btn_logout);
         QObject::connect(tblv, SIGNAL(clicked(const QModelIndex&)),
                 this, SLOT(get_selected_username(const QModelIndex&)));
 }
-
 
 
 
