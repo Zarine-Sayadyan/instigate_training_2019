@@ -14,7 +14,6 @@ void talker::run()
                         int r = m_rx.recv(msg, s);
                         assert(r < s);
                         std::cout << __FUNCTION__ << std::endl;
-                        std::cout << "size=" << r << " recv command="<< msg << std::endl;
 
                         std::cout << std::endl;
                         assert('\0' == msg[r]);
