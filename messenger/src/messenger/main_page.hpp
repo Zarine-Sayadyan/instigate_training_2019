@@ -26,14 +26,16 @@ class main_page : public QWidget
 public:
         void set_username(const std::string& n);
         void append_message(const std::string& m);
+        void fill_model();
+        const std::string& get_selected_username() const;
 private:
         void create_tool_bar(QBoxLayout* m);
         void create_table(QBoxLayout* m);
         void showEvent(QShowEvent* event); 
 private:
         messenger* m_messenger;
-        QTableView* tblv;
-        int nrow, ncol;
+        QTableView* m_table;
+        QStandardItemModel* m_model;
         QLabel* m_user_label;
         chat_page* m_chat;
         std::string m_select_user;
@@ -43,7 +45,7 @@ private:
 
         QPushButton* m_logout_button;
 private slots:
-        void get_selected_username(const QModelIndex& index);
+        void set_selected_username(const QModelIndex& index);
 public:
         main_page(messenger* m);
 };
