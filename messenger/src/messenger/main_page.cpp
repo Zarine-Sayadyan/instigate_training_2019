@@ -10,6 +10,8 @@
 void main_page::showEvent( QShowEvent* event )
 {
         std::cout << "Updating window" << std::endl;
+        assert(0 != m_messenger);
+        m_messenger->request_user_list();
         QWidget::showEvent( event );
 }
 
@@ -18,13 +20,7 @@ void main_page::set_username(const std::string& n)
         assert(0 != m_user_label);
         m_user_label->setText(n.c_str());
 }
-/*
-std::string main_page::get_selected_username() const
-{
-        return "";
-}
 
-*/
 void main_page::append_message(const std::string& m)
 {
         assert(0 != m_chat);
@@ -45,47 +41,55 @@ void main_page::create_menubar(QBoxLayout* l)
         // ml->addWidget(btn_logout);
 }
 
-void main_page::create_table(QBoxLayout* l)
+void main_page::fill_model()
 {
-        //create QTableView
-        tblv = new QTableView();
-        tblv->setSelectionBehavior(QAbstractItemView::SelectItems);
-        tblv->setSelectionMode(QAbstractItemView::ExtendedSelection);
-        tblv->setEditTriggers(QAbstractItemView::NoEditTriggers);
-        tblv->resizeColumnsToContents();
-        tblv->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-
-        //get number of input row and column
-
-        //create model
-        QStandardItemModel* model = new QStandardItemModel(0, 2, this);
-
+        std::cout << __FUNCTION__ << std::endl;
+        assert(0 != m_model);
+        m_model->clear();
         QStringList header;
         header << "Names" << "Status";
-        model->setHorizontalHeaderLabels(header);
-        tblv->setModel(model);
-
-        //fill model value
+        m_model->setHorizontalHeaderLabels(header);
+        assert(0 != m_table);
         assert(0 != m_messenger);
-        nrow = m_messenger->get_list_size();
+        int nrow = m_messenger->get_list_size();
         std::cout << "user list size is" << nrow << std::endl;
-        ncol = 2;
-        for (int r = 0; r < nrow; r++ ) {
-                QString sstr1 = QString::fromStdString(m_messenger->get_first(r));
+        for (int r = 0; r < nrow; r++) {
+                QString u = QString::fromStdString(m_messenger->get_first(r));
                 std::cout << m_messenger->get_first(r) << std::endl;
-                QStandardItem *item1 = new QStandardItem(sstr1);
-                QString sstr2 = QString::fromStdString(m_messenger->get_second(r));
+                QStandardItem* i1 = new QStandardItem(u);
+
+                QString st = QString::fromStdString(m_messenger->get_second(r));
                 std::cout << m_messenger->get_second(r) << std::endl;
-                QStandardItem *item2 = new QStandardItem(sstr2);
-                model->setItem(r, 0, item1);
-                model->setItem(r, 1, item2);
+                QStandardItem* i2 = new QStandardItem(st);
+                m_model->setItem(r, 0, i1);
+                m_model->setItem(r, 1, i2);
         }
 }
 
-
-void main_page::get_selected_username(const QModelIndex& index)
+void main_page::create_table(QBoxLayout* l)
 {
-        QModelIndex i = index.sibling(index.row(),0);
+        assert(0 == m_table);
+        m_table = new QTableView;
+        m_table->setSelectionBehavior(QAbstractItemView::SelectRows);
+        m_table->setSelectionMode(QAbstractItemView::ExtendedSelection);
+        m_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        m_table->resizeColumnsToContents();
+        m_table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+        assert(0 == m_model);
+        m_model = new QStandardItemModel(0, 2, this);
+        m_table->setModel(m_model);
+        l->addWidget(m_table);
+}
+
+const std::string& main_page::get_selected_username() const
+{
+        return m_select_user;
+}
+
+void main_page::set_selected_username(const QModelIndex& index)
+{
+        QModelIndex i = index.sibling(index.row(), 0);
         QString cell_text = i.data().toString();
         m_select_user = cell_text.toStdString();
         std::cout << "Selected user is " << m_select_user << std::endl;
@@ -94,9 +98,8 @@ void main_page::get_selected_username(const QModelIndex& index)
 main_page::main_page(messenger* m)
         : QWidget()
         , m_messenger(m)
-        , tblv(0)
-        , nrow(0)
-        , ncol(2)
+        , m_table(0)
+        , m_model(0)
         , m_user_label(0)
         , m_chat(0)
         , m_select_user()
@@ -116,16 +119,7 @@ main_page::main_page(messenger* m)
 
         create_menubar(hl);
         create_table(ml);
-        ml->addWidget(tblv);
-        QObject::connect(tblv, SIGNAL(clicked(const QModelIndex&)),
-                this, SLOT(get_selected_username(const QModelIndex&)));
+        QObject::connect(m_table, SIGNAL(clicked(const QModelIndex&)),
+                this, SLOT(set_selected_username(const QModelIndex&)));
 }
-
-
-
-
-
-
-
-
 
