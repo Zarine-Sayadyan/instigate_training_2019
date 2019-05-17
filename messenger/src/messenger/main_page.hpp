@@ -29,6 +29,7 @@ public:
         void fill_model();
         void update_table_view();
         const std::string& get_selected_username() const;
+        void clear_messages();
 private:
         void create_tool_bar(QBoxLayout* m);
         void create_table(QBoxLayout* m);

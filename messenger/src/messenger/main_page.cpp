@@ -6,6 +6,7 @@
 #include <QSpacerItem>
 #include <QFileInfo>
 #include <QFileDialog>
+#include <QSplitter>
 #include <cassert>
 
 void main_page::update_table_view()
@@ -103,6 +104,11 @@ const std::string& main_page::get_selected_username() const
         return m_select_user;
 }
 
+void main_page::clear_messages()
+{
+       m_chat->get_text_edit()->clear(); 
+}
+
 void main_page::set_selected_username(const QModelIndex& index)
 {
         QModelIndex i = index.sibling(index.row(), 0);
@@ -128,7 +134,6 @@ main_page::main_page(messenger* m)
         , m_user_label(0)
         , m_chat(0)
         , m_select_user("")
-
 {
         QVBoxLayout* ml = new QVBoxLayout;
         setLayout(ml);
@@ -142,5 +147,6 @@ main_page::main_page(messenger* m)
         create_table(l);
         m_chat = new chat_page(m_messenger);
         l->addWidget(m_chat);
+
 }
 
