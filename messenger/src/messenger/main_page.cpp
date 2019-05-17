@@ -17,6 +17,7 @@ void main_page::set_username(const std::string& n)
 {
         assert(0 != m_user_label);
         m_user_label->setText(n.c_str());
+
 }
 /*
 std::string main_page::get_selected_username() const
@@ -31,14 +32,18 @@ void main_page::append_message(const std::string& m)
         m_chat->append_message(m);
 }
 
-void main_page::create_menubar(QBoxLayout* l)
+void main_page::create_tool_bar(QBoxLayout* l)
 {
         assert(0 != l);
-        // QHBoxLayout* h = new QHBoxLayout;
-        // QLabel* u = new QLabel("User: ");
-        // assert(0 != m_messenger);
+        m_tool_bar = new QToolBar();
+
         m_user_label = new QLabel(m_messenger->get_username().c_str());
-        // h->addWidget(u);
+        m_tool_bar->addWidget(m_user_label);
+        m_logout_button = new QPushButton("logout");
+
+        m_tool_bar->addWidget(m_logout_button);
+        l->addWidget(m_tool_bar);
+
         // h->addWidget(m_user_label);
         // l->addLayout(h);
         // btn_logout = new QPushButton();
@@ -103,7 +108,10 @@ main_page::main_page(messenger* m)
 
 {
         QHBoxLayout* hl = new QHBoxLayout();
-        setLayout(hl);
+
+        QVBoxLayout* hll = new QVBoxLayout();
+        setLayout(hll);
+
 
         QVBoxLayout* ml = new QVBoxLayout();
         hl->addLayout(ml);
@@ -113,8 +121,12 @@ main_page::main_page(messenger* m)
 
         m_chat = new chat_page(m_messenger);
         cl->addWidget(m_chat);
+        
+        QVBoxLayout* tb = new QVBoxLayout();
+        hll->addLayout(tb);
+        hll->addLayout(hl);
 
-        create_menubar(hl);
+        create_tool_bar(tb);
         create_table(ml);
         ml->addWidget(tblv);
         QObject::connect(tblv, SIGNAL(clicked(const QModelIndex&)),
