@@ -7,12 +7,14 @@
 #include <cassert>
 
 
-void main_page::showEvent( QShowEvent* event )
+void main_page::showEvent(QShowEvent* event)
 {
         std::cout << "Updating window" << std::endl;
         assert(0 != m_messenger);
         m_messenger->request_user_list();
-        QWidget::showEvent( event );
+        assert(0 != m_chat);
+        m_chat->enable_buttons(false);
+        QWidget::showEvent(event);
 }
 
 void main_page::set_username(const std::string& n)
@@ -92,7 +94,10 @@ void main_page::set_selected_username(const QModelIndex& index)
         QModelIndex i = index.sibling(index.row(), 0);
         QString cell_text = i.data().toString();
         m_select_user = cell_text.toStdString();
+        assert(! m_select_user.empty());
         std::cout << "Selected user is " << m_select_user << std::endl;
+        assert(0 != m_chat);
+        m_chat->enable_buttons(true);
 }
 
 main_page::main_page(messenger* m)

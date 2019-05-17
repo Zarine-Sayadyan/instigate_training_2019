@@ -14,6 +14,10 @@ class messenger;
 class chat_page : public QWidget
 {
         Q_OBJECT
+public:
+        void append_message(const std::string& m);
+        void enable_buttons(bool b);
+
 private slots:
         void send_message();
         void send_file();
@@ -27,8 +31,6 @@ private:
         QPushButton* m_file;
 public:
         chat_page(messenger* m, QWidget* parent = 0);
-public:
-        void append_message(const std::string& m);
 
 };
 
