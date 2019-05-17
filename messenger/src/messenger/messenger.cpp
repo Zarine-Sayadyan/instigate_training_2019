@@ -179,7 +179,8 @@ void messenger::handle_user_list(const command::command& c)
 void messenger::handle_update_message(const command::command& c)
 {
         (void)c;
-        request_user_list();
+        assert(0 != m_main);
+        m_main->update_table_view();
 }
 
 void messenger::handle_send_message(const command::command& c)

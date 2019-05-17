@@ -6,14 +6,18 @@
 #include <QFileDialog>
 #include <cassert>
 
-
-void main_page::showEvent(QShowEvent* event)
+void main_page::update_table_view()
 {
-        std::cout << "Updating window" << std::endl;
         assert(0 != m_messenger);
         m_messenger->request_user_list();
         assert(0 != m_chat);
         m_chat->enable_buttons(false);
+}
+
+void main_page::showEvent(QShowEvent* event)
+{
+        std::cout << "Updating window" << std::endl;
+        update_table_view();
         QWidget::showEvent(event);
 }
 
@@ -98,11 +102,13 @@ void main_page::set_selected_username(const QModelIndex& index)
 {
         QModelIndex i = index.sibling(index.row(), 0);
         QString cell_text = i.data().toString();
-        m_select_user = cell_text.toStdString();
-        assert(! m_select_user.empty());
-        //std::cout << "Selected user is " << m_select_user << std::endl;
-        assert(0 != m_chat);
-        m_chat->enable_buttons(true);
+        if (m_select_user != cell_text.toStdString()) {
+                m_select_user = cell_text.toStdString();
+                assert(! m_select_user.empty());
+                assert(0 != m_chat);
+                m_chat->enable_buttons(true);
+                // clean
+        }
 }
 
 main_page::main_page(messenger* m)
