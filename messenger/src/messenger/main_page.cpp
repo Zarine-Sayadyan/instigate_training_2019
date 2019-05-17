@@ -106,7 +106,9 @@ const std::string& main_page::get_selected_username() const
 
 void main_page::clear_messages()
 {
-       m_chat->get_text_edit()->clear(); 
+        assert(0 != m_chat);
+        assert(0 != m_chat->get_text_edit());
+        m_chat->get_text_edit()->clear(); 
 }
 
 void main_page::set_selected_username(const QModelIndex& index)
@@ -122,7 +124,7 @@ void main_page::set_selected_username(const QModelIndex& index)
                 if (stat_text == QString("online")) {
                         m_chat->enable_buttons(true);
                 }
-                // clean
+                clear_messages();
         }
 }
 
