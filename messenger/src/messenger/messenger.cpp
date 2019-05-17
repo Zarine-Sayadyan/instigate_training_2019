@@ -28,7 +28,7 @@ int messenger::get_list_size()
 std::string messenger::get_selected_username() const
 {
         assert(0 != m_main);
-        return "David";// m_main->get_selected_username();
+        return m_main->get_selected_username();
 }
 
 void messenger::show_login()
@@ -110,9 +110,6 @@ void messenger::handle_register(const command::command& c)
         assert("FAILED" != r || c.has_key("reason"));
         if ("DONE" == r) {
                 set_username(c.get_value("username"));
-                request_user_list();
-                m_main->update();
-                m_main->repaint();
                 show_main();
         } else {
                 std::string e = c.get_value("reason"); 
@@ -174,10 +171,9 @@ void messenger::handle_user_list(const command::command& c)
         command::command k(str_json.toStdString());
         m_list.clear();
         k.parse_list(m_list);
-        // delete m_main;
-        // m_main = new main_page(this);
-        // m_main->show();
-        // update
+        assert(0 != m_main);
+        m_main->fill_model();
+        m_main->update();
 }
 
 void messenger::handle_send_message(const command::command& c)

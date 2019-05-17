@@ -6,10 +6,7 @@
 
 void command::command::parse_list(std::vector<std::pair<std::string, std::string>>& list)
 {
-        std::cout << "m_command = " << m_command << std::endl;
-        std::cout << "Begin parse list" << std::endl;
         QJsonObject obj = str_to_json();
-        int i = 0;
         foreach(const QString& key, obj.keys()) {
             QJsonValue val = obj.value(key);
             QString q_val_string = val.toString();
@@ -18,11 +15,7 @@ void command::command::parse_list(std::vector<std::pair<std::string, std::string
             p.first = key.toStdString();
             p.second = val_string;
             list.push_back(p);
-            std::cout << list[i].first << std::endl;
-            std::cout << list[i].second << std::endl;
-            i++;
         }
-        std::cout << "End parse list" << std::endl;
 }
 
 void command::command::set_command(const std::string& s)
