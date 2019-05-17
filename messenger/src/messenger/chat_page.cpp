@@ -23,6 +23,14 @@ void chat_page::append_message(const std::string& m)
         m_text_edit->append(m.c_str());
 }
 
+void chat_page::enable_buttons(bool b)
+{
+        assert(0 != m_send);
+        assert(0 != m_file);
+        m_send->setEnabled(b);
+        m_file->setEnabled(b);
+}
+
 void chat_page::send_message()
 {
         if (m_line_edit->text().isEmpty()) {
@@ -80,6 +88,8 @@ chat_page::chat_page(messenger* m, QWidget* parent)
         m_line_edit->resize(200, 20);
         m_send = new QPushButton("Send");
         m_file = new QPushButton("Send File");
+        m_send->setDisabled(true);
+        m_file->setDisabled(true);
         // m_file->setIcon(QIcon("images.png"));
         m_file->setFixedSize(80, 30);
         m_send->setFixedSize(80, 30);
