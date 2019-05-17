@@ -12,6 +12,10 @@ void talker::run()
                         memset(msg, 0, sizeof(msg));
                         int s = sizeof(msg);
                         int r = m_rx.recv(msg, s);
+                        if (r == 0) {
+                                std::cout << "Something wrong" << std::endl;
+                                break;
+                        }
                         assert(r < s);
                         assert('\0' == msg[r]);
                         std::string str((const char*)msg);
