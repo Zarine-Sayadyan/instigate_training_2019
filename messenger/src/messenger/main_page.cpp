@@ -64,14 +64,10 @@ void main_page::fill_model()
         assert(0 != m_table);
         assert(0 != m_messenger);
         int nrow = m_messenger->get_list_size();
-        std::cout << "user list size is" << nrow << std::endl;
         for (int r = 0; r < nrow; r++) {
                 QString u = QString::fromStdString(m_messenger->get_first(r));
-                std::cout << m_messenger->get_first(r) << std::endl;
                 QStandardItem* i1 = new QStandardItem(u);
-
                 QString st = QString::fromStdString(m_messenger->get_second(r));
-                std::cout << m_messenger->get_second(r) << std::endl;
                 QStandardItem* i2 = new QStandardItem(st);
                 m_model->setItem(r, 0, i1);
                 m_model->setItem(r, 1, i2);
@@ -105,7 +101,7 @@ void main_page::set_selected_username(const QModelIndex& index)
         QString cell_text = i.data().toString();
         m_select_user = cell_text.toStdString();
         assert(! m_select_user.empty());
-        std::cout << "Selected user is " << m_select_user << std::endl;
+        //std::cout << "Selected user is " << m_select_user << std::endl;
         assert(0 != m_chat);
         m_chat->enable_buttons(true);
 }
