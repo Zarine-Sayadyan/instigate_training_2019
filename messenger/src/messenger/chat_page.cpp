@@ -19,8 +19,13 @@ void chat_page::keyPressEvent(QKeyEvent *event)
 void chat_page::append_message(const std::string& m)
 {
         assert(0 != m_text_edit);
-        m_text_edit->setAlignment(Qt::AlignLeft);
         m_text_edit->append(m.c_str());
+        m_text_edit->setAlignment(Qt::AlignLeft);
+}
+
+QTextEdit* chat_page::get_text_edit()
+{
+        return m_text_edit;
 }
 
 void chat_page::enable_buttons(bool b)
@@ -36,9 +41,9 @@ void chat_page::send_message()
         if (m_line_edit->text().isEmpty()) {
                 return;
         }
-        m_text_edit->setAlignment(Qt::AlignRight);
         QString m = m_line_edit->text();
         m_text_edit->append(m);
+        m_text_edit->setAlignment(Qt::AlignRight);
         m_line_edit->clear();
         m_line_edit->setFocus();
         assert(0 != m_messenger);

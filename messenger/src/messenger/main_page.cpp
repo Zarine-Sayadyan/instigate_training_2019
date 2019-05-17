@@ -94,6 +94,11 @@ const std::string& main_page::get_selected_username() const
         return m_select_user;
 }
 
+void main_page::clear_messages()
+{
+       m_chat->get_text_edit()->clear(); 
+}
+
 void main_page::set_selected_username(const QModelIndex& index)
 {
         QModelIndex i = index.sibling(index.row(), 0);

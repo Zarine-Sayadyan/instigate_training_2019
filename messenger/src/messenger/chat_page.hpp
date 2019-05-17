@@ -17,6 +17,7 @@ class chat_page : public QWidget
 public:
         void append_message(const std::string& m);
         void enable_buttons(bool b);
+        QTextEdit* get_text_edit();
 
 private slots:
         void send_message();

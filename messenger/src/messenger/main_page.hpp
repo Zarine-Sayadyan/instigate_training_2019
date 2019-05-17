@@ -28,6 +28,7 @@ public:
         void append_message(const std::string& m);
         void fill_model();
         const std::string& get_selected_username() const;
+        void clear_messages();
 private:
         void create_tool_bar(QBoxLayout* m);
         void create_table(QBoxLayout* m);
