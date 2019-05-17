@@ -23,21 +23,12 @@ void main_page::set_username(const std::string& n)
         m_user_label->setText(n.c_str());
 }
 
-/*
-std::string main_page::get_selected_username() const
-{
-        return "";
-}
-*/
 void main_page::logout()
 {
-        assert(0 != m_logout);
         command::command c(command::command::LOGOUT);
-        c.add_value("username", m_messenger->get_username());
-        std::string t = c.get_cmd_str();
-        m_messenger->send_command(t);
+        //c.add_value("username", m_messenger->get_username());
+        m_messenger->send_command(c.get_cmd_str());
 }
-
 
 void main_page::append_message(const std::string& m)
 {
@@ -48,19 +39,18 @@ void main_page::append_message(const std::string& m)
 void main_page::create_tool_bar(QBoxLayout* l)
 {
         assert(0 != l);
-        m_tool_bar = new QToolBar();
+        QToolBar* tb = new QToolBar;
 
         m_user_label = new QLabel(m_messenger->get_username().c_str());
-        m_tool_bar->addWidget(m_user_label);
-        m_logout_button = new QPushButton("logout");
+        tb->addWidget(m_user_label);
 
-        m_tool_bar->addWidget(m_logout_button);
-        l->addWidget(m_tool_bar);
+        QPushButton* button = new QPushButton("Logout");
 
-        // h->addWidget(m_user_label);
-        // l->addLayout(h);
-        // btn_logout = new QPushButton();
-        // ml->addWidget(btn_logout);
+        tb->addWidget(button);
+        l->addWidget(tb);
+        
+        QObject::connect(button, SIGNAL(clicked()),
+                this, SLOT(logout()));
 }
 
 void main_page::fill_model()
@@ -123,22 +113,17 @@ void main_page::set_selected_username(const QModelIndex& index)
 main_page::main_page(messenger* m)
         : QWidget()
         , m_messenger(m)
-        , tblv(0)
-        , m_logout(0)
-        , nrow(0)
-        , ncol(2)
         , m_table(0)
         , m_model(0)
         , m_user_label(0)
         , m_chat(0)
-        , m_select_user()
+        , m_select_user("")
 
 {
         QHBoxLayout* hl = new QHBoxLayout();
 
         QVBoxLayout* hll = new QVBoxLayout();
         setLayout(hll);
-
 
         QVBoxLayout* ml = new QVBoxLayout();
         hl->addLayout(ml);
@@ -155,11 +140,6 @@ main_page::main_page(messenger* m)
 
         create_tool_bar(tb);
         create_table(ml);
-        ml->addWidget(tblv);
-        QObject::connect(tblv, SIGNAL(clicked(const QModelIndex&)),
-                this, SLOT(get_selected_username(const QModelIndex&)));
-        QObject::connect(m_logout, SIGNAL(clicked()),
-                this, SLOT(logout()));
         QObject::connect(m_table, SIGNAL(clicked(const QModelIndex&)),
                 this, SLOT(set_selected_username(const QModelIndex&)));
 }
