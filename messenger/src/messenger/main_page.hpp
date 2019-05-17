@@ -29,7 +29,7 @@ public:
         void fill_model();
         const std::string& get_selected_username() const;
 private:
-        void create_menubar(QBoxLayout* m);
+        void create_tool_bar(QBoxLayout* m);
         void create_table(QBoxLayout* m);
         void showEvent(QShowEvent* event); 
 private:
@@ -39,7 +39,11 @@ private:
         QLabel* m_user_label;
         chat_page* m_chat;
         std::string m_select_user;
+        //tool bar
+        QToolBar* m_tool_bar;
+        //logut button
 
+        QPushButton* m_logout_button;
 private slots:
         void set_selected_username(const QModelIndex& index);
 public:
