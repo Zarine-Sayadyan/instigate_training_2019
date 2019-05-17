@@ -14,9 +14,7 @@ void threads::thread::create_thread(enum flag f)
 {
     pthread_attr_t attr;
     int r = pthread_attr_init(&attr);
-
     if (DETACHABLE == f) {
-        std::cout << "ete detacha\n";
         r = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
         assert(0 == r);
     }

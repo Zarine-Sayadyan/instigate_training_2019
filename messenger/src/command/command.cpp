@@ -39,7 +39,6 @@ command::command::type
 command::command::
 get_command() const
 {
-        // std::cout << "get_command=" << m_command << std::endl;
         assert(has_key("command"));
         QJsonObject obj = str_to_json();
         QString cmd = obj["command"].toString();

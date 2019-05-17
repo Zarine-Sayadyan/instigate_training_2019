@@ -10,13 +10,13 @@
 
 std::string messenger::get_first(int i)
 {
-        assert(i < m_list.size());
+        assert(i < (int)m_list.size());
         return m_list[i].first;
 }
 
 std::string messenger::get_second(int i)
 {
-        assert(i < m_list.size());
+        assert(i < (int)m_list.size());
         return m_list[i].second;
 }
 
@@ -298,7 +298,7 @@ messenger::messenger()
         assert(0 != m_main);
         m_talker = new talker(this, m_server.duplicate());
         assert(0 != m_talker);
-        m_talker->create_thread();
+        m_talker->create_thread(threads::thread::DETACHABLE);
         m_timer = new QTimer(this);
         connect(m_timer, SIGNAL(timeout()), this, SLOT(handle_messages()));
         m_timer->start(500);

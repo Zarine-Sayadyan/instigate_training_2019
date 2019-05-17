@@ -29,6 +29,7 @@ void chat_page::enable_buttons(bool b)
         assert(0 != m_file);
         m_send->setEnabled(b);
         m_file->setEnabled(b);
+        m_line_edit->setEnabled(b);
 }
 
 void chat_page::send_message()

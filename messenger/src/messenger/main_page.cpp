@@ -106,12 +106,16 @@ const std::string& main_page::get_selected_username() const
 void main_page::set_selected_username(const QModelIndex& index)
 {
         QModelIndex i = index.sibling(index.row(), 0);
-        QString cell_text = i.data().toString();
-        if (m_select_user != cell_text.toStdString()) {
-                m_select_user = cell_text.toStdString();
+        QModelIndex si = index.sibling(index.row(), 1);
+        QString user_text = i.data().toString();
+        QString stat_text = si.data().toString();
+        if (m_select_user != user_text.toStdString()) {
+                m_select_user = user_text.toStdString();
                 assert(! m_select_user.empty());
                 assert(0 != m_chat);
-                m_chat->enable_buttons(true);
+                if (stat_text == QString("online")) {
+                        m_chat->enable_buttons(true);
+                }
                 // clean
         }
 }

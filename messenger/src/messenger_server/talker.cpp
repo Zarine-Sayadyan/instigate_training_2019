@@ -98,10 +98,11 @@ void messenger_server::talker::handle_logout()
 {
         assert(! m_user.empty());
         assert(0 != m_server);
-        assert(m_server->get_status(m_user));
-        m_server->logout_user(m_user);
-        set_ok();
-        m_update_required = true;
+        if (m_server->get_status(m_user)) {
+                m_server->logout_user(m_user);
+                set_ok();
+                m_update_required = true;
+        }
 }
 
 void messenger_server::talker::handle_send_request()
@@ -113,13 +114,14 @@ void messenger_server::talker::handle_send_request()
         std::string to = m_command.get_value("to");
         assert(! to.empty());
         assert(m_server->does_user_exist(to));
-        assert(m_server->get_status(to));
-        assert(0 != m_server);
-        m_server->send_data_to(to, m_command);
-        command::command c(m_command.get_cmd_str());
-        c.add_value("response", "DONE");
-        c.set_value("data", "NONE");
-        m_response = c.get_cmd_str();
+        if (m_server->get_status(to)) {
+                assert(0 != m_server);
+                m_server->send_data_to(to, m_command);
+                command::command c(m_command.get_cmd_str());
+                c.add_value("response", "DONE");
+                c.set_value("data", "NONE");
+                m_response = c.get_cmd_str();
+        }
 }
 
 void messenger_server::talker::receive_data(const command::command& c)
@@ -213,6 +215,8 @@ void messenger_server::talker::run()
         } catch (const char* m) {
                 std::cerr << "Talker error: " << m << std::endl;
         }
+        assert(0 != m_server);
+        m_server->remove_talker(this);
 }
 
 messenger_server::talker::
@@ -233,4 +237,6 @@ talker(messenger_server::server* s, ipc::socket r, ipc::socket t)
 
 messenger_server::talker::
 ~talker()
-{}
+{
+        std::cout << "In talker destructor" << std::endl;
+}

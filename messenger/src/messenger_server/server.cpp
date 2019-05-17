@@ -142,15 +142,34 @@ void messenger_server::server::insert_talker(messenger_server::talker* t)
         m_mutex.unlock();
 }
 
+void messenger_server::server::remove_talker(talker* t)
+{
+        std::cout << "Delete talker" << std::endl;
+        m_mutex.lock();
+        auto i = m_talkers.begin();
+        for (; i != m_talkers.end(); ++i) {
+                if (t == *i) {
+                        break;
+                }
+        }
+        assert(t == *i);
+        m_talkers.erase(i);
+        delete t;
+        m_mutex.unlock();
+}
+
 void messenger_server::server::run()
 {
         assert(m_socket.is_valid());
         while (true) {
-                ipc::socket c = m_socket.accept();
-                talker* t = new talker(this, c, c.duplicate());
-                t->create_thread();
-                insert_talker(t);
-                std::cout << "talkers size=" << m_talkers.size() << std::endl;
+                try {
+                        ipc::socket c = m_socket.accept();
+                        talker* t = new talker(this, c, c.duplicate());
+                        t->create_thread(threads::thread::DETACHABLE);
+                        insert_talker(t);
+                } catch (const char* e) {
+                        std::cout << "accept error: " << e << std::endl;
+                }
         }
 }
 

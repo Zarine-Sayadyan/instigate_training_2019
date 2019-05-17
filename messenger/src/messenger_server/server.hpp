@@ -69,6 +69,7 @@ public:
         bool get_status(const std::string& n);
         /// send file to user @param u
         void send_data_to(const std::string& u, const command::command& c);
+        void remove_talker(talker* t);
 
 private:
         typedef std::vector<talker*> talkers;
